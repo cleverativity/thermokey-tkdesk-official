@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Cardano_API</RootNamespace>
+    <RuntimeIdentifiers>win-x64;linux-arm64</RuntimeIdentifiers>
+    <ContainerRuntimeIdentifier>win-x64</ContainerRuntimeIdentifier>
+    <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:9.0-nanoserver-1809</ContainerBaseImage>
+    <UserSecretsId>cca6b30f-8003-4c85-8bea-fbb252e92527</UserSecretsId>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ContainerPort Include="8081" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="4.0.6.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cardano.Application\Cardano.Application.csproj" />
+    <ProjectReference Include="..\Cardano.Infrastructure\Cardano.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <!-- Logo deployed with API so PDF reports show it on server (path: header/thermokey_logo.png) -->
+  <ItemGroup>
+    <Content Include="header\thermokey_logo.png" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="header\thermokey_logo.png" />
+  </ItemGroup>
+
+</Project>

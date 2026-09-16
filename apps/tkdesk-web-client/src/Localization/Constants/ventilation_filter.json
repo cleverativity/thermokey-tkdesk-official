@@ -1,0 +1,5 @@
+[
+  { "value": 1, "label": "Special" },
+  { "value": 3, "label": "Exclude Long Lead Time" },
+  { "value": 2, "label": "Silenced" }
+]

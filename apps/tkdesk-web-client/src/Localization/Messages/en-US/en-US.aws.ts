@@ -1,0 +1,31 @@
+export default {
+  en: {
+    'Sign in': 'Sign In',
+    Username: 'Username',
+    'Enter your username': 'Enter your username',
+    'Back to Sign In': 'Back to Sign In',
+    'Send code': 'Send code',
+    Code: 'Code',
+    'New Password': 'new Password',
+    'Confirm Password': 'Confirm password',
+    Submit: 'Change Password',
+    'Resend Code': 'Resend Code',
+    'Submitting...': 'Submitting...',
+    'Sending...': 'Sending...',
+    'Signing in': 'Signing in',
+    'User does not exist.': 'Incorrect username or password.',
+    'Incorrect username or password.': 'Incorrect username or password.',
+    'Username/client id combination not found.': 'Invalid code.',
+    'Your passwords must match': 'Le password non coincidono.',
+    'Attempt limit exceeded, please try after some time.':
+      'Attempt limit exceeded, please try after some time.',
+    'Change Password': 'Change Password',
+    Changing: 'Changing',
+    'Cannot reset password for the user as there is no registered/verified email or phone_number':
+      'Cannot reset password for the user as there is no registered/verified email or phone_number',
+    Verify: 'Verify',
+    Verifying: 'Verifying',
+    Skip: 'Skip',
+    'User is disabled.': 'User is disabled.',
+  },
+}

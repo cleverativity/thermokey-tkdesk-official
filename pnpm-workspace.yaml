@@ -1,0 +1,13 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+onlyBuiltDependencies:
+  - nx
+  - esbuild
+  - '@parcel/watcher'
+  - '@sentry/cli'
+  - cypress
+
+ignoredBuiltDependencies:
+  - '@scarf/scarf'

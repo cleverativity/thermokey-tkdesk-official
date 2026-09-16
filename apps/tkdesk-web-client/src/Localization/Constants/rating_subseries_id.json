@@ -1,0 +1,13 @@
+{
+  "T": [
+    { "value": "HLL", "label": "HLL" },
+    { "value": "HNU", "label": "HNU" },
+    { "value": "HTM", "label": "HTM" },
+    { "value": "HTN", "label": "HTN" },
+    { "value": "HTT", "label": "HTT" },
+    { "value": "HTX", "label": "HTX" },
+    { "value": "HTZ", "label": "HTZ" },
+    { "value": "HUU", "label": "HUU" }
+  ],
+  "J": [{ "value": "V", "label": "V" }]
+}

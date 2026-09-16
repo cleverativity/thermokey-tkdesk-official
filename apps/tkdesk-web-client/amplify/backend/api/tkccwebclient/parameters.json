@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "tkccwebclient",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authtkccwebclient5b774b4a",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

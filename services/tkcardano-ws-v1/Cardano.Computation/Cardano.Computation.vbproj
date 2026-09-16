@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Cardano.Computation</RootNamespace>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cardano.Domain\Cardano.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="InstinctCodeII">
+      <HintPath>InstinctCodeII\InstinctCodeII.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

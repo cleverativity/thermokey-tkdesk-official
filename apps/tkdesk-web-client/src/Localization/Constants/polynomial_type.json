@@ -1,0 +1,46 @@
+[
+  { "key": "pressure", "ITA": "Pressione", "ENG": "Pressure" },
+  { "key": "power", "ITA": "Potenza", "ENG": "Power" },
+  { "key": "current", "ITA": "Corrente", "ENG": "Current" },
+  { "key": "noise", "ITA": "Rumore", "ENG": "Noise" },
+  {
+    "key": "octave_band_63",
+    "ITA": "Octave band 63",
+    "ENG": "Octave band 63"
+  },
+  {
+    "key": "octave_band_125",
+    "ITA": "Octave band 125",
+    "ENG": "Octave band 125"
+  },
+  {
+    "key": "octave_band_250",
+    "ITA": "Octave band 250",
+    "ENG": "Octave band 250"
+  },
+  {
+    "key": "octave_band_500",
+    "ITA": "Octave band 500",
+    "ENG": "Octave band 500"
+  },
+  {
+    "key": "octave_band_1000",
+    "ITA": "Octave band 1000",
+    "ENG": "Octave band 1000"
+  },
+  {
+    "key": "octave_band_2000",
+    "ITA": "Octave band 2000",
+    "ENG": "Octave band 2000"
+  },
+  {
+    "key": "octave_band_4000",
+    "ITA": "Octave band 4000",
+    "ENG": "Octave band 4000"
+  },
+  {
+    "key": "octave_band_8000",
+    "ITA": "Octave band 8000",
+    "ENG": "Octave band 8000"
+  }
+]

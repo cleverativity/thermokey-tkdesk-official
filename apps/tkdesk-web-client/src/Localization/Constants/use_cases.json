@@ -1,0 +1,24 @@
+[
+  {
+    "key": "air_cooled_condenser",
+    "ITA": "Air_cooled condenser",
+    "ENG": "Air_cooled condenser"
+  },
+  { "key": "water_cooler", "ITA": "Liquid cooler", "ENG": "Liquid cooler" },
+  { "key": "water_heater", "ITA": "Liquid heater", "ENG": "Liquid heater" },
+  {
+    "key": "double_flow_rw",
+    "ITA": "Multi System Dual Flow (MSDF) - Refrigerante Liquido",
+    "ENG": "Multi System Dual Flow (MSDF) - Refrigerant Liquid"
+  },
+  {
+    "key": "double_flow_ww",
+    "ITA": "Multi System Dual Flow (MSDF) - Liquido Liquido",
+    "ENG": "Multi System Dual Flow (MSDF) - Liquid Liquid"
+  },
+  {
+    "key": "free_cooling_condenser",
+    "ITA": "Condenser w. free cooling",
+    "ENG": "Condenser w. free cooling"
+  }
+]

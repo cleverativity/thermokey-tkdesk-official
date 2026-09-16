@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tkccwebclient-dev-161144-authRole",
+      "UnauthRoleArn": "arn:aws:iam::279171875366:role/amplify-tkccwebclient-dev-161144-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::279171875366:role/amplify-tkccwebclient-dev-161144-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-tkccwebclient-dev-161144-deployment",
+      "UnauthRoleName": "amplify-tkccwebclient-dev-161144-unauthRole",
+      "StackName": "amplify-tkccwebclient-dev-161144",
+      "StackId": "arn:aws:cloudformation:eu-west-1:279171875366:stack/amplify-tkccwebclient-dev-161144/4dce71f0-c7c6-11ec-a288-029c9401b38f",
+      "AmplifyAppId": "dvs84db70770z"
+    },
+    "categories": {
+      "auth": {
+        "tkccwebclient5b774b4a": {}
+      },
+      "storage": {
+        "s36b794b81": {}
+      },
+      "api": {
+        "tkccwebclient": {}
+      }
+    }
+  }
+}

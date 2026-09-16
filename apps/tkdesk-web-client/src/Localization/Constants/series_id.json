@@ -1,0 +1,5 @@
+[
+  { "value": 1, "label": "Modular" },
+  { "value": 2, "label": "Table-type" },
+  { "value": 3, "label": "V-type" }
+]

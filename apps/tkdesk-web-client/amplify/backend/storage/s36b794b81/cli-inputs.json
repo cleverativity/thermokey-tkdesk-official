@@ -1,0 +1,16 @@
+{
+  "resourceName": "s36b794b81",
+  "policyUUID": "6b794b81",
+  "bucketName": "tkcc-storage",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

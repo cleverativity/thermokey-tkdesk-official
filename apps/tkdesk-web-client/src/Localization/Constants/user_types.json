@@ -1,0 +1,11 @@
+[
+  {
+    "key": "superadmin",
+    "ITA": "Super Amministratore",
+    "ENG": "Super Administrator"
+  },
+  { "key": "admin", "ITA": "Amministratore", "ENG": "Administrator" },
+  { "key": "internal", "ITA": "Utente Interno", "ENG": "Internal User" },
+  { "key": "oem_plus", "ITA": "Utente OEM Plus", "ENG": "OEM Plus User" },
+  { "key": "oem", "ITA": "Utente OEM", "ENG": "OEM User" }
+]

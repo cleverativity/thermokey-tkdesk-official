@@ -1,0 +1,5 @@
+[
+  { "key": "mono", "ITA": "Monofase", "ENG": "1-phase" },
+  { "key": "tri", "ITA": "Trifase", "ENG": "3-phase" },
+  { "key": "unknown", "ITA": "Sconosciuto", "ENG": "Unknown" }
+]

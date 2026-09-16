@@ -1,0 +1,14 @@
+[
+  { "value": 1, "label": "Jumbo" },
+  { "value": 2, "label": "SuperJumbo" },
+  { "value": 3, "label": "HighDensity" },
+  { "value": 4, "label": "V-Type Std" },
+  { "value": 5, "label": "Tavola HTM" },
+  { "value": 6, "label": "Tavola HTZ" },
+  { "value": 7, "label": "Tavola HTX" },
+  { "value": 8, "label": "Tavola HTN" },
+  { "value": 9, "label": "Tavola HTTs" },
+  { "value": 10, "label": "Tavola HTT" },
+  { "value": 11, "label": "Tavola HUU" },
+  { "value": 12, "label": "Tavola HLL" }
+]

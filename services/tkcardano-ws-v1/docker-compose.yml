@@ -1,0 +1,17 @@
+services:
+  cardanows:
+    image: cardanows-api17
+    container_name: cardano-api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      # CapRover: set ASPNETCORE_ENVIRONMENT=Staging (or Production) per app in the dashboard.
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DB_HOST=199.241.137.109   # postgres = Locally | 199.241.137.109 = Caprover IP
+      - DB_PORT=5432
+    restart: unless-stopped
+

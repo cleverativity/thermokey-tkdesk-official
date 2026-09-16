@@ -1,0 +1,46 @@
+{
+  "name": "tkcardano-ws-v1",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "services/tkcardano-ws-v1",
+  "tags": ["type:service", "lang:dotnet"],
+  "targets": {
+    "restore": {
+      "command": "dotnet restore \"Cardano API.sln\"",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "command": "dotnet build \"Cardano API.sln\" --no-restore",
+      "dependsOn": ["restore"],
+      "cache": true,
+      "outputs": ["{projectRoot}/**/bin", "{projectRoot}/**/obj"],
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "command": "dotnet test \"Cardano API.sln\" --no-build",
+      "dependsOn": ["build"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "serve": {
+      "command": "dotnet run --project \"Cardano API/Cardano API.csproj\" --no-launch-profile",
+      "continuous": true,
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "command": "dotnet run --project \"Cardano API/Cardano API.csproj\" --no-launch-profile",
+      "continuous": true,
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

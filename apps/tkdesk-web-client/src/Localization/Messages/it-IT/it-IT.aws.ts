@@ -1,0 +1,31 @@
+export default {
+  it: {
+    'Sign in': 'Login',
+    Username: 'Nome Utente',
+    'Enter your username': 'Inserisci il nome utente',
+    'Back to Sign In': 'Torna al login',
+    'Send code': 'Invia codice',
+    Code: 'Codice',
+    'New Password': 'Nuova Password',
+    'Confirm Password': 'Conferma password',
+    Submit: 'Cambia Password',
+    'Resend Code': 'Rinvia Codice',
+    'Submitting...': 'Caricamento...',
+    'Sending...': 'Caricamento...',
+    'Signing in': 'Caricamento...',
+    'User does not exist.': 'Nome utente e/o password errati.',
+    'Incorrect username or password.': 'Nome utente e/o password errati.',
+    'Username/client id combination not found.': 'Codice non valido.',
+    'Your passwords must match': 'Le password non coincidono.',
+    'Attempt limit exceeded, please try after some time.':
+      'Limite di tentativi raggiunto, riprova più tardi.',
+    'Change Password': 'Imposta Password',
+    Changing: 'Caricamento...',
+    'Cannot reset password for the user as there is no registered/verified email or phone_number':
+      "Impossibile cambiare la password per l'utente inserito, non ci sono email o numeri di telefono registrati a suo nome.",
+    Verify: 'Verifica',
+    Skip: 'Salta',
+    Verifying: 'Caricamento',
+    'User is disabled.': "L'utente è disabilitato.",
+  },
+}

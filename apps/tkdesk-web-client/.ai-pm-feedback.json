@@ -1,0 +1,18 @@
+{
+  "projectId": "3c53546a-7e7c-4b3b-adc0-a2601191298a",
+  "assignees": {
+    "development": "Jhonnel Remolin",
+    "qualityControl": "Edgielyn Perol"
+  },
+  "assigneeIds": {
+    "development": "6924e259-22b1-46d7-a383-9422a36e3b01",
+    "qualityControl": "7ac1312f-a300-4f2b-8ba4-4248a32fdfb1"
+  },
+  "csvProjectName": "P016-05 - THERMOKEY TkDesk New features 2026 - Part 1",
+  "csvTaskBoard": "Feedback",
+  "csvTaskGroup": "To do",
+  "cursorSpeedMultiplier": 3,
+  "developerMode": "fullStack",
+  "frontendStart": "independentFirst",
+  "lastFeedbackNumber": 30
+}

@@ -1,0 +1,134 @@
+﻿Title,Description,Assigned To,Start Date,Due Date (Europe/Rome),Project,Task Board,Task Group
+[FB-001] Fix Min Operative Temperature for accessories,"Original feedback [FB-001]:
+Check how ""Min Operative Temperature"" works - it's related to accessories's operating temperature, not the unit.
+
+Investigate and correct Min Operative Temperature so it filters accessories by their operating temperature, not unit performance. Reference the Dry Cooler flow in `src/Modules/Selections/Manage/steps/InputParameter/Design/Air.tsx` (`input_data.air.min_operative_temperature`) and `src/Modules/Selections/Manage/steps/ModelDetail/Accessories/index.tsx` (passes `minAmbOpTemp` to `ExpandedTable`). For Remote condensers, add or relocate the equivalent design field (likely in `src/Modules/Selections/thermal/InputParameter/Design/Air.tsx` or Fluid), register it in `src/Modules/Selections/units/shared/unitTable/condenser/designData.ts`, map it in `src/Modules/Selections/units/shared/condenserPayload.ts`, and pass it into `src/Modules/Selections/thermal/ModelDetail/Accessories.tsx` / `src/Model/Selections/thermal/ModelDetail/accessoriesTable.tsx` and `src/Generic/hooks/useAccessoryEngine.tsx` so accessory enable/disable uses accessory operating limits.",Jhonnel Remolin,15/09/2026 9:00 AM,15/09/2026 10:03 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-002] Admin-only atmospheric pressure from altitude,"Original feedback [FB-002]:
+Atmospheric pressure should be visible only for Admin, and it should change from Altitude
+
+In `src/Modules/Selections/thermal/InputParameter/Design/Air.tsx`, wrap `condenser.atmosphericPress` / `condenser.atmosphericPressType` with `useAuthorization().iAmAdmin` (mirror Dry Cooler admin gating in `src/Modules/Selections/Manage/steps/InputParameter/Design/Air.tsx`). Derive atmospheric pressure from `condenser.altitude` when altitude changes (reuse altitude→pressure logic from Dry Cooler payload or add conversion in `src/Modules/Selections/units/shared/condenserPayload.ts` and/or Cardano `ConvertUnitType`). Hide the field for non-admin users and ensure computed kPa is sent to the Cardano Computation API via `src/Api/Thermal/api/endpoints.ts`. Reference: FB-002.png.",Jhonnel Remolin,15/09/2026 10:03 AM,15/09/2026 11:22 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-003] Tolerance field like Dry Cooler,"Original feedback [FB-003]:
+Change the tolerance field so that it works like on Dry Coolers
+
+Replace the single `FieldDecimalNumber` for `condenser.tolerance` in `src/Modules/Selections/thermal/InputParameter/Design/Performance.tsx` with `FieldMinMax` (min/max pair) matching `src/Modules/Selections/Manage/steps/InputParameter/Design/Performance.tsx` (`input_data.performance.tolerance`). Update form shape, `src/Modules/Selections/units/shared/condenserPayload.ts`, and `src/Model/Selections/Thermal.d.ts` if needed. Reference: FB-003.png, FB-003-2.png.",Jhonnel Remolin,15/09/2026 11:22 AM,15/09/2026 11:53 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-004] Remove condenser model field,"Original feedback [FB-004]:
+Remove ""condenser model""
+
+Remove the `condenser.condenserModel` `FieldThermalSelect` from `src/Modules/Selections/thermal/InputParameter/Design/Performance.tsx`, drop related defaults/API preload (`CondenserModels` in `src/Api/Thermal/api/endpoints.ts` / `sagas.ts` if only used here), and clean payload mapping in `src/Modules/Selections/units/shared/condenserPayload.ts` and localization keys `data.thermal.field.condenser_model`. Reference: FB-004.png.",Jhonnel Remolin,15/09/2026 11:53 AM,15/09/2026 12:17 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-005] Invert Air and Fluid card order,"Original feedback [FB-005]:
+Invert the order of the Air Fluid cards
+
+Swap render order of `<Air />` and `<Fluid />` in `src/Modules/Selections/thermal/InputParameter/Design/index.tsx` so Fluid appears before Air (or vice versa per customer screenshot). Adjust collapse keys/margins if needed for consistent layout. Reference: FB-005.png, FB-005-2.png.",Jhonnel Remolin,15/09/2026 12:17 PM,15/09/2026 12:25 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-006] Sort refrigerants and remove dash,"Original feedback [FB-006]:
+Refrigerants list: sort alphabetically and remove the '-' like R407C
+
+In `src/Modules/Selections/thermal/InputParameter/Design/Fluid.tsx`, sort `refType` options from Cardano `RefTypes` API (`src/Api/Thermal/api/endpoints.ts`) alphabetically and display labels without hyphen (e.g. R407C instead of R-407C). Apply formatting in the select mapper or `FieldThermalSelect`; update default value if still `R-404A`. Reference: FB-006.png.",Jhonnel Remolin,15/09/2026 12:25 PM,15/09/2026 12:49 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-007] Desuperheating vs inlet K/°C toggle,"Original feedback [FB-007]:
+Desuperheating / Inlet .. problem with between the two. 25K is the default and it should calculate the °C , and disable K., and vice versa
+
+Fix mutual exclusion in `src/Modules/Selections/thermal/InputParameter/Design/Fluid.tsx` for `condenser.compressorInletMode`: when Desuperheating (delta) is selected, default 25 K, compute equivalent °C from condensing temp, disable K unit selector; when Inlet Temperature is selected, disable K and allow °C/°F/Rankine only. Update `useUnitMeasureField` enabled/asDelta flags, unit lists in `src/Modules/Selections/units/shared/unitTable/condenser/designData.ts` (variable `compressor`), and normalization in `src/Modules/Selections/units/shared/condenserPayload.ts` (compressor delta vs absolute inlet). Reference: FB-007.png.",Jhonnel Remolin,15/09/2026 12:49 PM,15/09/2026 2:23 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-008] Implement Rankine temperature unit,"Original feedback [FB-008]:
+Implement Rankine that is the equivalent of Kelvin for Celsius
+
+Add Rankine (°R) as absolute temperature unit equivalent to Kelvin for Celsius—register in `src/Modules/Selections/units/shared/unitsMeasureTable.ts`, expose via relevant `unitTable/condenser/*.ts` entries (design, rating, detail, working), and ensure `src/Modules/Selections/units/shared/conversion/unitConvertion.ts` and `variableUnitField.ts` convert correctly. Apply to temperature fields in Fluid/Air/Rating where K is offered.",Jhonnel Remolin,15/09/2026 2:23 PM,15/09/2026 3:42 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-009] Implement Dew Points,"Original feedback [FB-009]:
+Implement Dew Points - pending list from GLG
+
+Implement dew-point saturation mode using `saturation_temp_modes.json` key `dew` in `src/Modules/Selections/thermal/InputParameter/Design/Fluid.tsx` (`condenser.saturationTitle`) and wire dew-point inputs/results once GLG provides the pending field list. Extend `condenserPayload.ts`, Cardano Computation request, and results display in `RemoteCondensers.tsx` / model-list columns as needed. Reference: FB-009.png.",Jhonnel Remolin,15/09/2026 3:42 PM,16/09/2026 9:48 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-010] Sub cooling or outlet temperature mode,"Original feedback [FB-010]:
+Implement the Sub Cooling or Outlet Temperature selection
+
+Add a mode toggle for Sub Cooling vs Outlet Temperature on the Fluid card, mirroring Dry Cooler liquid mode in `src/Modules/Selections/Manage/steps/InputParameter/Design/Liquid.tsx` (`input_data.liquid.liquid_mode`). Implement in `src/Modules/Selections/thermal/InputParameter/Design/Fluid.tsx` with `condenser.subCoolingMode`, conditional fields, unit registry updates, and payload mapping in `condenserPayload.ts`. Reference: FB-010.png.",Jhonnel Remolin,16/09/2026 9:48 AM,16/09/2026 11:07 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-011] Rename card to Condenser Type and add dimension filters,"Original feedback [FB-011]:
+Change the card title to ""Condenser Type"" and see if it's possible to implement the filter on dimensions
+
+Rename the Dimensions card header from `ui.thermal.panelHeader.dimensions` to ""Condenser Type"" in `src/Modules/Selections/thermal/InputParameter/Design/Dimensions.tsx` and localization (`en-US.data.ts`, `it-IT.data.ts`). Investigate adding max length/width/height filters like Dry Cooler `src/Modules/Selections/Manage/steps/InputParameter/Design/Dimensions.tsx`, wiring `condenser.condenserType` plus dimension constraints into Cardano `CondenserTypes` / Computation filter payload. Reference: FB-011.png.",Jhonnel Remolin,16/09/2026 11:07 AM,16/09/2026 12:10 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-012] Fans table and filter coordination,Original feedback [FB-012]:
+Send the table of the fans and coordinate with Gianluca about the filters on the Fans
+
+Replace placeholder `['test']` data in `src/Modules/Selections/thermal/InputParameter/Rating/Filter/VentilationFilter.tsx` and Design `Fans.tsx` with real fan metadata from Cardano `FanConnections` and/or `src/Api/FanModels/api/endpoints.ts`. Build a fans results/filter table aligned with customer spec; coordinate filter field names with Gianluca/backend. Update `src/Modules/Selections/thermal/ModelList/CondenserResults.tsx` fan columns if needed. Reference: FB-012.png.,Jhonnel Remolin,16/09/2026 12:10 PM,16/09/2026 2:16 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-013] Fan type three fields like Dry Cooler,"Original feedback [FB-013]:
+Convert the list of fan types into the three fields like Dry Cooler
+
+Refactor `src/Modules/Selections/thermal/InputParameter/Design/Fans.tsx` to match Dry Cooler ventilation fields in `src/Modules/Selections/Manage/steps/InputParameter/Design/Ventilation.tsx`: separate fan type (AC/EC), frequency (`FieldSelectFrequency`), and supply (`Localization/Constants/supply.json`), plus certifications/filters checkboxes. Map new `condenser.*` fields in `condenserPayload.ts` and unit table. Reference: FB-013.png.",Jhonnel Remolin,16/09/2026 2:16 PM,16/09/2026 3:51 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-014] Verify Cardano External Static Pressure input,"Original feedback [FB-014]:
+Check if Cardano allows the user to put the External Static Pressure as input
+
+Check whether Cardano Computation/Performance APIs accept External Static Pressure (ESP). If supported, add `condenser.esp` field to Design/Rating fan sections (mirror `input_data.ventilation.esp` in Dry Cooler Ventilation.tsx), register in `unitTable/condenser/designData.ts`, and include in `condenserPayload.ts` / `src/Api/Thermal/api/endpoints.ts` requests; if not supported, document backend gap.",Jhonnel Remolin,16/09/2026 3:51 PM,16/09/2026 4:38 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-015] Noise card like Dry Cooler with SPL,"Original feedback [FB-015]:
+Noise card, make it look like dry cooler and implement the missing fields.SPL s Sound Pressure Level
+
+Rebuild `src/Modules/Selections/thermal/InputParameter/Design/Noise.tsx` to match `src/Modules/Selections/Manage/steps/InputParameter/Design/Noise.tsx`: add max sound power, max sound pressure (SPL), distance with ""at"" label, and admin tolerance. Replace lone `condenser.splValue` with full noise field set; update `unitTable/condenser/designData.ts`, payload, and localization. Reference: FB-015.png, FB-015-2.png.",Jhonnel Remolin,16/09/2026 4:38 PM,17/09/2026 9:41 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[QC] Spot-check Remote condenser feedback batch,"Original feedback [FB-007]:
+Desuperheating / Inlet .. problem with between the two. 25K is the default and it should calculate the °C , and disable K., and vice versa
+
+Original feedback [FB-021]:
+Check the accessories list, it's broken
+
+Original feedback [FB-025]:
+Check the Energy Analysis calculation
+
+Original feedback [FB-027]:
+Check the navigation, from details to parameters didn't work
+
+Light regression pass on `/selections/:id` Remote condensers flow (steps 2–4): spot-check each FB change against its screenshot/reference, with extra attention to navigation (FB-027), accessories list (FB-021), desuperheating K/°C toggle (FB-007), and Energy Analysis outputs (FB-025).",Edgielyn Perol,17/09/2026 9:00 AM,17/09/2026 12:09 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-016] Align model choice results table with Dry Cooler,"Original feedback [FB-016]:
+Make sure the results table has similar fields as the Dry Cooler's
+
+Update step-3 results in `src/Modules/Selections/thermal/ModelList/CondenserResults.tsx`, column defs in `src/Model/Selections/steps/ModelList/table.tsx` / `src/Model/Selections/table.tsx`, and UM handling in `TableDetailUM.tsx` / `ColumnUM.tsx` to include the same fields/sections as Dry Cooler `src/Modules/Selections/Manage/steps/ModelsList/index.tsx` and `EntryConditions.tsx`. Reference: FB-016.png.",Jhonnel Remolin,17/09/2026 9:41 AM,17/09/2026 11:16 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-017] Cosmetic UOM display fixes,"Original feedback [FB-017]:
+Check the ""Cosmetic changes"" task: 1) we don't need ""W"", 2) m3/h should have no decimals, and when there is only one Unit of Measure available for a certain variable, just show it without the Selectio box
+
+Complete cosmetic changes from prior task: remove ""W"" suffix where shown (`baseField` / capacity display in `FieldUnitInput`, `DetailUnitValue.tsx`, `TableDetailUM.tsx`); set `m³/h` (`id: 23` in `unitsMeasureTable.ts`) to `decimalPlaces: 0`; in `src/Components/Field/FieldUnitInput.tsx`, when `field.options` has only one unit, render static unit label instead of `FieldRangeSelect`. Reference: FB-017.png.",Jhonnel Remolin,17/09/2026 11:16 AM,17/09/2026 12:03 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-018] Hide calibration tools,Original feedback [FB-018]:
+Hide the calibations tools
+
+Hide the Adjustment Module / calibration UI on Remote condenser model detail: `src/Modules/Selections/thermal/ModelDetail/AdjustModule/` (rendered from `ModelDetail/index.tsx` perf tab). Conditionally remove or gate behind admin if required; ensure PDF/download flow in `onDownloadPDF` still works without exposed controls. Reference: FB-018.png.,Jhonnel Remolin,17/09/2026 12:03 PM,17/09/2026 12:19 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-019] Model detail page layout like Dry Cooler,"Original feedback [FB-019]:
+Make the results page look similar to the Dry Cooler, using the same cards and  sections..
+
+Restructure step-4 Remote condenser detail (`src/Modules/Selections/thermal/ModelDetail/index.tsx`) to use the same card/section layout as Dry Cooler `src/Modules/Selections/Manage/steps/ModelDetail/Detail/index.tsx` (Liquid, Air, Ventilation, UnitData, Noise, Coil equivalents: `RemoteCondensers.tsx`, `InletsAndOutlets.tsx`, `FanTechnicalData.tsx`, `GeometricParameters.tsx`, `Accessories.tsx`). Reorder collapse panels and shared styling via `StyledCollapse`/`FieldsetCard`. Reference: FB-019.png.",Jhonnel Remolin,17/09/2026 12:19 PM,17/09/2026 2:25 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-020] Show drawings on results page,"Original feedback [FB-020]:
+Possibly show the drawings in the last page of the UI
+
+Investigate Cardano detail/performance response for drawing URLs or assets; if available, add a drawings section/tab on the last UI step in `src/Modules/Selections/thermal/ModelDetail/index.tsx` (or post-selection summary). May require new API field from `src/Api/Thermal/api/endpoints.ts` (`RemoteCondenserReport` or Performance).",Jhonnel Remolin,17/09/2026 2:25 PM,17/09/2026 3:59 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-021] Fix broken accessories list,"Original feedback [FB-021]:
+Check the accessories list, it's broken
+
+Debug and fix Remote condenser accessories on step 4: `src/Modules/Selections/thermal/ModelDetail/Accessories.tsx`, `src/Modules/Selections/thermal/hooks/useAccessories.ts`, `getAccessories` / `getAccessoriesPrices` in `src/Api/Thermal/api/endpoints.ts`, and table rendering in `src/Model/Selections/thermal/ModelDetail/accessoriesTable.tsx`. Align selection/expansion behavior with working Dry Cooler `src/Modules/Selections/Manage/steps/ModelDetail/Accessories/index.tsx` and `useAccessoryEngine`. Reference: FB-021.png.",Jhonnel Remolin,17/09/2026 3:59 PM,18/09/2026 9:18 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-022] Fan results as expandable table,"Original feedback [FB-022]:
+Fan results should be like a table, if there are multiple fans, the table should extend
+
+Convert fan results in `src/Modules/Selections/thermal/ModelDetail/FanTechnicalData.tsx` (and/or `RemoteCondensers.tsx` fan fields) from description list to `StyledTable` rows; when multiple fans exist, extend table with one row per fan using performance API array data. Update `src/Model/Selections/thermal/ModelDetail/workingPointTable.tsx` if WP tab shares fan output. Reference: FB-022.png.",Jhonnel Remolin,18/09/2026 9:18 AM,18/09/2026 10:21 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-023] Simplify dimension labels,"Original feedback [FB-023]:
+Dont need to write ""mm"" in the label, change the dimensions in just length, width, and height
+
+Remove ""mm"" from dimension labels in localization (`data.thermal.details.*` keys in `en-US.data.ts` / `it-IT.data.ts`) and detail components `GeometricParameters.tsx`, `RemoteCondensers.tsx`, rating `UnitData.tsx`; show plain Length, Width, Height with units only in the value column via `DetailUnitValue.tsx` / `unitDetailItem`. Reference: FB-023.png.",Jhonnel Remolin,18/09/2026 10:21 AM,18/09/2026 10:45 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-024] PDF layout like Dry Cooler,Original feedback [FB-024]:
+PDF layout should look like the Dry Cooler one
+
+Align Remote condenser PDF with Dry Cooler report layout: compare `RemoteCondenserReport` download in `src/Modules/Selections/thermal/ModelDetail/index.tsx` / `src/Modules/Selections/sagas.ts` (`thermalPdfDownload`) vs Dry Cooler `generatePdf` in `src/Api/Selections/api/endpoints.ts`. Coordinate template/field mapping changes with Cardano backend; update PDF request payload (perf + accessories + units). Reference: FB-024.png.,Jhonnel Remolin,18/09/2026 10:45 AM,18/09/2026 12:51 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-025] Verify Energy Analysis calculation,"Original feedback [FB-025]:
+Check the Energy Analysis calculation
+
+Review and fix Energy Analysis tab: `src/Modules/Selections/thermal/ModelDetail/EnergyAnalysis/index.tsx`, sub-forms (`CapacityCalculation.tsx`, `CalculateAirFlow.tsx`, `SingleCalculation.tsx`), payload builder `EnergyAnalysisPayload.ts`, hook `useTable.ts`, and Cardano `EnergyAnalysis` endpoint. Compare outputs/columns in `energyAnalysisTable.tsx` and `ColumnUM.tsx` against expected values in screenshot. Reference: FB-025.png.",Jhonnel Remolin,18/09/2026 12:51 PM,18/09/2026 2:26 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-026] Complete Working Point UI,"Original feedback [FB-026]:
+Complete the Working point UI
+
+Finish Working Point tab in `src/Modules/Selections/thermal/ModelDetail/WorkingPoint/` (`index.tsx`, `Air.tsx`, `Liquid.tsx`, `Ventilation.tsx`, `Speed.tsx`): wire missing fields, API compute call, results table (`workingPointTable.tsx`), and unit defs in `unitTable/condenser/workingData.ts`. Mirror completed patterns from Dry Cooler detail WP if applicable.",Jhonnel Remolin,18/09/2026 2:26 PM,18/09/2026 4:32 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-027] Fix navigation from detail to parameters,"Original feedback [FB-027]:
+Check the navigation, from details to parameters didn't work
+
+Fix wizard step navigation when going from Model Detail (step 4, status `detailed`) back to Input Parameters (step 2): `src/Modules/Selections/Manage/SelectionHeader.tsx` `handleBackToStep`, `src/Modules/Selections/index.tsx` `onStep` case 1, and `src/Modules/Selections/sagas.ts` `resetStatus` — ensure Remote condenser `condenser.*` Formik values persist and step index/disabled state is correct for `macro_serie === 'Remote condensers'`.",Jhonnel Remolin,18/09/2026 4:32 PM,21/09/2026 9:19 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-028] Multi-select and delete ventilation filters,"Original feedback [FB-028]:
+Implement mutiple selection and deletion of filters
+
+Enhance ventilation filter UI in `src/Modules/Selections/thermal/InputParameter/Design/Fans.tsx` (`condenser.vent_filters`) and `src/Modules/Selections/thermal/InputParameter/Rating/Filter/VentilationFilter.tsx` (`rating.vent_filters`) to support selecting multiple filters and bulk removal (tag/chip delete or checkbox group actions), matching improved UX expected for `Localization/Constants/ventilation_filter.json` options.",Jhonnel Remolin,21/09/2026 9:19 AM,21/09/2026 10:06 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-029] Machine type multi-select Single/Assembled,"Original feedback [FB-029]:
+Machine type should allow to select ""Single"" OR ""Assemble"" or both or none
+
+Replace binary `FieldSwitch` for `rating.single_assembled` in `src/Modules/Selections/thermal/InputParameter/Rating/Filter/UnitFilter.tsx` with `FieldCheckbox` allowing Single, Assembled, both, or none (mirror intent of `input_data.dimensions.machine_type` in Dry Cooler `Dimensions.tsx`). Update payload and any backend filter mapping. Reference: FB-029.png.",Jhonnel Remolin,21/09/2026 10:06 AM,21/09/2026 10:46 AM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do
+[FB-030] Rating results like Dry Cooler,"Original feedback [FB-030]:
+Rating results should look like Dry Cooler
+
+Replace placeholder/sample data in `src/Modules/Selections/thermal/InputParameter/Rating/Result/index.tsx` with live PEF results wired to Cardano/API (mirror `src/Modules/Selections/Manage/steps/InputParameter/Rating/performance/PefResult.tsx`). Align section cards (`AirData`, `LiquidData`, `VentilationData`, `NoiseData`, `UnitData`, `CoilData`, `PerfData`) and table columns in `src/Model/Selections/table.tsx` (`staticColumnPefResults`). Reference: FB-030.png.",Jhonnel Remolin,21/09/2026 10:46 AM,21/09/2026 12:52 PM,P016-05 - THERMOKEY TkDesk New features 2026 - Part 1,Feedback,To do

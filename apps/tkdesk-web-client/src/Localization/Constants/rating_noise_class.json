@@ -1,0 +1,6 @@
+[
+  { "value": "High", "label": "High" },
+  { "value": "Low", "label": "Low" },
+  { "value": "Quiet", "label": "Quiet" },
+  { "value": "Residential", "label": "Residential" }
+]

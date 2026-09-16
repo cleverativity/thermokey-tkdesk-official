@@ -1,0 +1,5 @@
+# Sensitive ASP.NET configuration — keep local copies, do not commit
+Cardano API/appsettings.json
+Cardano API/appsettings.Development.json
+Cardano API/appsettings.Staging.json
+Cardano API/appsettings.Production.json

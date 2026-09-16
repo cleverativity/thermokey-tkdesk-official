@@ -1,0 +1,23 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=CHANGE_ME;Port=5432;Database=cardano_prod;Username=cardano_user;Password=CHANGE_ME"
+  },
+  "Api": {
+    "GatewayHost": "CHANGE_ME"
+  },
+  "AWS": {
+    "Region": "eu-west-1",
+    "CognitoUserPoolId": "CHANGE_ME",
+    "CognitoClientId": "CHANGE_ME",
+    "CognitoAuthority": "https://cognito-idp.eu-west-1.amazonaws.com/CHANGE_ME",
+    "CognitoClientIds": [
+      "CHANGE_ME"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "tkccwebclient",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authtkccwebclient5b774b4a"
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 256,
+        "apiKeyExpirationDate": "2025-02-23T08:28:28.585Z",
+        "keyDescription": ""
+      }
+    ]
+  }
+}

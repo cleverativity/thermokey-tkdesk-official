@@ -1,0 +1,6 @@
+[
+  { "key": 0, "ITA": "Nessuna preferenza", "ENG": "No Preference" },
+  { "key": 3, "ITA": "Monofase", "ENG": "1-phase" },
+  { "key": 1, "ITA": "Trifase", "ENG": "3-phase" },
+  { "key": 2, "ITA": "Altro", "ENG": "Other" }
+]

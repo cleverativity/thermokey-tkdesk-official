@@ -1,0 +1,60 @@
+export const condenserDesignData = [
+  {
+    id: 1,
+    step: 'Input parameters',
+    section: 'Performance',
+    variable: 'capacity',
+    unitMeasuresIds: [
+      5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 163,
+    ],
+  },
+  {
+    id: 2,
+    step: 'Input parameters',
+    section: 'Air',
+    variable: 'drybulb',
+    unitMeasuresIds: [32, 33, 34],
+  },
+  {
+    id: 3,
+    step: 'Input parameters',
+    section: 'Air',
+    variable: 'atmospheric_pressure',
+    unitMeasuresIds: [],
+  },
+  {
+    id: 4,
+    step: 'Input parameters',
+    section: 'Air',
+    variable: 'altitude',
+    unitMeasuresIds: [1, 3],
+  },
+  {
+    id: 5,
+    step: 'Input parameters',
+    section: 'Fluid',
+    variable: 'compressor',
+    unitMeasuresIds: [32, 33, 34],
+  },
+  {
+    id: 6,
+    step: 'Input parameters',
+    section: 'Fluid',
+    variable: 'condensing',
+    unitMeasuresIds: [32, 33, 34],
+  },
+  {
+    id: 7,
+    step: 'Input parameters',
+    section: 'Fluid',
+    variable: 'subCooling',
+    unitMeasuresIds: [32, 33, 34],
+  },
+  {
+    id: 8,
+    step: 'Input parameters',
+    section: 'Noise',
+    variable: 'distance',
+    unitMeasuresIds: [167],
+  },
+]

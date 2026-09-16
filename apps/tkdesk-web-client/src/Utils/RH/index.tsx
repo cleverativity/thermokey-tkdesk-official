@@ -1,0 +1,5 @@
+export { default as stripTrailingDot } from './stripTrailingDot'
+export { default as flattenObjectKeys } from './flattenObjectKeys'
+export { default as deepValues } from './deepValues'
+export { default as flatMap } from './flatMap'
+export { default as isMultipleOf } from './isMultipleOf'

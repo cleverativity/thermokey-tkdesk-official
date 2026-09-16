@@ -1,0 +1,26 @@
+{
+  "name": "thermokey-tkdesk-official",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "nx": "nx",
+    "graph": "nx graph",
+    "dev": "nx run-many -t dev --projects=tkdesk-web-client --projects=tkcardano-ws-v1 --parallel=2",
+    "dev:web": "nx dev tkdesk-web-client",
+    "dev:api": "nx dev tkcardano-ws-v1",
+    "build": "nx run-many -t build",
+    "test": "nx run-many -t test"
+  },
+  "devDependencies": {
+    "@nx/eslint": "^23.2.1",
+    "@nx/js": "^23.2.1",
+    "@nx/react": "^23.2.1",
+    "@nx/vite": "^23.2.1",
+    "nx": "^23.2.1"
+  }
+}

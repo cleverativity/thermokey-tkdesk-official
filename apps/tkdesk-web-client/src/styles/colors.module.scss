@@ -1,0 +1,47 @@
+$white: #fefefe;
+$text: #353535;
+$description: #6e6e6e;
+$background: #fafafa;
+
+$disabled: #b9b9b9;
+$disabled_background: #f5f5f5;
+
+$border: #d9d9d9;
+
+$primary: #00497c;
+$primary_hover: #165d8a;
+$primary_background: #538fba;
+$primary_disabled: #00497ca6;
+
+$warning: #faad14;
+
+$danger: #cf0a2c;
+$danger_hover: #df534b;
+
+$success: #28a745;
+$success_hover: #218838;
+
+:export {
+  white: $white;
+  text: $text;
+  description: $description;
+  background: $background;
+
+  disabled: $disabled;
+  disabled_background: $disabled_background;
+
+  border: $border;
+
+  primary: $primary;
+  primary_hover: $primary_hover;
+  primary_background: $primary_background;
+  primary_disabled: $primary_disabled;
+
+  warning: $warning;
+
+  danger: $danger;
+  danger_hover: $danger_hover;
+
+  success: $success;
+  success_hover: $success_hover;
+}

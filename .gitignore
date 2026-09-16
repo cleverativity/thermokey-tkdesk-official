@@ -1,0 +1,33 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+.pnpm-store
+
+# nx
+.nx/cache
+.nx/workspace-data
+
+# build outputs
+dist
+build
+coverage
+bin/
+obj/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# env
+.env
+.env.local
+.env.*.local
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea
+*.swp
