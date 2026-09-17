@@ -389,33 +389,49 @@ export const getUnitTypeFields = async (payload: any) => {
   return { data }
 }
 
-// export const getRatingCalculation = async (payload: any) => {
-//   const endpoint = '/Rating/Calculation'
-//   const { data } = await makeApiRequest(
-//     `${endpoint}`,
-//     'POST',
-//     {},
-//     false,
-//     true,
-//     payload,
-//   )
+export const getRatingCalculation = async (payload: any) => {
+  const endpoint = 'Rating/Calculation'
+  const { data } = await makeApiRequest(
+    `${endpoint}`,
+    'POST',
+    {},
+    false,
+    true,
+    payload,
+  )
 
-//   log.info('getRatingCalculation.response', { data, payload })
-//   return { data }
-// }
+  log.info('getRatingCalculation.response', { data, payload })
+  return { data }
+}
 
-// export const getRatingResult = async (payload: any) => {
-//   const endpoint = 'Rating'
+export const getRatingResult = async (payload: any) => {
+  const endpoint = 'Rating'
 
-//   const { data } = await makeApiRequest(
-//     `${endpoint}`,
-//     'POST',
-//     {},
-//     false,
-//     true,
-//     payload,
-//   )
+  const { data } = await makeApiRequest(
+    `${endpoint}`,
+    'POST',
+    {},
+    false,
+    true,
+    payload,
+  )
 
-//   log.info('getRatingResult.response', { data, payload })
-//   return { data }
-// }
+  log.info('getRatingResult.response', { data, payload })
+  return { data }
+}
+
+export const getRatingWorkingPoint = async (payload: any) => {
+  const endpoint = 'WorkingPoint'
+
+  const { data } = await makeApiRequest(
+    `${endpoint}`,
+    'POST',
+    {},
+    false,
+    true,
+    payload,
+  )
+
+  log.info('getRatingWorkingPoint.response', { data, payload })
+  return { data }
+}

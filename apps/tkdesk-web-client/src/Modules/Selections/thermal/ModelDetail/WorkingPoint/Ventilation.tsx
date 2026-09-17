@@ -15,21 +15,6 @@ function Ventilation(props: VentilationProps) {
   const { unitTypes } = props
   const { values, setFieldValue } = useFormikContext<any>()
 
-  const espTemp = useUnitMeasureField({
-    query: {
-      product: 'condenser',
-      step: 'Working point',
-      section: 'Working Point (ventilation)',
-      variable: 'espTemp',
-    },
-    values,
-    setFieldValue,
-    unitTypes,
-    valueField: 'wp.espTemp',
-    unitField: 'wp.espTempType',
-    defaultUnitIds: { si: 41, ip: 46 },
-  })
-
   const liquidDistanceTemp = useUnitMeasureField({
     query: {
       product: 'condenser',
@@ -42,6 +27,7 @@ function Ventilation(props: VentilationProps) {
     unitTypes,
     valueField: 'wp.liquidDistanceTemp',
     unitField: 'wp.liquidDistanceTempType',
+    defaultValue: 10,
     defaultUnitIds: { si: 1, ip: 3 },
   })
 
@@ -54,22 +40,13 @@ function Ventilation(props: VentilationProps) {
         >
           <StyledRow gutter={[16, 16]} align='top'>
             <FieldUnitInput
-              span={{ xs: 24, sm: 12 }}
-              labelId='data.thermal.wp.espTemp'
-              field={espTemp}
-              valueName='wp.espTemp'
-              unitName='wp.espTempType'
-              required
-              unitSelectWidth={128}
-            />
-            <FieldUnitInput
-              span={{ xs: 24, sm: 12 }}
+              span={{ xs: 24 }}
               labelId='data.thermal.wp.liquidDistanceTemp'
               field={liquidDistanceTemp}
               valueName='wp.liquidDistanceTemp'
               unitName='wp.liquidDistanceTempType'
               required
-              unitSelectWidth={128}
+              unitSelectWidth={72}
             />
           </StyledRow>
         </StyledCollapsePanel>

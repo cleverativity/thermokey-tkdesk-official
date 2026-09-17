@@ -54,7 +54,7 @@ interface AccessoriesProps {
   discount?: any
   unitTypes: string
 }
-const CURRENCY_UNITS = { si: 131, ip: 131 }
+const CURRENCY_UNITS = { si: 132, ip: 132 }
 const ACCESSORIES_SECTION = 'accessories'
 
 function Accessories(props: AccessoriesProps) {

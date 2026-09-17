@@ -16,6 +16,11 @@ const UNIT_NAME_ALIASES: Record<string, string> = {
   celsius: '°C',
   C: '°C',
   kelvin: 'K',
+  K: 'K',
+  rankine: 'R',
+  Rankine: 'R',
+  '°R': 'R',
+  R: 'R',
 }
 
 const getUnitDef = (name: string, type?: UnitType): UnitDef | undefined => {

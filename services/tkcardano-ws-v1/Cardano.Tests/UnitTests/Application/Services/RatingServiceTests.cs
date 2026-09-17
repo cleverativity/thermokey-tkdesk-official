@@ -28,7 +28,7 @@ public class RatingServiceTests
     private static RatingRequest Request() => new()
     {
         Series = "T",
-        FanType = "EC",
+        FansConnection = "All-EC~50Hz",
         FanBrand = "EBM Papst",
         DryBulb = 25,
         RelHumidity = 50,
@@ -121,7 +121,7 @@ public class RatingServiceTests
         var result = await _service.CalculateAsync(new RatingCalculationRequest
         {
             Id = 99,
-            FanType = "EC",
+            FansConnection = "All-EC~50Hz",
             FanBrand = "EBM Papst",
             DryBulb = 25,
             Condensing = 40,
@@ -157,7 +157,7 @@ public class RatingServiceTests
         {
             Id = 2,
             ModelId = 2,
-            FanType = "EC",
+            FansConnection = "All-EC~50Hz",
             FanBrand = "EBM Papst",
             DryBulb = 25,
             Condensing = 40,
@@ -172,5 +172,47 @@ public class RatingServiceTests
             It.IsAny<IList<Condenser>>(),
             It.Is<RatingSearch>(s => s.FanType == "EC" && s.FanBrand == "EBM Papst"),
             2), Times.Once);
+    }
+
+    [Test]
+    public async Task RateAsync_B1Connection_MapsToEcAndEbmBrand()
+    {
+        _condenserRepository.Setup(x => x.GetAllCondenser()).ReturnsAsync(new List<Condenser>
+        {
+            new() { Id = 1, Model = "TMCH1150HUU" }
+        });
+        _engine.Setup(x => x.SelectRatedUnits(It.IsAny<IList<Condenser>>(), It.IsAny<RatingSearch>()))
+            .Returns(new List<RatingMatch>());
+
+        var request = Request();
+        request.FansConnection = "EC-(B1)~50Hz";
+        request.FanBrand = "All";
+
+        await _service.RateAsync(request, 1, 10);
+
+        _engine.Verify(x => x.SelectRatedUnits(
+            It.IsAny<IList<Condenser>>(),
+            It.Is<RatingSearch>(s => s.FanType == "EC" && s.FanBrand == "EBM Papst")), Times.Once);
+    }
+
+    [Test]
+    public async Task RateAsync_AllAcConnection_MapsToAc()
+    {
+        _condenserRepository.Setup(x => x.GetAllCondenser()).ReturnsAsync(new List<Condenser>
+        {
+            new() { Id = 1, Model = "TMCH1150HUU" }
+        });
+        _engine.Setup(x => x.SelectRatedUnits(It.IsAny<IList<Condenser>>(), It.IsAny<RatingSearch>()))
+            .Returns(new List<RatingMatch>());
+
+        var request = Request();
+        request.FansConnection = "All-AC~50Hz";
+        request.FanBrand = "All";
+
+        await _service.RateAsync(request, 1, 10);
+
+        _engine.Verify(x => x.SelectRatedUnits(
+            It.IsAny<IList<Condenser>>(),
+            It.Is<RatingSearch>(s => s.FanType == "AC" && s.FanBrand == "All")), Times.Once);
     }
 }

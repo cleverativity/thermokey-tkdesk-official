@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { Col, Space } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import { Col, Space, Tooltip } from 'antd'
 import { useIntl } from 'react-intl'
 
 import FieldDecimalNumber from './FieldDecimalNumber'
@@ -32,6 +33,8 @@ export function FieldUnitInput({
   tooltip,
   disabled,
   unitSelectWidth = UNIT_SELECT_WIDTH,
+  useFormikValueChange = false,
+  tooltipTrigger = 'hover',
 }: {
   span?: { xs?: number; sm?: number; md?: number; lg?: number; xl?: number }
   labelId?: string
@@ -42,6 +45,8 @@ export function FieldUnitInput({
   tooltip?: ReactNode
   disabled?: boolean
   unitSelectWidth?: number
+  useFormikValueChange?: boolean
+  tooltipTrigger?: 'hover' | 'click'
 }) {
   const intl = useIntl()
 
@@ -59,9 +64,11 @@ export function FieldUnitInput({
           controls={false}
           isPointed={true}
           addonAfter={null}
-          tooltip={tooltip}
+          tooltip={labelId ? undefined : tooltip}
           disabled={disabled}
-          overrideOnChange={field.handleValueChange}
+          overrideOnChange={
+            useFormikValueChange ? undefined : field.handleValueChange
+          }
         />
       </div>
       {field.unitMeasuresIds?.length ? (
@@ -101,6 +108,13 @@ export function FieldUnitInput({
       <p style={labelStyle}>
         {required ? <span style={{ color: '#ff4d4f' }}>* </span> : null}
         {intl.formatMessage({ id: labelId })}
+        {tooltip ? (
+          <Tooltip title={tooltip} trigger={tooltipTrigger}>
+            <InfoCircleOutlined
+              style={{ marginLeft: 4, color: 'rgba(0, 0, 0, 0.45)' }}
+            />
+          </Tooltip>
+        ) : null}
       </p>
       {input}
     </Col>

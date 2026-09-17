@@ -6,22 +6,28 @@ import {
   StyledRow,
 } from 'Components/Styled'
 import { useFormikContext } from 'formik'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface VentilationProps {
   unitTypes: string
 }
 
 function Ventilation(_props: VentilationProps) {
-  const { setFieldValue } = useFormikContext<any>()
+  const { values, setFieldValue } = useFormikContext<any>()
+
+  useEffect(() => {
+    if (!values?.rating?.fanSpeed?.unit) {
+      setFieldValue('rating.fanSpeed.unit', '%', false)
+    }
+  }, [])
 
   const fieldColStyle: React.CSSProperties = {
     minWidth: 0,
     maxWidth: '100%',
   }
   const handleFanSpeedChange = (checked: boolean, { form, field }: any) => {
-    setFieldValue(field.name, checked ? 'rpm' : '%', false)
-    setFieldValue('rating.fan_speed_value', checked ? 0 : 100, false)
+    setFieldValue(field.name, checked ? '%' : 'rpm', false)
+    setFieldValue('rating.fanSpeed.value', checked ? 100 : 0, false)
   }
 
   return (
@@ -34,23 +40,23 @@ function Ventilation(_props: VentilationProps) {
           <StyledRow gutter={[16, 16]} align='bottom'>
             <Col flex='none'>
               <FieldSwitch
-                name='rating.fan_speed'
+                name='rating.fanSpeed.unit'
                 label='data.thermal.rating.fan_speed'
                 checkedChildren='%'
                 unCheckedChildren='RPM'
-                transformFrom={(value) => value === 'rpm'}
+                transformFrom={(value) => value === '%'}
                 overrideOnChange={handleFanSpeedChange}
               />
             </Col>
             <Col flex='auto' style={fieldColStyle}>
               <FieldDecimalNumber
                 style={{ width: '100%' }}
-                name='rating.fan_speed_value'
+                name='rating.fanSpeed.value'
                 showUnitAddon={false}
                 hideLabel
                 hasFeedback={false}
                 controls={false}
-                defaultValue={10}
+                defaultValue={100}
                 isPointed={true}
                 addonAfter='%'
                 disabled

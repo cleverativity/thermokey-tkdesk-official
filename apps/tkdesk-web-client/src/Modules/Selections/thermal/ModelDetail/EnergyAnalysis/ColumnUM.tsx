@@ -94,7 +94,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableDpAir',
     unitField: 'ea.tableDpAirType',
     extraUnitFields: ['ea.tableDpAir_unit'],
-    defaultUnitIds: { si: 40, ip: 50 },
+    defaultUnitIds: { si: 41, ip: 51 },
     baseField: 'ea.tableDpAirBaseW',
   },
   {
@@ -108,7 +108,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableSpl',
     unitField: 'ea.tableSplType',
     extraUnitFields: ['ea.tableSpl_unit'],
-    defaultUnitIds: { si: 167, ip: 167 },
+    defaultUnitIds: { si: 168, ip: 168 },
     baseField: 'ea.tableSplBaseW',
   },
   {
@@ -122,7 +122,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableRpm',
     unitField: 'ea.tableRpmType',
     extraUnitFields: ['ea.tableRpm_unit'],
-    defaultUnitIds: { si: 168, ip: 168 },
+    defaultUnitIds: { si: 169, ip: 169 },
     baseField: 'ea.tableRpmBaseW',
   },
   {
@@ -150,7 +150,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableCurrentAllFans',
     unitField: 'ea.tableCurrentAllFansType',
     extraUnitFields: ['ea.tableCurrentAllFans_unit'],
-    defaultUnitIds: { si: 165, ip: 165 },
+    defaultUnitIds: { si: 166, ip: 166 },
     baseField: 'ea.tableCurrentAllFansBaseW',
   },
   {
@@ -164,7 +164,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableTubeVol',
     unitField: 'ea.tableTubeVolType',
     extraUnitFields: ['ea.tableTubeVol_unit'],
-    defaultUnitIds: { si: 137, ip: 146 },
+    defaultUnitIds: { si: 138, ip: 147 },
     baseField: 'ea.tableTubeVolBaseW',
   },
   {
@@ -178,7 +178,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'ea.tableWeight',
     unitField: 'ea.tableWeightType',
     extraUnitFields: ['ea.tableWeight_unit'],
-    defaultUnitIds: { si: 138, ip: 166 },
+    defaultUnitIds: { si: 139, ip: 167 },
     baseField: 'ea.tableWeightBaseW',
   },
   {
@@ -208,20 +208,6 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     extraUnitFields: ['ea.tableConnectionsInlet_unit'],
     defaultUnitIds: { si: 2, ip: 4 },
     baseField: 'ea.tableConnectionsInletBaseW',
-  },
-  {
-    query: {
-      product: 'condenser',
-      step: 'Model detail',
-      section: SECTION,
-      variable: 'price',
-    },
-    dataIndex: 'price',
-    valueField: 'ea.tablePrice',
-    unitField: 'ea.tablePriceType',
-    extraUnitFields: ['ea.tablePrice_unit'],
-    defaultUnitIds: { si: 131, ip: 131 },
-    baseField: 'ea.tablePriceBaseW',
   },
 ]
 

@@ -1,14 +1,13 @@
-import {
-  FieldUnitInput,
-  FieldDecimalNumber,
-  FieldThermalSelect,
-} from 'Components/Field'
+import { Col } from 'antd'
+import { FieldUnitInput, FieldDecimalNumber } from 'Components/Field'
 import {
   StyledCollapse,
   StyledCollapsePanel,
   StyledRow,
 } from 'Components/Styled'
 import { useFormikContext } from 'formik'
+import { useIntl } from 'react-intl'
+import styled from 'styled-components'
 import { useUnitMeasureField } from '../../../units/shared/variableUnitField'
 
 const CAPACITY_UNITS_QUERY = {
@@ -18,15 +17,46 @@ const CAPACITY_UNITS_QUERY = {
   variable: 'capacity',
 }
 
-interface PerformanceProps {
-  data?: {
-    condensersModel?: any[]
+const ToleranceLabel = styled.p`
+  font-family: 'Avenir Medium', sans-serif;
+  font-size: 15px;
+  line-height: 22px;
+  margin-bottom: 8px;
+`
+
+const ToleranceRange = styled(StyledRow)`
+  flex-wrap: nowrap;
+  align-items: center;
+
+  .ant-form-item {
+    margin-bottom: 0;
   }
+
+  .ant-form-item-explain,
+  .ant-form-item-extra,
+  .ant-form-item-additional {
+    display: none;
+  }
+`
+
+const ToleranceSeparator = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 4px;
+  flex: none;
+`
+
+interface PerformanceProps {
+  data?: any
   unitTypes?: string
 }
+
 function Performance(props: PerformanceProps) {
+  const intl = useIntl()
   const { values, setFieldValue } = useFormikContext<any>()
-  const { condensersModel } = props.data
 
   const capacityField = useUnitMeasureField({
     query: CAPACITY_UNITS_QUERY,
@@ -58,26 +88,47 @@ function Performance(props: PerformanceProps) {
               required
               unitSelectWidth={128}
             />
-            <FieldDecimalNumber
-              span={{ xs: 24, sm: 24, md: 24, lg: 6 }}
-              name='condenser.tolerance'
-              label='data.thermal.field.tolerance'
-              showUnitAddon={false}
-              required
-              hasFeedback={false}
-              controls={false}
-              defaultValue={10}
-              isPointed={true}
-            />
-            <FieldThermalSelect
-              span={{ xs: 24, sm: 24, md: 24, lg: 6 }}
-              data={condensersModel}
-              name='condenser.condenserModel'
-              label='data.thermal.field.condenser_model'
-              defaultValue='TMCH1140HLL1'
-              field='model'
-              required
-            />
+            <Col xs={24} sm={24} md={24} lg={6}>
+              <ToleranceLabel>
+                <span style={{ color: '#ff4d4f' }}>* </span>
+                {intl.formatMessage({ id: 'data.thermal.field.tolerance' })}
+              </ToleranceLabel>
+              <ToleranceRange gutter={8}>
+                <Col flex='auto' style={{ minWidth: 0 }}>
+                  <FieldDecimalNumber
+                    style={{ width: '100%' }}
+                    name='condenser.toleranceMin'
+                    hideLabel
+                    required
+                    hasFeedback={false}
+                    controls={false}
+                    defaultValue={-10}
+                    scale={2}
+                    min={-100}
+                    max={0}
+                    isPointed={true}
+                    addonAfter='%'
+                  />
+                </Col>
+                <ToleranceSeparator>~</ToleranceSeparator>
+                <Col flex='auto' style={{ minWidth: 0 }}>
+                  <FieldDecimalNumber
+                    style={{ width: '100%' }}
+                    name='condenser.toleranceMax'
+                    hideLabel
+                    required
+                    hasFeedback={false}
+                    controls={false}
+                    defaultValue={10}
+                    scale={2}
+                    min={0}
+                    max={100}
+                    isPointed={true}
+                    addonAfter='%'
+                  />
+                </Col>
+              </ToleranceRange>
+            </Col>
           </StyledRow>
         </StyledCollapsePanel>
       </StyledCollapse>

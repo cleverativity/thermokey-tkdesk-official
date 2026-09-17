@@ -9,7 +9,7 @@ namespace Cardano.Application.DTOs.Requests
         public double Condensing { get; set; }
         public string? RefrigerantType { get; set; }
         public double AtmosphericPress { get; set; }
-        public double SplValue { get; set; }
+        public double MaxSoundPressure { get; set; }
         public double Distance { get; set; }
         public double Compressor { get; set; }
         public double SubCooling { get; set; }

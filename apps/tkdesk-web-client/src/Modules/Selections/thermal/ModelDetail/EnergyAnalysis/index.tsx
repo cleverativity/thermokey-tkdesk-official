@@ -51,8 +51,12 @@ const EnergyAnalysis = connect((props: EnergyAnalysisProps) => {
 
   const { values, setFieldValue } = useFormikContext<any>()
   const intl = useIntl()
+  const visibleColumns = React.useMemo(
+    () => (columns || []).filter((column) => column.dataIndex !== 'price'),
+    [columns],
+  )
   const { columns: tableColumns } = useColumnUM({
-    columns: columns || [],
+    columns: visibleColumns,
     values,
     setFieldValue,
     unitTypes: props.unitsType,

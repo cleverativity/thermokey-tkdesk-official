@@ -9,6 +9,7 @@ const log = new ConsoleLogger('Modules/Selections/SelectionHeader')
 type EnergyAnalysisButtonsProps = {
   visible: boolean
   onCalculateEnergy?: (payload: Record<string, unknown>) => void
+  onCalculateWorkingPoint?: () => void
   onDownload?: (data: any) => void
   onDownloadCondenserPdf?: () => void
   condenserPdfLoading?: boolean
@@ -19,6 +20,7 @@ function EnergyAnalysisButtons(props: EnergyAnalysisButtonsProps) {
   const {
     visible,
     onCalculateEnergy,
+    onCalculateWorkingPoint,
     onDownload,
     onDownloadCondenserPdf,
     condenserPdfLoading,
@@ -42,6 +44,17 @@ function EnergyAnalysisButtons(props: EnergyAnalysisButtonsProps) {
   ) as string
 
   const handleCalculate = () => {
+    if (activeThermalTab === 'wp') {
+      if (!onCalculateWorkingPoint) {
+        log.warn('EnergyAnalysisButtons.workingPoint skipped', {
+          hasHandler: false,
+        })
+        return
+      }
+      onCalculateWorkingPoint()
+      return
+    }
+
     const payload = EnergyAnalysisPayload(
       values,
       { condenser, performance },

@@ -49,6 +49,9 @@ Public Class ThermokeyCondensers
     Dim _SearchMaximumMachineLength As Double
     Dim _SearchMaximumMachineWidth As Double
     Dim _SearchToleranceSize As Double
+    Dim _espPa As Double = 0
+    Dim _maxSoundPower As Double = 0
+    Dim _noiseTolerance As Double = 0
 
 
     Dim _microchannelTubeWidth As String = ""
@@ -415,6 +418,9 @@ Public Class ThermokeyCondensers
     Public Sub CapacitySearch(newCondeser As List(Of Condenser), search As CondenserSearch, unitType As String)
 
         condensers = newCondeser
+        _espPa = Math.Max(0, search.Esp)
+        _maxSoundPower = Math.Max(0, search.MaxSoundPower)
+        _noiseTolerance = Math.Max(0, search.NoiseTolerance)
 
         'THERMODYNAMIC PERFORMANCES OF ONE SINGLE CORE
 
@@ -9367,6 +9373,7 @@ Public Class ThermokeyCondensers
                                 .Capacity = Capacity,
                                 .Airflow = Math.Round(Airflow, 0),
                                 .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                 .No_fans = condensers(AC_Delta_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_Delta_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                 .Rpm = condensers(AC_Delta_foundIdCM - 1).FanRPM_Delta,
                                 .Power = condensers(AC_Delta_foundIdCM - 1).FanPower_Delta,
@@ -9769,6 +9776,7 @@ Public Class ThermokeyCondensers
                                 .Capacity = Capacity,
                                 .Airflow = Math.Round(Airflow, 0),
                                 .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                 .No_fans = condensers(AC_Delta_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_Delta_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                 .Rpm = condensers(AC_Delta_foundIdCM - 1).FanRPM_Delta,
                                 .Power = condensers(AC_Delta_foundIdCM - 1).FanPower_Delta,
@@ -10202,6 +10210,7 @@ Public Class ThermokeyCondensers
                                 .Capacity = Capacity,
                                 .Airflow = Math.Round(Airflow, 0),
                                 .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                 .No_fans = condensers(AC_Star_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_Star_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                 .Rpm = condensers(AC_Star_foundIdCM - 1).FanRPM_Star,
                                 .Power = condensers(AC_Star_foundIdCM - 1).Fan_Power_Star,
@@ -10609,6 +10618,7 @@ Public Class ThermokeyCondensers
                                 .Capacity = Capacity,
                                 .Airflow = Math.Round(Airflow, 0),
                                 .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                 .No_fans = condensers(AC_Star_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_Star_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                 .Rpm = condensers(AC_Star_foundIdCM - 1).FanRPM_Star,
                                 .Power = condensers(AC_Star_foundIdCM - 1).Fan_Power_Star,
@@ -11032,6 +11042,7 @@ Public Class ThermokeyCondensers
                                 .Capacity = Capacity,
                                 .Airflow = Math.Round(Airflow, 0),
                                 .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                 .No_fans = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_1Phase_foundCapacity_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                 .Rpm = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).FanRPM_Delta,
                                 .Power = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).FanPower_Delta,
@@ -11417,6 +11428,7 @@ Public Class ThermokeyCondensers
                                    .Capacity = Capacity,
                                    .Airflow = Math.Round(Airflow, 0),
                                    .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                                    .No_fans = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).Num_Of_Fan_Rows * condensers(AC_1Phase_foundCapacity_foundIdCM - 1).Num_Of_Fan_Per_Row,
                                    .Rpm = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).FanRPM_Delta,
                                    .Power = condensers(AC_1Phase_foundCapacity_foundIdCM - 1).FanPower_Delta,
@@ -12554,6 +12566,7 @@ Public Class ThermokeyCondensers
                        .Capacity = Capacity,
                        .Airflow = Math.Round(Airflow, 0),
                        .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                        .No_fans = Math.Round(condensers(EC_3Phase_B1_FoundId - 1).Num_Of_Fan_Rows * condensers(EC_3Phase_B1_FoundId - 1).Num_Of_Fan_Per_Row, 0),
                        .Rpm = Math.Round(FansEcDataAtWP.RadialSpeed(thisEC_FanName, _thisFanFlowRateEC_3PhaseB1, thisEC_DpAir), 0),
                        .Power = Math.Round(FansEcDataAtWP.ElectricPower(thisEC_FanName, _thisFanFlowRateEC_3PhaseB1, thisEC_DpAir), 0),
@@ -13587,6 +13600,7 @@ Public Class ThermokeyCondensers
                        .Capacity = Capacity,
                        .Airflow = Math.Round(Airflow, 0),
                        .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                        .No_fans = Math.Round(condensers(EC_3Phase_B2_FoundId - 1).Num_Of_Fan_Rows * condensers(EC_3Phase_B2_FoundId - 1).Num_Of_Fan_Per_Row, 0),
                        .Rpm = Math.Round(FansEcDataAtWP.RadialSpeed(thisEC_FanName, _thisEC_FanFlowRate_3Phase_B2, thisEC_DpAir), 0),
                        .Power = Math.Round(FansEcDataAtWP.ElectricPower(thisEC_FanName, _thisEC_FanFlowRate_3Phase_B2, thisEC_DpAir), 0),
@@ -14510,6 +14524,7 @@ Public Class ThermokeyCondensers
                             .Capacity = Capacity,
                             .Airflow = Math.Round(Airflow, 1),
                             .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                             .No_fans = Math.Round(condensers(EC_1Ph_B1_FoundId - 1).Num_Of_Fan_Rows * condensers(EC_1Ph_B1_FoundId - 1).Num_Of_Fan_Per_Row, 0),
                             .Rpm = Math.Round(FansEcDataAtWP.RadialSpeed(thisEC_FanName, _thisEC_FanFlowRate_EC_1Phase_B1, thisEC_DpAir), 0),
                             .Power = Math.Round(FansEcDataAtWP.ElectricPower(thisEC_FanName, _thisEC_FanFlowRate_EC_1Phase_B1, thisEC_DpAir), 0),
@@ -15284,6 +15299,7 @@ Public Class ThermokeyCondensers
                             .Capacity = Capacity,
                             .Airflow = Math.Round(Airflow, 1),
                             .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+                                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
                             .No_fans = Math.Round(condensers(EC_1Ph_B2_FoundId - 1).Num_Of_Fan_Rows * condensers(EC_1Ph_B2_FoundId - 1).Num_Of_Fan_Per_Row, 0),
                             .Rpm = Math.Round(FansEcDataAtWP.RadialSpeed(thisEC_FanName, _thisEC_FanFlowRate_EC_1Phase_B2, thisEC_DpAir), 0),
                             .Power = Math.Round(FansEcDataAtWP.ElectricPower(thisEC_FanName, _thisEC_FanFlowRate_EC_1Phase_B2, thisEC_DpAir), 0),
@@ -15594,7 +15610,8 @@ Public Class ThermokeyCondensers
 
 
         ' Modificato da Cristiano Gnesutta il 7 Luglio 2015
-        If (thisAirPressureDrop >= thisMaxAirPressureDrop Or thisFansFlow <= 10) Then
+        ' ESP is extra installation static pressure (Pa). ESP = 0 is free-field, same as the original 150 Pa coil-ΔP gate.
+        If (thisAirPressureDrop + _espPa >= thisMaxAirPressureDrop Or thisFansFlow <= 10) Then
             thisAirPressureDropCheck = True
         Else
             thisAirPressureDropCheck = False
@@ -15698,6 +15715,10 @@ Microsoft.VisualBasic.Left(condensers(foundIdCM - 1).Model, 3) = "TMC") Then
         Else
             thisSoundPressureLevelCheck = True
 
+        End If
+
+        If SoundPowerExceedsLimit() Then
+            thisSoundPressureLevelCheck = True
         End If
 
 
@@ -15935,8 +15956,9 @@ Microsoft.VisualBasic.Left(condensers(foundIdCM - 1).Model, 3) = "TMC") Then
         '€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
         'Vengono accettate Perdite di Pressione Lato Aria non superiori a 150 Pa e non inferiori a 10 Pa
         'C. Gnesutta, 17 Dicembre 2020
+        ' ESP is extra installation static pressure (Pa). ESP = 0 is free-field, same as the original 150 Pa gate.
 
-        If (this_NewEC_DpAir >= this_Max_NewEC_DpAir Or this_NewEC_DpAir <= this_Min_NewEC_DpAir) Then
+        If (this_NewEC_DpAir + _espPa >= this_Max_NewEC_DpAir Or this_NewEC_DpAir <= this_Min_NewEC_DpAir) Then
             thisAirPressureDropCheck = True
         Else
             thisAirPressureDropCheck = False
@@ -16141,10 +16163,27 @@ Microsoft.VisualBasic.Left(condensers(foundIdCM - 1).Model, 3) = "TMC") Then
 
         End If
 
+        If SoundPowerExceedsLimit() Then
+            thisSoundPressureLevelCheck = True
+        End If
+
 
         'Baco Corretto da C. Gnesutta il 27 Gennaio 2021.
         Return thisSoundPressureLevelCheck
 
+    End Function
+
+    Private Function SoundPowerExceedsLimit() As Boolean
+        If _maxSoundPower <= 0 Then
+            Return False
+        End If
+
+        Dim soundPower = FanNoiseMachine.FanTotalNoisePowerLevel
+        If Double.IsNaN(soundPower) OrElse Double.IsInfinity(soundPower) Then
+            Return True
+        End If
+
+        Return soundPower > _maxSoundPower + _noiseTolerance
     End Function
 
     Private Function CheckMachineAvailability(ByVal foundIdCM As Int16) As Boolean
@@ -20072,6 +20111,7 @@ Microsoft.VisualBasic.Left(condensers(foundIdCM - 1).Model, 3) = "TMC") Then
     '                .Capacity = Math.Round(Capacity, 1),
     '                .Airflow = Math.Round(Airflow, 0),
     '                .Spl = Math.Round(FanNoiseMachine.MachineFanNoise, 0),
+    '                .SoundPower = Math.Round(FanNoiseMachine.FanTotalNoisePowerLevel, 0),
     '                .No_fans = theseFans,
     '                .Rpm = thisFanRPM,
     '                .Power = thisFanWatts,

@@ -1,9 +1,10 @@
 import { LineChartOutlined } from '@ant-design/icons'
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import { formatRatingUnit, ResultDataProps } from './types'
 
 function PerfData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.performanceData
 
   return (
     <FieldsetCard
@@ -12,16 +13,16 @@ function PerfData(props: ResultDataProps) {
       items={[
         {
           labelId: 'data.thermal.rating.performance_data.capacity',
-          value: selectedMachine ? 157.3 : null,
-          unit: 'kW',
+          value: data?.capacity ?? null,
+          unit: formatRatingUnit(data?.capacityUnit) ?? 'kW',
         },
         {
           labelId: 'data.thermal.rating.performance_data.mode',
-          value: selectedMachine ? 'FluidCooling' : null,
+          value: data?.mode ?? null,
         },
         {
           labelId: 'data.thermal.rating.performance_data.condition',
-          value: selectedMachine ? 'Dry' : null,
+          value: data?.condition ?? null,
         },
       ]}
     />

@@ -1,9 +1,10 @@
 import { CloudOutlined } from '@ant-design/icons'
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import { formatRatingUnit, ResultDataProps } from './types'
 
 function AirData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.airData
 
   return (
     <FieldsetCard
@@ -12,35 +13,35 @@ function AirData(props: ResultDataProps) {
       items={[
         {
           labelId: 'data.thermal.rating.air_data.inlet_temperature',
-          value: selectedMachine ? 25.0 : null,
-          unit: '°C',
+          value: data?.inletTemperature ?? null,
+          unit: formatRatingUnit(data?.inletTemperatureUnit),
         },
         {
           labelId: 'data.thermal.rating.air_data.inlet_relative_humidity',
-          value: selectedMachine ? 50 : null,
-          unit: '%',
+          value: data?.inletRelativeHumidity ?? null,
+          unit: formatRatingUnit(data?.inletRelativeHumidityUnit),
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.air_data.altitude',
-          value: selectedMachine ? 0 : null,
-          unit: 'm',
+          value: data?.altitude ?? null,
+          unit: formatRatingUnit(data?.altitudeUnit),
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.air_data.outlet_temperature',
-          value: selectedMachine ? 36.3 : null,
-          unit: '°C',
+          value: data?.outletTemperature ?? null,
+          unit: formatRatingUnit(data?.outletTemperatureUnit),
         },
         {
           labelId: 'data.thermal.rating.air_data.flowrate',
-          value: selectedMachine ? '41,461' : null,
-          unit: 'm³/h',
+          value: data?.flowrate ?? null,
+          unit: formatRatingUnit(data?.flowrateUnit),
         },
         {
           labelId: 'data.thermal.rating.air_data.pressure_drop',
-          value: selectedMachine ? 70 : null,
-          unit: 'Pa',
+          value: data?.pressureDrop ?? null,
+          unit: formatRatingUnit(data?.pressureDropUnit),
           scale: 0,
         },
       ]}

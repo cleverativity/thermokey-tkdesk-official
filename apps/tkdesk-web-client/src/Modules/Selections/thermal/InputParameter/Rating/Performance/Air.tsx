@@ -30,8 +30,9 @@ function Air(props: AirProps) {
     values,
     setFieldValue,
     unitTypes,
-    valueField: 'rating.airInletTemp',
-    unitField: 'rating.airInletTempType',
+    valueField: 'rating.dryBulb',
+    unitField: 'rating.dryBulbType',
+    defaultValue: 35,
     defaultUnitIds: { si: 32, ip: 33 },
   })
 
@@ -47,6 +48,7 @@ function Air(props: AirProps) {
     unitTypes,
     valueField: 'rating.altitude',
     unitField: 'rating.altitudeType',
+    defaultValue: 0,
     defaultUnitIds: { si: 1, ip: 3 },
   })
 
@@ -58,8 +60,8 @@ function Air(props: AirProps) {
             span={twoColSpan}
             labelId='data.thermal.rating.airInletTemp'
             field={airInletTemp}
-            valueName='rating.airInletTemp'
-            unitName='rating.airInletTempType'
+            valueName='rating.dryBulb'
+            unitName='rating.dryBulbType'
             required
           />
 

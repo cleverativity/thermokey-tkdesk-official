@@ -1,4 +1,5 @@
 using AutoMapper;
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Repositories;
@@ -44,7 +45,7 @@ namespace Cardano.Application.Services
             {
                 ModelId = dto.ModelId,
                 RemoteModel = dto.RemoteModel,
-                RefrigerantType = dto.RefrigerantType,
+                RefrigerantType = RefrigerantTypeNormalizer.ToEngine(dto.RefrigerantType),
                 UnitsType = dto.UnitsType,
                 Condensing = dto.Condensing,
                 PercentAdjustment = dto.PercentAdjustment,
@@ -74,7 +75,7 @@ namespace Cardano.Application.Services
                 IntEACondensingTemp = dto.IntEACondensingTemp,
                 Distance = dto.Distance,
                 FlowDirection = dto.FlowDirection,
-                refRigerantType = dto.refRigerantType,
+                refRigerantType = RefrigerantTypeNormalizer.ToEngine(dto.refRigerantType),
                 AirflowRate = dto.AirflowRate,
                 Rpm = dto.Rpm,
                 NoOfFans = dto.NoOfFans,

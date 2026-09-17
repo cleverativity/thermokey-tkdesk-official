@@ -1,4 +1,5 @@
 using Cardano.Application.Common;
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Requests;
 using FluentValidation;
 
@@ -8,7 +9,6 @@ namespace Cardano.Application.Validators
     {
         private static readonly string[] AllowedSubseries = ["All", "M", "T", "J"];
         private static readonly string[] AllowedAssembly = ["All", "Single", "Assembled"];
-        private static readonly string[] AllowedFanType = ["All", "AC", "EC"];
         private static readonly string[] AllowedFanBrand =
         [
             "All",
@@ -83,10 +83,10 @@ namespace Cardano.Application.Validators
                 .GreaterThan(0)
                 .When(x => x.NumberOfFans.HasValue);
 
-            RuleFor(x => x.FanType)
-                .Must(value => IsAllowed(value, AllowedFanType))
-                .WithMessage("Fan type must be All, AC, or EC.")
-                .When(x => !string.IsNullOrWhiteSpace(x.FanType));
+            RuleFor(x => x.FansConnection)
+                .Must(FansConnectionMapper.IsAllowed)
+                .WithMessage("Fans connection is not supported. Use GET /FanConnections.")
+                .When(x => !string.IsNullOrWhiteSpace(x.FansConnection));
 
             RuleFor(x => x.FanBrand)
                 .Must(value => IsAllowed(value, AllowedFanBrand))

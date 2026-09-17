@@ -25,8 +25,9 @@ function Noise(props: NoiseProps) {
     values,
     setFieldValue,
     unitTypes,
-    valueField: 'rating.noise',
-    unitField: 'rating.noiseType',
+    valueField: 'rating.distance',
+    unitField: 'rating.distanceType',
+    defaultValue: 10,
     defaultUnitIds: { si: 1, ip: 3 },
   })
   return (
@@ -41,8 +42,8 @@ function Noise(props: NoiseProps) {
               span={{ xs: 24 }}
               labelId='data.thermal.rating.noise'
               field={noise}
-              valueName='rating.noise'
-              unitName='rating.noiseType'
+              valueName='rating.distance'
+              unitName='rating.distanceType'
               required
             />
           </StyledRow>

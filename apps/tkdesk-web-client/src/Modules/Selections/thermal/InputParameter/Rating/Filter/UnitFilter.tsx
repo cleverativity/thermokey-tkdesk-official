@@ -13,7 +13,7 @@ import {
 import { useFormikContext } from 'formik'
 import _ from 'lodash'
 import { useUnitMeasureField } from 'Modules/Selections/units/shared/variableUnitField'
-import React from 'react'
+import React, { useEffect } from 'react'
 import rawSeriesId from 'Localization/Constants/rating_series_id.json'
 import rawSubseriesId from 'Localization/Constants/rating_subseries_id.json'
 
@@ -23,28 +23,44 @@ interface UnitFilterProps {
 
 const SECTION = 'Unit Filter'
 const MEASURE_UNITS = { si: 1, ip: 3 }
-const WEIGHT_UNITS = { si: 138, ip: 166 }
-const COUNT_OPTIONS = Array.from({ length: 12 }, (_, index) => {
-  const value = String(index + 1)
-  return { value, label: value }
-})
+const WEIGHT_UNITS = { si: 139, ip: 167 }
+const ALL_OPTION = { value: 'All', label: 'All' }
+const withAllOption = (
+  options: Array<{ value: string; label: string }> = [],
+) => [ALL_OPTION, ...options.filter((option) => option.value !== 'All')]
+
+const COUNT_OPTIONS = withAllOption(
+  Array.from({ length: 12 }, (_, index) => {
+    const value = String(index + 1)
+    return { value, label: value }
+  }),
+)
 
 const getSubseriesOptions = (series?: string) => {
   if (series === 'T') {
-    return rawSubseriesId.T
+    return withAllOption(rawSubseriesId.T)
   }
   if (series === 'V' || series === 'J') {
-    return rawSubseriesId.J ?? []
+    return withAllOption(rawSubseriesId.J ?? [])
   }
-  return []
+  return [ALL_OPTION]
 }
 
 function UnitFilter(props: UnitFilterProps) {
   const { unitTypes } = props
   const { values, setFieldValue } = useFormikContext<any>()
 
+  useEffect(() => {
+    if (_.isNil(_.get(values, 'rating.assembly'))) {
+      setFieldValue('rating.assembly', 'All', false)
+    }
+    if (_.isNil(_.get(values, 'rating.useContainerWidth'))) {
+      setFieldValue('rating.useContainerWidth', false, false)
+    }
+  }, [])
+
   const handleContainerhange = (checked: boolean, { form, field }: any) => {
-    setFieldValue(field.name, checked ? 'assembled' : 'single', false)
+    setFieldValue(field.name, checked ? 'Single' : 'Assembled', false)
   }
 
   const selectedSeries = _.get(values, 'rating.series')
@@ -133,7 +149,7 @@ function UnitFilter(props: UnitFilterProps) {
           <StyledRow gutter={[16, 16]}>
             <FieldThermalSelect
               span={{ xs: 24, sm: 12 }}
-              data={rawSeriesId}
+              data={withAllOption(rawSeriesId)}
               name='rating.series'
               label='data.thermal.rating.series'
               field='value'
@@ -149,7 +165,6 @@ function UnitFilter(props: UnitFilterProps) {
               field='value'
               defaultValue='All'
               required
-              disabled={!subseriesOptions.length}
             />
             <FieldThermalSelect
               span={{ xs: 24, sm: 12 }}
@@ -207,7 +222,7 @@ function UnitFilter(props: UnitFilterProps) {
               <FieldCheckbox
                 hideLabel
                 hasFeedback={false}
-                name='rating.container_width'
+                name='rating.useContainerWidth'
                 options={[
                   {
                     value: true,
@@ -220,10 +235,10 @@ function UnitFilter(props: UnitFilterProps) {
               <FieldSwitch
                 hideLabel
                 hasFeedback={false}
-                name='rating.single_assembled'
+                name='rating.assembly'
                 checkedChildren='SINGLE'
                 unCheckedChildren='ASSEMBLED'
-                transformFrom={(value) => value === 'assembled'}
+                transformFrom={(value) => value === 'Single'}
                 overrideOnChange={handleContainerhange}
               />
             </Col>

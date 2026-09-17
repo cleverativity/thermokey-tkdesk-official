@@ -44,7 +44,10 @@ const getPath = (source: any, path: string) =>
   path.split('.').reduce((acc, key) => acc?.[key], source)
 
 const toNumber = (raw: any): number => {
-  const value = raw && typeof raw === 'object' ? raw.value : raw
+  const value =
+    raw && typeof raw === 'object'
+      ? (raw.target?.value ?? raw.value ?? raw)
+      : raw
   if (value == null || value === '') return NaN
   const n = Number(value)
   return Number.isFinite(n) ? n : NaN
@@ -69,7 +72,12 @@ export function convertByMeasureUnit(
   const rateCompatible =
     (from.type === 'Rate' || from.type === 'Rate Water') &&
     (to.type === 'Rate' || to.type === 'Rate Water')
-  if (from.type !== to.type && !rateCompatible) return value
+  const temperatureCompatible =
+    (from.type === 'Temperature' || from.type === 'Temperature Difference') &&
+    (to.type === 'Temperature' || to.type === 'Temperature Difference')
+  if (from.type !== to.type && !rateCompatible && !temperatureCompatible) {
+    return value
+  }
 
   return convertUnit(value, from, to, { round, asDelta })
 }
@@ -277,13 +285,15 @@ export function useUnitMeasureField({
     writeBase(set, displayValue, prev)
   }
 
-  const handleValueChange = (nextValue: number, { form }: any) => {
-    if (!Number.isFinite(nextValue)) return
+  const handleValueChange = (nextValue: number | string, { form }: any) => {
+    const numericValue = toNumber(nextValue)
+    if (!Number.isFinite(numericValue)) return
+
     const { values: formValues, setFieldValue: set } = form
     const storedBase = Number(getPath(formValues, baseField))
     if (
       persistBase &&
-      nextValue === 0 &&
+      numericValue === 0 &&
       Number.isFinite(storedBase) &&
       storedBase !== 0
     ) {
@@ -295,8 +305,8 @@ export function useUnitMeasureField({
       lastUnitRef.current ??
       defaultUnit
 
-    writeValue(set, formValues, nextValue)
-    writeBase(set, nextValue, unit)
+    writeValue(set, formValues, numericValue)
+    writeBase(set, numericValue, unit)
   }
 
   return {

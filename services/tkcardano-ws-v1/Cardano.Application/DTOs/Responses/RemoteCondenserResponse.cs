@@ -14,6 +14,7 @@ namespace Cardano.Application.DTOs.Responses
         public double Capacity { get; set; }
         public double Airflow { get; set; }
         public double Spl { get; set; }
+        public double SoundPower { get; set; }
         public int No_Fans { get; set; }
         public int Rpm { get; set; }
         public double Power { get; set; }

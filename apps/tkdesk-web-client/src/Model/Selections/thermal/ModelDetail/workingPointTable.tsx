@@ -16,27 +16,9 @@ const staticColumn = [
     render: (value: string) => <Span value={value} />,
   },
   {
-    title: <FormattedMessage id='data.thermal.wp_columns.liquid_inlet_temp' />,
-    dataIndex: 'liquidInletTemp',
+    title: <FormattedMessage id='data.thermal.wp_columns.condensing' />,
+    dataIndex: 'condensing',
     width: 165,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.wp_columns.liquid_outlet_temp' />,
-    dataIndex: 'liquidOutletTemp',
-    width: 170,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.wp_columns.liquid_flowrate' />,
-    dataIndex: 'liquidFlowrate',
-    width: 165,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.wp_columns.adiabatic_state' />,
-    dataIndex: 'adiabaticState',
-    width: 140,
     render: (value: string) => <Span value={value} />,
   },
   {
@@ -48,16 +30,10 @@ const staticColumn = [
     ),
   },
   {
-    title: <FormattedMessage id='data.thermal.wp_columns.liquid_speed' />,
-    dataIndex: 'liquidSpeed',
-    width: 150,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
     title: (
-      <FormattedMessage id='data.thermal.wp_columns.liquid_pressure_drop' />
+      <FormattedMessage id='data.thermal.wp_columns.refrigerant_pressure' />
     ),
-    dataIndex: 'liquidPressureDrop',
+    dataIndex: 'refrigerantPressureDrop',
     width: 185,
     render: (value: string) => <Span value={value} />,
   },
@@ -74,23 +50,9 @@ const staticColumn = [
     render: (value: string) => <Span value={value} />,
   },
   {
-    title: <FormattedMessage id='data.thermal.wp_columns.air_outlet_rh' />,
-    dataIndex: 'airOutletRh',
-    width: 145,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
     title: <FormattedMessage id='data.thermal.wp_columns.air_pressure_drop' />,
     dataIndex: 'airPressureDrop',
     width: 165,
-    render: (value: string) => <Span value={value} />,
-  },
-  {
-    title: (
-      <FormattedMessage id='data.thermal.wp_columns.ext_static_pressure' />
-    ),
-    dataIndex: 'extStaticPressure',
-    width: 170,
     render: (value: string) => <Span value={value} />,
   },
   {

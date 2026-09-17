@@ -10,7 +10,9 @@ interface InputData {
   condenserModel: CommonValue
   fansConnection: CommonValue
   airFlowDirection: CommonValue
-  splValue: CommonValue
+  maxSoundPower: CommonValue
+  maxSoundPressure: CommonValue
+  noiseTolerance: CommonValue
   distance: CommonValue
   thermalCapacity: CommonValue
   tolerance: CommonValue

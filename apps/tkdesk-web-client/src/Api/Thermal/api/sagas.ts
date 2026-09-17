@@ -229,22 +229,31 @@ export function* getUnitTypeFieldsSaga(payload: any) {
   return response
 }
 
-// export function* getRatingCalculationSaga(payload: any) {
-//   const response: { data: any } = yield call(
-//     APISettings.getRatingCalculation,
-//     payload,
-//   )
-//   log.info('getRatingCalculationSaga.response', { response, payload })
-//   return response
-// }
+export function* getRatingCalculationSaga(payload: any) {
+  const response: { data: any } = yield call(
+    APISettings.getRatingCalculation,
+    payload,
+  )
+  log.info('getRatingCalculationSaga.response', { response, payload })
+  return response
+}
 
-// export function* getRatingResultSaga(payload: any) {
-//   const response: { data: any } = yield call(
-//     APISettings.getRatingResult,
-//     payload,
-//   )
-//   log.info('getRatingResultSaga.response', { response, payload })
-//   return response
-// }
+export function* getRatingResultSaga(payload: any) {
+  const response: { data: any } = yield call(
+    APISettings.getRatingResult,
+    payload,
+  )
+  log.info('getRatingResultSaga.response', { response, payload })
+  return response
+}
 
-//End temporary endpoint
+export function* getRatingWorkingPointSaga(payload: any) {
+  const response: { data: any } = yield call(
+    APISettings.getRatingWorkingPoint,
+    payload,
+  )
+  log.info('getRatingWorkingPointSaga.response', { response, payload })
+  return response
+}
+
+// End temporary endpoint

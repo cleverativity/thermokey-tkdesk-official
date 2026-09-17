@@ -3,6 +3,7 @@ export type UnitType =
   | 'Capacity'
   | 'Rate'
   | 'Temperature'
+  | 'Temperature Difference'
   | 'Fouling'
   | 'Pressure'
   | 'Velocity'
@@ -275,6 +276,15 @@ export const UNITS: readonly UnitDef[] = [
   },
   {
     id: 34,
+    name: 'R',
+    type: 'Temperature',
+    factor: 0.555555555556,
+    // Absolute Rankine → °C: (R - 491.67) * 5/9; ignored when asDelta
+    delta: 491.67,
+    decimalPlaces: 1,
+  },
+  {
+    id: 35,
     name: 'K',
     type: 'Temperature',
     factor: 1,
@@ -282,7 +292,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 35,
+    id: 36,
     name: '(m² K)/W',
     type: 'Fouling',
     factor: 1,
@@ -290,7 +300,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 36,
+    id: 37,
     name: '(m² h °C)/kcal',
     type: 'Fouling',
     factor: 0.8598,
@@ -298,7 +308,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 5,
   },
   {
-    id: 37,
+    id: 38,
     name: '(ftq h °F)/Btu',
     type: 'Fouling',
     factor: 0.1761,
@@ -306,7 +316,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 38,
+    id: 39,
     name: 'atm',
     type: 'Pressure',
     factor: 1.01325,
@@ -314,7 +324,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 39,
+    id: 40,
     name: 'bar',
     type: 'Pressure',
     factor: 1,
@@ -322,7 +332,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 40,
+    id: 41,
     name: 'Pa',
     type: 'Pressure',
     factor: 0.00001,
@@ -330,7 +340,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 41,
+    id: 42,
     name: 'kPa',
     type: 'Pressure',
     factor: 0.01,
@@ -338,7 +348,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 42,
+    id: 43,
     name: 'mH2O',
     type: 'Pressure',
     factor: 0.0980665,
@@ -346,7 +356,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 43,
+    id: 44,
     name: 'mmH2O',
     type: 'Pressure',
     factor: 0.000098066,
@@ -354,7 +364,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 44,
+    id: 45,
     name: 'mmHg',
     type: 'Pressure',
     factor: 0.001333224,
@@ -362,7 +372,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 45,
+    id: 46,
     name: 'inHg',
     type: 'Pressure',
     factor: 0.03386389,
@@ -370,7 +380,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 46,
+    id: 47,
     name: 'psi',
     type: 'Pressure',
     factor: 0.06894757,
@@ -378,7 +388,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 47,
+    id: 48,
     name: 'at',
     type: 'Pressure',
     factor: 0.980665,
@@ -386,7 +396,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 48,
+    id: 49,
     name: 'Torr',
     type: 'Pressure',
     factor: 0.001333224,
@@ -394,7 +404,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 49,
+    id: 50,
     name: 'Ba',
     type: 'Pressure',
     factor: 0.000001,
@@ -402,7 +412,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 50,
+    id: 51,
     name: 'inH2O',
     type: 'Pressure',
     factor: 0.002490889,
@@ -410,7 +420,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 51,
+    id: 52,
     name: 'kgf/cm²',
     type: 'Pressure',
     factor: 0.980665,
@@ -418,7 +428,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 52,
+    id: 53,
     name: 'kgf/m²',
     type: 'Pressure',
     factor: 0.000098066,
@@ -426,7 +436,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 53,
+    id: 54,
     name: 'lbf/ft²',
     type: 'Pressure',
     factor: 0.000478802,
@@ -434,7 +444,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 54,
+    id: 55,
     name: 'pdl/ft²',
     type: 'Pressure',
     factor: 0.000014881,
@@ -442,7 +452,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 55,
+    id: 56,
     name: 'm/s',
     type: 'Velocity',
     factor: 1,
@@ -450,7 +460,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 56,
+    id: 57,
     name: 'ft/s',
     type: 'Velocity',
     factor: 0.3048,
@@ -458,7 +468,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 57,
+    id: 58,
     name: 'ft/h',
     type: 'Velocity',
     factor: 0.00008466667,
@@ -466,7 +476,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 58,
+    id: 59,
     name: 'ft/min',
     type: 'Velocity',
     factor: 0.00508,
@@ -474,7 +484,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 59,
+    id: 60,
     name: 'in/s',
     type: 'Velocity',
     factor: 0.0254,
@@ -482,7 +492,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 60,
+    id: 61,
     name: 'km/h',
     type: 'Velocity',
     factor: 0.2777778,
@@ -490,7 +500,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 61,
+    id: 62,
     name: 'kn',
     type: 'Velocity',
     factor: 0.5144444,
@@ -498,7 +508,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 62,
+    id: 63,
     name: 'm/h',
     type: 'Velocity',
     factor: 0.0002777778,
@@ -506,7 +516,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 63,
+    id: 64,
     name: 'mi/h',
     type: 'Velocity',
     factor: 0.44704,
@@ -514,7 +524,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 64,
+    id: 65,
     name: 'mi/min',
     type: 'Velocity',
     factor: 26.8224,
@@ -522,7 +532,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 65,
+    id: 66,
     name: 'mi/s',
     type: 'Velocity',
     factor: 1609.344,
@@ -530,7 +540,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 66,
+    id: 67,
     name: 'kg/m³',
     type: 'Density',
     factor: 1,
@@ -538,7 +548,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 67,
+    id: 68,
     name: 'g/cm³',
     type: 'Density',
     factor: 1000,
@@ -546,7 +556,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 68,
+    id: 69,
     name: 'gr/gal(US)',
     type: 'Density',
     factor: 0.01711806,
@@ -554,7 +564,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 69,
+    id: 70,
     name: 'kg/L',
     type: 'Density',
     factor: 1000,
@@ -562,7 +572,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 70,
+    id: 71,
     name: 'lb/ft³',
     type: 'Density',
     factor: 16.01846,
@@ -570,7 +580,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 71,
+    id: 72,
     name: 'lb/gal(Im)',
     type: 'Density',
     factor: 99.77637,
@@ -578,7 +588,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 72,
+    id: 73,
     name: 'lb/gal(US)',
     type: 'Density',
     factor: 119.8264,
@@ -586,7 +596,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 73,
+    id: 74,
     name: 'lb/in³',
     type: 'Density',
     factor: 27679.91,
@@ -594,7 +604,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 5,
   },
   {
-    id: 74,
+    id: 75,
     name: 'lb/yd³',
     type: 'Density',
     factor: 0.5932764,
@@ -602,7 +612,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 75,
+    id: 76,
     name: 'oz/gal(Im)',
     type: 'Density',
     factor: 6.236023,
@@ -610,7 +620,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 76,
+    id: 77,
     name: 'oz/gal(US)',
     type: 'Density',
     factor: 7.489152,
@@ -618,7 +628,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 77,
+    id: 78,
     name: 'oz/in³',
     type: 'Density',
     factor: 1729.994,
@@ -626,7 +636,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 78,
+    id: 79,
     name: 'slug/ft³',
     type: 'Density',
     factor: 515.3788,
@@ -634,7 +644,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 79,
+    id: 80,
     name: 't/m³',
     type: 'Density',
     factor: 1000,
@@ -642,7 +652,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 80,
+    id: 81,
     name: '(long) ton/yd³',
     type: 'Density',
     factor: 1328.939,
@@ -650,7 +660,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 81,
+    id: 82,
     name: '(short) ton/yd³',
     type: 'Density',
     factor: 1186.553,
@@ -658,7 +668,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 82,
+    id: 83,
     name: 'g/L',
     type: 'Density',
     factor: 1,
@@ -666,7 +676,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 83,
+    id: 84,
     name: 'J/(kg K)',
     type: 'Specific Heat',
     factor: 1,
@@ -674,7 +684,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 84,
+    id: 85,
     name: 'm²/(s² K)',
     type: 'Specific Heat',
     factor: 1,
@@ -682,7 +692,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 85,
+    id: 86,
     name: 'Btu/(lb °R)',
     type: 'Specific Heat',
     factor: 4186.8,
@@ -690,7 +700,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 86,
+    id: 87,
     name: 'Btu/(slug °R)',
     type: 'Specific Heat',
     factor: 130.1298,
@@ -698,7 +708,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 87,
+    id: 88,
     name: 'cal/(g K)',
     type: 'Specific Heat',
     factor: 4186.8,
@@ -706,7 +716,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 88,
+    id: 89,
     name: 'kcal/(kg K)',
     type: 'Specific Heat',
     factor: 4186.8,
@@ -714,7 +724,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 89,
+    id: 90,
     name: 'kg/(m s)',
     type: 'Dynamic viscosity',
     factor: 1,
@@ -722,7 +732,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 90,
+    id: 91,
     name: 'Pa s',
     type: 'Dynamic viscosity',
     factor: 1,
@@ -730,7 +740,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 91,
+    id: 92,
     name: 'cP',
     type: 'Dynamic viscosity',
     factor: 0.001,
@@ -738,7 +748,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 92,
+    id: 93,
     name: 'kgf h/m²',
     type: 'Dynamic viscosity',
     factor: 35303.94,
@@ -746,7 +756,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 93,
+    id: 94,
     name: 'kgf s/m²',
     type: 'Dynamic viscosity',
     factor: 9.80665,
@@ -754,7 +764,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 94,
+    id: 95,
     name: 'kg/(m h)',
     type: 'Dynamic viscosity',
     factor: 0.0002777778,
@@ -762,7 +772,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 95,
+    id: 96,
     name: 'lbf h/ft²',
     type: 'Dynamic viscosity',
     factor: 172368.9,
@@ -770,7 +780,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 5,
   },
   {
-    id: 96,
+    id: 97,
     name: 'lbf s/ft²',
     type: 'Dynamic viscosity',
     factor: 47.88026,
@@ -778,7 +788,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 97,
+    id: 98,
     name: 'lbf s/in²',
     type: 'Dynamic viscosity',
     factor: 6894.757,
@@ -786,7 +796,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 98,
+    id: 99,
     name: 'lb/(ft h)',
     type: 'Dynamic viscosity',
     factor: 0.0004133789,
@@ -794,7 +804,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 99,
+    id: 100,
     name: 'lb/(ft s)',
     type: 'Dynamic viscosity',
     factor: 1.488164,
@@ -802,7 +812,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 100,
+    id: 101,
     name: 'N s/m²',
     type: 'Dynamic viscosity',
     factor: 1,
@@ -810,7 +820,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 101,
+    id: 102,
     name: 'P',
     type: 'Dynamic viscosity',
     factor: 0.1,
@@ -818,7 +828,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 102,
+    id: 103,
     name: 'pdl s/ft²',
     type: 'Dynamic viscosity',
     factor: 1.488164,
@@ -826,7 +836,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 103,
+    id: 104,
     name: 'slug/(ft s)',
     type: 'Dynamic viscosity',
     factor: 47.88026,
@@ -834,7 +844,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 8,
   },
   {
-    id: 104,
+    id: 105,
     name: 'W/(m K)',
     type: 'Thermal conductivity',
     factor: 1,
@@ -842,7 +852,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 105,
+    id: 106,
     name: 'Btu/(h ft °F)',
     type: 'Thermal conductivity',
     factor: 1.730735,
@@ -850,7 +860,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 106,
+    id: 107,
     name: 'Btu/(h in °F)',
     type: 'Thermal conductivity',
     factor: 20.76882,
@@ -858,7 +868,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 107,
+    id: 108,
     name: 'Btu in/(h ft² °F)',
     type: 'Thermal conductivity',
     factor: 0.1442279,
@@ -866,7 +876,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 108,
+    id: 109,
     name: 'Btu in/(s ft² °F)',
     type: 'Thermal conductivity',
     factor: 519.2204,
@@ -874,7 +884,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 109,
+    id: 110,
     name: 'cal/(cm s K)',
     type: 'Thermal conductivity',
     factor: 418.68,
@@ -882,7 +892,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 110,
+    id: 111,
     name: 'cal/(m s °C)',
     type: 'Thermal conductivity',
     factor: 4.1868,
@@ -890,7 +900,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 111,
+    id: 112,
     name: 'kcal cm/(m² h °C)',
     type: 'Thermal conductivity',
     factor: 0.01163,
@@ -898,7 +908,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 112,
+    id: 113,
     name: 'kcal/(m h °C)',
     type: 'Thermal conductivity',
     factor: 1.163,
@@ -906,7 +916,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 113,
+    id: 114,
     name: 'J/kg',
     type: 'Latent Heat',
     factor: 1,
@@ -914,7 +924,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 114,
+    id: 115,
     name: 'm²/s²',
     type: 'Latent Heat',
     factor: 1,
@@ -922,7 +932,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 115,
+    id: 116,
     name: 'kcal/kg',
     type: 'Latent Heat',
     factor: 4186.8,
@@ -930,7 +940,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 116,
+    id: 117,
     name: 'Btu/lb',
     type: 'Latent Heat',
     factor: 2326,
@@ -938,7 +948,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 5,
   },
   {
-    id: 117,
+    id: 118,
     name: 'cal/g',
     type: 'Latent Heat',
     factor: 4186.8,
@@ -946,7 +956,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 5,
   },
   {
-    id: 118,
+    id: 119,
     name: 'kgf m/kg',
     type: 'Latent Heat',
     factor: 9.80665,
@@ -954,16 +964,16 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 119,
+    id: 120,
     name: 'm²',
     type: 'Surface',
     factor: 1,
     delta: 0,
     decimalPlaces: 2,
   },
-  { id: 120, name: 'l', type: 'Volume', factor: 1, delta: 0, decimalPlaces: 1 },
+  { id: 121, name: 'l', type: 'Volume', factor: 1, delta: 0, decimalPlaces: 1 },
   {
-    id: 121,
+    id: 122,
     name: 'W/(m² K)',
     type: 'Heat transfer coefficient',
     factor: 1,
@@ -971,7 +981,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 122,
+    id: 123,
     name: 'kcal/(m² h °C)',
     type: 'Heat transfer coefficient',
     factor: 1.163,
@@ -979,7 +989,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 123,
+    id: 124,
     name: 'Btu/(h ft² °F)',
     type: 'Heat transfer coefficient',
     factor: 5.678263,
@@ -987,7 +997,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 124,
+    id: 125,
     name: 'Btu/(s ft² °F)',
     type: 'Heat transfer coefficient',
     factor: 20441.75,
@@ -995,7 +1005,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 125,
+    id: 126,
     name: 'cal/(cm² s K)',
     type: 'Heat transfer coefficient',
     factor: 41868,
@@ -1003,7 +1013,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 6,
   },
   {
-    id: 126,
+    id: 127,
     name: 'mm(2)',
     type: 'Measure',
     factor: 1,
@@ -1011,7 +1021,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 127,
+    id: 128,
     name: 'mm(1)',
     type: 'Measure',
     factor: 1,
@@ -1019,7 +1029,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 128,
+    id: 129,
     name: 'kJ/kg',
     type: 'Latent Heat',
     factor: 1000,
@@ -1027,7 +1037,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 129,
+    id: 130,
     name: 'barg',
     type: 'Pressure',
     factor: 1,
@@ -1035,7 +1045,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 130,
+    id: 131,
     name: 'kcal/kg',
     type: 'Hentalpy',
     factor: 1,
@@ -1043,7 +1053,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 131,
+    id: 132,
     name: '€ (EUR)',
     type: 'Currency',
     factor: 1,
@@ -1051,7 +1061,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 132,
+    id: 133,
     name: '$ (USD)',
     type: 'Currency',
     factor: 0.8272,
@@ -1059,7 +1069,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 133,
+    id: 134,
     name: '£ (GBP)',
     type: 'Currency',
     factor: 1.519895,
@@ -1067,7 +1077,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 134,
+    id: 135,
     name: '¥ (JPY)',
     type: 'Currency',
     factor: 0.007811157,
@@ -1075,7 +1085,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 135,
+    id: 136,
     name: 'm³',
     type: 'Volume',
     factor: 1000,
@@ -1083,7 +1093,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 136,
+    id: 137,
     name: 'cm³',
     type: 'Volume',
     factor: 0.001,
@@ -1091,7 +1101,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 137,
+    id: 138,
     name: 'dm³',
     type: 'Volume',
     factor: 1,
@@ -1099,7 +1109,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 138,
+    id: 139,
     name: 'kg',
     type: 'Weight',
     factor: 1,
@@ -1107,7 +1117,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 139,
+    id: 140,
     name: 'g',
     type: 'Weight',
     factor: 0.001,
@@ -1115,7 +1125,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 140,
+    id: 141,
     name: 'kJ/(kg K)',
     type: 'Specific Heat',
     factor: 1000,
@@ -1123,7 +1133,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 141,
+    id: 142,
     name: 'l/h',
     type: 'Rate',
     factor: 0.001,
@@ -1131,7 +1141,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 142,
+    id: 143,
     name: 'ft²',
     type: 'Surface',
     factor: 0.092903043597,
@@ -1139,7 +1149,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 143,
+    id: 144,
     name: 'mPa s',
     type: 'Dynamic viscosity',
     factor: 0.001,
@@ -1147,7 +1157,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 144,
+    id: 145,
     name: 'kg/(m² s)',
     type: 'Specific flow',
     factor: 1,
@@ -1155,7 +1165,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 145,
+    id: 146,
     name: 'ftH2O',
     type: 'Pressure',
     factor: 0.0298896,
@@ -1163,7 +1173,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 146,
+    id: 147,
     name: 'ft³',
     type: 'Volume',
     factor: 28.31685,
@@ -1171,7 +1181,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 147,
+    id: 148,
     name: 'g/kg',
     type: 'Specific humidity',
     factor: 0.001,
@@ -1179,7 +1189,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 148,
+    id: 149,
     name: 'kg/kg',
     type: 'Specific humidity',
     factor: 1,
@@ -1187,7 +1197,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 149,
+    id: 150,
     name: 'lb/lb',
     type: 'Specific humidity',
     factor: 1,
@@ -1195,7 +1205,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 150,
+    id: 151,
     name: 'gr/lb',
     type: 'Specific humidity',
     factor: 0.000453592,
@@ -1203,7 +1213,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 151,
+    id: 152,
     name: 'm³/s',
     type: 'Rate Water',
     factor: 3600,
@@ -1211,7 +1221,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 152,
+    id: 153,
     name: 'm³/h',
     type: 'Rate Water',
     factor: 1,
@@ -1219,7 +1229,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 153,
+    id: 154,
     name: 'l/s',
     type: 'Rate Water',
     factor: 3.6,
@@ -1227,7 +1237,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 154,
+    id: 155,
     name: 'cft/s',
     type: 'Rate Water',
     factor: 101.94,
@@ -1235,7 +1245,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 155,
+    id: 156,
     name: 'cft/min',
     type: 'Rate Water',
     factor: 1.699,
@@ -1243,7 +1253,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 156,
+    id: 157,
     name: 'Gal/min',
     type: 'Rate Water',
     factor: 0.2271,
@@ -1251,7 +1261,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 2,
   },
   {
-    id: 157,
+    id: 158,
     name: 'kg/s',
     type: 'Rate Water',
     factor: 3600,
@@ -1259,7 +1269,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 158,
+    id: 159,
     name: 'kg/h',
     type: 'Rate Water',
     factor: 1,
@@ -1267,7 +1277,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 159,
+    id: 160,
     name: 'lb/s',
     type: 'Rate Water',
     factor: 1632.932532,
@@ -1275,7 +1285,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 4,
   },
   {
-    id: 160,
+    id: 161,
     name: 'lb/h',
     type: 'Rate Water',
     factor: 0.45359244,
@@ -1283,7 +1293,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 161,
+    id: 162,
     name: 'kg/24h',
     type: 'Rate Water 24h',
     factor: 1,
@@ -1291,7 +1301,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 162,
+    id: 163,
     name: 'lb/24h',
     type: 'Rate Water 24h',
     factor: 0.45359244,
@@ -1299,7 +1309,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 163,
+    id: 164,
     name: 'MW',
     type: 'Capacity',
     factor: 1000000,
@@ -1307,7 +1317,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 3,
   },
   {
-    id: 164,
+    id: 165,
     name: 'l/min',
     type: 'Rate',
     factor: 0.06,
@@ -1315,7 +1325,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 165,
+    id: 166,
     name: 'A',
     type: 'Current',
     factor: 1,
@@ -1323,7 +1333,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 166,
+    id: 167,
     name: 'lb',
     type: 'Weight',
     factor: 0.45359237,
@@ -1331,7 +1341,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 1,
   },
   {
-    id: 167,
+    id: 168,
     name: 'dB(A)',
     type: 'Sound',
     factor: 1,
@@ -1339,7 +1349,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 168,
+    id: 169,
     name: 'rpm',
     type: 'Rotation speed',
     factor: 1,
@@ -1347,7 +1357,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 169,
+    id: 170,
     name: 'V',
     type: 'Voltage',
     factor: 1,
@@ -1355,7 +1365,7 @@ export const UNITS: readonly UnitDef[] = [
     decimalPlaces: 0,
   },
   {
-    id: 170,
+    id: 171,
     name: 'Hz',
     type: 'Frequency',
     factor: 1,

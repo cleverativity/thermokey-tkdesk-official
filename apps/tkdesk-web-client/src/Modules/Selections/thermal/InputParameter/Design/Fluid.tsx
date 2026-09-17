@@ -23,17 +23,34 @@ interface FluidProps {
 }
 
 function Fluid(props: FluidProps) {
-  const { refType } = props.data
+  const { refType } = props.data ?? {}
   const { unitTypes } = props
 
   const intl = useIntl()
   const { values, setFieldValue } = useFormikContext<any>()
+
+  const handleCondensingReferenceChange = (value: any) => {
+    const reference =
+      value && typeof value === 'object'
+        ? (value.value ?? value.key)
+        : value
+    setFieldValue('condenser.condensingReference', reference, false)
+  }
 
   const isCompressorInletTemperature = _.isEqual(
     _.get(
       values,
       'condenser.compressorInletMode.value',
       _.get(values, 'condenser.compressorInletMode', 'delta_temperature'),
+    ),
+    'temperature',
+  )
+
+  const isOutletTemperature = _.isEqual(
+    _.get(
+      values,
+      'condenser.subCoolingMode.value',
+      _.get(values, 'condenser.subCoolingMode', 'delta_temperature'),
     ),
     'temperature',
   )
@@ -50,8 +67,10 @@ function Fluid(props: FluidProps) {
     unitTypes,
     valueField: 'condenser.compressor',
     unitField: 'condenser.compressorType',
-    defaultValue: 298.0,
-    defaultUnitIds: { si: 34, ip: 33 },
+    defaultValue: 25,
+    defaultValueUnit: unitTypes === 'imp' ? '°F' : 'K',
+    asDelta: true,
+    defaultUnitIds: { si: 35, ip: 33 },
     enabled: !isCompressorInletTemperature,
   })
   const inletTempField = useUnitMeasureField({
@@ -59,15 +78,15 @@ function Fluid(props: FluidProps) {
       product: 'condenser',
       step: 'Input parameters',
       section: 'Fluid',
-      variable: 'compressor',
+      variable: 'inletTemperature',
     },
     values,
     setFieldValue,
     unitTypes,
     valueField: 'condenser.inletTemperature',
     unitField: 'condenser.inletTemperatureType',
-    defaultValue: 298.0,
-    defaultUnitIds: { si: 34, ip: 33 },
+    defaultValue: 22,
+    defaultUnitIds: { si: 32, ip: 33 },
     enabled: isCompressorInletTemperature,
   })
   const condensingField = useUnitMeasureField({
@@ -97,14 +116,33 @@ function Fluid(props: FluidProps) {
     unitTypes,
     valueField: 'condenser.subCooling',
     unitField: 'condenser.subCoolingType',
-    defaultValue: 298.0,
-    defaultUnitIds: { si: 34, ip: 33 },
+    defaultValue: 3,
+    defaultValueUnit: unitTypes === 'imp' ? '°F' : 'K',
+    asDelta: true,
+    defaultUnitIds: { si: 35, ip: 33 },
+    enabled: !isOutletTemperature,
+  })
+  const outletTempField = useUnitMeasureField({
+    query: {
+      product: 'condenser',
+      step: 'Input parameters',
+      section: 'Fluid',
+      variable: 'outletTemperature',
+    },
+    values,
+    setFieldValue,
+    unitTypes,
+    valueField: 'condenser.outletTemperature',
+    unitField: 'condenser.outletTemperatureType',
+    defaultValue: 37,
+    defaultUnitIds: { si: 32, ip: 33 },
+    enabled: isOutletTemperature,
   })
 
   return (
     <>
-      <StyledCollapse defaultActiveKey={['3']} style={{ marginBottom: '20px' }}>
-        <StyledCollapsePanel header='ui.thermal.panelHeader.fluid' key='3'>
+      <StyledCollapse defaultActiveKey={['2']} style={{ marginBottom: '20px' }}>
+        <StyledCollapsePanel header='ui.thermal.panelHeader.fluid' key='2'>
           <StyledRow>
             <FieldThermalSelect
               span={{ sm: 24, md: 12, lg: 6, xl: 6 }}
@@ -113,13 +151,13 @@ function Fluid(props: FluidProps) {
               label='data.thermal.field.refrigerant_type'
               field='condenser_type'
               required
-              defaultValue='R-404A'
+              defaultValue='R404A'
             />
 
             <Col sm={24} md={12} lg={6} xl={6} style={{ minWidth: 0 }}>
               <p
                 style={{
-                  fontFamily: 'Avenir Medium, sans serif',
+                  fontFamily: 'Avenir Medium, sans-serif',
                   paddingBottom: '8px',
                 }}
               >
@@ -180,7 +218,7 @@ function Fluid(props: FluidProps) {
             <Col sm={24} md={12} lg={6} xl={6} style={{ minWidth: 0 }}>
               <p
                 style={{
-                  fontFamily: 'Avenir Medium, sans serif',
+                  fontFamily: 'Avenir Medium, sans-serif',
                   paddingBottom: '8px',
                 }}
               >
@@ -204,7 +242,8 @@ function Fluid(props: FluidProps) {
                     style={{ width: '100%' }}
                     allowClear={false}
                     defaultValue='ave'
-                    name='condenser.saturationTitle'
+                    name='condenser.condensingReference'
+                    overrideOnChange={handleCondensingReferenceChange}
                     optionKeyPath={['key']}
                     optionMessagePath={['key']}
                     prefix='select.sat_temp_modes.'
@@ -214,15 +253,66 @@ function Fluid(props: FluidProps) {
               </Space.Compact>
             </Col>
 
-            <FieldUnitInput
-              span={{ sm: 24, md: 12, lg: 6, xl: 6 }}
-              labelId='data.thermal.field.sub_cooling'
-              field={subCoolingField}
-              valueName='condenser.subCooling'
-              unitName='condenser.subCoolingType'
-              required
-              unitSelectWidth={64}
-            />
+            <Col sm={24} md={12} lg={6} xl={6} style={{ minWidth: 0 }}>
+              <p
+                style={{
+                  fontFamily: 'Avenir Medium, sans-serif',
+                  paddingBottom: '8px',
+                }}
+              >
+                <span style={{ color: '#ff4d4f' }}>* </span>
+                {intl.formatMessage({
+                  id: isOutletTemperature
+                    ? 'data.thermal.field.desired_outlet_temp'
+                    : 'data.thermal.field.subcooling_delta_long',
+                })}
+              </p>
+              <Space.Compact style={{ width: '100%', minWidth: 0 }}>
+                <div style={{ flex: '0 0 auto', minWidth: 150 }}>
+                  <FieldRangeSelect
+                    hideLabel
+                    hasFeedback={false}
+                    style={{ width: '100%' }}
+                    allowClear={false}
+                    defaultValue='delta_temperature'
+                    name='condenser.subCoolingMode'
+                    optionKeyPath={['key']}
+                    optionMessagePath={['label']}
+                    options={[
+                      {
+                        label: 'data.thermal.field.subcooling',
+                        value: 'delta_temperature',
+                      },
+                      {
+                        label: 'data.thermal.field.outlet_temp',
+                        value: 'temperature',
+                      },
+                    ]}
+                  />
+                </div>
+                {isOutletTemperature ? (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <FieldUnitInput
+                      field={outletTempField}
+                      valueName='condenser.outletTemperature'
+                      unitName='condenser.outletTemperatureType'
+                      required
+                      unitSelectWidth={64}
+                    />
+                  </div>
+                ) : (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <FieldUnitInput
+                      field={subCoolingField}
+                      valueName='condenser.subCooling'
+                      unitName='condenser.subCoolingType'
+                      required
+                      unitSelectWidth={64}
+                    />
+                  </div>
+                )}
+              </Space.Compact>
+            </Col>
           </StyledRow>
         </StyledCollapsePanel>
       </StyledCollapse>

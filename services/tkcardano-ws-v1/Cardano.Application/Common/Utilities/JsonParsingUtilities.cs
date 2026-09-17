@@ -39,15 +39,22 @@ namespace Cardano.Application.Common.Utilities
                 data.CondenserModel = GetStringValue(condenserNode, "condenserModel");
                 data.CondenserType = GetStringValue(condenserNode, "condenserType");
                 data.Condensing = GetDoubleValue(condenserNode, "condensing");
+                data.CondensingReference = ReadCondensingReference(condenserNode, jsonData);
                 data.Distance = GetDoubleValue(condenserNode, "distance");
                 data.DryBulb = GetDoubleValue(condenserNode, "dryBulb");
                 data.FansConnection = GetStringValue(condenserNode, "fansConnection");
-                data.RefrigerantType = GetStringValue(condenserNode, "refrigerantType");
+                data.RefrigerantType = RefrigerantTypeNormalizer.ToEngine(GetStringValue(condenserNode, "refrigerantType"));
                 data.RelHumidity = GetDoubleValue(condenserNode, "relHumidity");
-                data.SplValue = GetDoubleValue(condenserNode, "splValue");
+                data.MaxSoundPressure = GetOptionalDoubleValue(condenserNode, "maxSoundPressure")
+                    ?? GetOptionalDoubleValue(condenserNode, "splValue")
+                    ?? 0;
+                data.MaxSoundPower = GetDoubleValue(condenserNode, "maxSoundPower");
+                data.NoiseTolerance = GetDoubleValue(condenserNode, "noiseTolerance");
                 data.SubCooling = GetDoubleValue(condenserNode, "subCooling");
                 data.ThermalCapacity = GetDoubleValue(condenserNode, "thermalCapacity");
                 data.Tolerance = GetDoubleValue(condenserNode, "tolerance");
+                data.ToleranceMin = GetOptionalDoubleValue(condenserNode, "toleranceMin");
+                data.ToleranceMax = GetOptionalDoubleValue(condenserNode, "toleranceMax");
                 data.UnitsType = GetStringValue(condenserNode, "unitsType");
                 data.CapacityAdjustment = GetDoubleValue(condenserNode, "capacityAdjustment");
                 data.AdjustmentModuleType = GetStringValue(condenserNode, "adjustmentModuleType", "ac");
@@ -56,6 +63,10 @@ namespace Cardano.Application.Common.Utilities
                 data.Price = GetDoubleValue(condenserNode, "price");
                 data.RemoteModel = GetStringValue(condenserNode, "remoteModel");
                 data.CurrentUnitType = GetStringValue(condenserNode, "currentUnitType");
+                data.MaxLength = GetOptionalDoubleValue(condenserNode, "maxLength");
+                data.MaxHeight = GetOptionalDoubleValue(condenserNode, "maxHeight");
+                data.MaxWidth = GetOptionalDoubleValue(condenserNode, "maxWidth");
+                data.Esp = GetDoubleValue(condenserNode, "esp");
 
             }
             catch (Newtonsoft.Json.JsonReaderException ex)
@@ -101,7 +112,7 @@ namespace Cardano.Application.Common.Utilities
                 data.Id = modelId;
                 data.SelectedCondenser = GetStringValue(accessoriesNode, "selectedCondenser");
                 data.CondenserModel = GetStringValue(accessoriesNode, "condenserModel");
-                data.RefrigerantType = GetStringValue(accessoriesNode, "refRigerantType");
+                data.RefrigerantType = RefrigerantTypeNormalizer.ToEngine(GetStringValue(accessoriesNode, "refRigerantType"));
                 data.FlowDirection = GetStringValue(accessoriesNode, "flowDirection");
                 data.AccessoriesDiscount = GetDoubleValue(accessoriesNode, "accessoriesDiscount");
                 data.UnitDiscount = GetDoubleValue(accessoriesNode, "unitDiscount");
@@ -153,6 +164,18 @@ namespace Cardano.Application.Common.Utilities
             return 0.0;
         }
 
+        public static double? GetOptionalDoubleValue(JObject jsonData, string propertyName)
+        {
+            var token = jsonData[propertyName];
+            if (token != null && token.Type != JTokenType.Null &&
+                double.TryParse(token.ToString(), out double result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
         public static int GetIntValue(JObject jsonData, string propertyName)
         {
             var token = jsonData[propertyName];
@@ -196,6 +219,33 @@ namespace Cardano.Application.Common.Utilities
 
             // Return an empty list if the property doesn't exist or on error
             return new List<int>();
+        }
+
+        private static string? ReadCondensingReference(JObject condenserNode, JObject root)
+        {
+            var token = GetTokenIgnoreCase(condenserNode, "condensingReference")
+                ?? GetTokenIgnoreCase(root, "condensingReference");
+
+            if (token == null || token.Type == JTokenType.Null)
+            {
+                return null;
+            }
+
+            if (token.Type is JTokenType.Float or JTokenType.Integer)
+            {
+                return CondensingReferenceConverter.TryFromQuality(token.Value<double>(), out var fromQuality)
+                    ? fromQuality
+                    : null;
+            }
+
+            return CondensingReferenceConverter.Parse(token.ToString());
+        }
+
+        private static JToken? GetTokenIgnoreCase(JObject jsonData, string propertyName)
+        {
+            var property = jsonData.Properties()
+                .FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase));
+            return property?.Value;
         }
     }
 }
