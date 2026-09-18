@@ -192,9 +192,22 @@ export function* getCondenserAndAccessoriesSaga(id: number, status: string) {
 }
 
 export function* deleteSolveSaga(id: number) {
-  const response: { data: any } = yield call(APISettings.deleteSolve, id)
-  log.info('deleteSolveSaga.response', { response, id })
-  return response
+  if (id == null || Number.isNaN(Number(id))) {
+    log.info('deleteSolveSaga.skipped', { id })
+    return { data: null }
+  }
+
+  try {
+    const response: { data: any } = yield call(APISettings.deleteSolve, id)
+    log.info('deleteSolveSaga.response', { response, id })
+    return response
+  } catch (error: any) {
+    if (error?.response?.status === 404) {
+      log.info('deleteSolveSaga.alreadyDeleted', { id })
+      return { data: null }
+    }
+    throw error
+  }
 }
 
 export function* pdfCondenserSaga(payload: any) {

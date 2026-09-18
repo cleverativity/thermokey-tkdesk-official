@@ -73,7 +73,10 @@ const AdjustCapacity = connect((props: AdjustCapacityProps) => {
   // Sync condenser model when it changes
   useEffect(() => {
     if (condenser) {
-      setFieldValue('acData.condenserModel', condenser.condenserModel ?? '')
+      setFieldValue(
+        'acData.condenserModel',
+        condenser.remoteModel ?? condenser.condenserModel ?? '',
+      )
     }
   }, [condenser, setFieldValue])
 

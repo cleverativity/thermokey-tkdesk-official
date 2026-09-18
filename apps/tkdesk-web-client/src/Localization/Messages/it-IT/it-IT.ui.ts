@@ -258,6 +258,7 @@ export default {
           '': 'Dettaglio',
           unit_data: 'Dati Unità',
           accessories: 'Accessori',
+          image: 'Immagine',
         },
       },
       tabs: {

@@ -285,7 +285,9 @@ const AdjustFanFlows = connect((props: AdjustFanFlowsProps) => {
               label='data.thermal.performance.fan_flows_field.condenser_model'
               required
               controls={true}
-              defaultValue={condenser?.condenserModel}
+              defaultValue={
+                condenser?.remoteModel ?? condenser?.condenserModel
+              }
               isPointed={true}
               disabled={true}
             />

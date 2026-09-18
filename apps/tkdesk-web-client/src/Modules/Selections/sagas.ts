@@ -162,8 +162,17 @@ function* resetStatusEdit({ payload }: any) {
     })
 
     if (macro_serie === 'Remote condensers') {
-      yield call(Thermal.deleteSolveSaga, thermal_id)
+      if (thermal_id != null) {
+        yield call(Thermal.deleteSolveSaga, thermal_id)
+      } else {
+        log.info('resetStatusEdit.skipDelete', { id, thermal_id })
+      }
+
       const steps: SelectionBack = yield call(Thermal.getCurrentStepSaga, id)
+      if (!steps) {
+        throw new Error('Current step not found after reset')
+      }
+
       const condensersType = yield call(Thermal.getCondenserTypeSaga)
       const condensersModel = yield call(Thermal.getCondenserModelSaga)
       const fanConnection = yield call(Thermal.getFanConSaga)
