@@ -6,11 +6,8 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import RemoteCondensers from './RemoteCondensers'
-import InletsAndOutlets from './InletsAndOutlets'
-import FanTechnicalData from './FanTechnicalData'
 import Accessories from './Accessories'
-import GeometricParameters from './GeometricParameters'
+import GroupedDetails from './GroupedDetails'
 import { ConsoleLogger } from 'aws-amplify/utils'
 import _ from 'lodash'
 
@@ -28,6 +25,8 @@ import { useAccessories } from '../hooks/useAccessories'
 
 import EnergyAnalysis from './EnergyAnalysis'
 import WorkingPoint from './WorkingPoint'
+import { useWorkingPoint } from '../hooks/useWorkingPoint'
+import { useAuthorization } from 'Modules/App/Authorization'
 
 interface ThermalModelDetailProps {
   data?: any
@@ -42,6 +41,7 @@ interface ThermalModelDetailProps {
 export type ThermalModelDetailHandle = {
   downloadCondenserPdf: () => void
   calculateEnergyAnalysis: (payload: Record<string, unknown>) => void
+  calculateWorkingPoint: () => void
 }
 
 const ThermalModelDetail = forwardRef<
@@ -74,6 +74,7 @@ const ThermalModelDetail = forwardRef<
   const [selectedAccessoryIds, setSelectedAccessoryIds] = useState<number[]>([])
 
   const intl = useIntl()
+  const autho = useAuthorization()
 
   const formik = useFormikContext()
   const { values, setFieldValue } = formik
@@ -187,11 +188,20 @@ const ThermalModelDetail = forwardRef<
 
   const [activeTab, setActiveTab] = useState(tabsPanels[0].key)
 
+  useEffect(() => {
+    setFieldValue('ea.activeThermalTab', activeTab, false)
+  }, [activeTab, setFieldValue])
+
   const onTabChange = (key: string) => {
     setActiveTab(key)
-    setFieldValue('ea.activeThermalTab', key)
     log.info('ThermalModelDetail.tabChanged', { activeTab: key })
   }
+
+  const {
+    rows: workingPointRows,
+    isCalculating: workingPointLoading,
+    calculate: calculateWorkingPoint,
+  } = useWorkingPoint(condenser)
 
   const onCalculateEnergyAnalysis = useCallback(
     (data: any) => {
@@ -298,8 +308,9 @@ const ThermalModelDetail = forwardRef<
     () => ({
       downloadCondenserPdf: onDownloadPDF,
       calculateEnergyAnalysis: onCalculateEnergyAnalysis,
+      calculateWorkingPoint,
     }),
-    [onDownloadPDF, onCalculateEnergyAnalysis],
+    [onDownloadPDF, onCalculateEnergyAnalysis, calculateWorkingPoint],
   )
 
   log.info('ThermalModelDetail.render', {
@@ -331,7 +342,7 @@ const ThermalModelDetail = forwardRef<
 
       {activeTab === 'perf' ? (
         <>
-          {condenser !== null && (
+          {autho.iAmAdmin && condenser !== null && (
             <AdjustModule
               capacityData={adjustCapacityResult}
               fanFlowsData={adjustFanFlowsResult}
@@ -340,25 +351,9 @@ const ThermalModelDetail = forwardRef<
               preferences={preferences}
             />
           )}
-          <RemoteCondensers
+          <GroupedDetails
             data={performance}
             model={condenser}
-            loading={isLoading}
-            unitTypes={unitsType}
-          />
-          <InletsAndOutlets
-            data={performance}
-            loading={isLoading}
-            unitTypes={unitsType}
-          />
-
-          <FanTechnicalData
-            data={performance}
-            loading={isLoading}
-            unitTypes={unitsType}
-          />
-          <GeometricParameters
-            data={performance}
             loading={isLoading}
             direction={condenser.airFlowDirection}
             unitTypes={unitsType}
@@ -378,7 +373,11 @@ const ThermalModelDetail = forwardRef<
           />
         </>
       ) : activeTab === 'wp' ? (
-        <WorkingPoint preferences={preferences} />
+        <WorkingPoint
+          preferences={preferences}
+          rows={workingPointRows}
+          loading={workingPointLoading}
+        />
       ) : (
         <>
           <EnergyAnalysis

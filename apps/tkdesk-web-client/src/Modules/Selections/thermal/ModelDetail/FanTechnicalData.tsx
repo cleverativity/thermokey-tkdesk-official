@@ -16,12 +16,12 @@ interface FanTechnicalDataProps {
 }
 
 const FANS = 'Fans'
-const RPM_UNITS = { si: 168, ip: 168 }
+const RPM_UNITS = { si: 169, ip: 169 }
 const POWER_UNITS = { si: 5, ip: 5 }
-const CURRENT_UNITS = { si: 165, ip: 165 }
-const SOUND_UNITS = { si: 167, ip: 167 }
-const VOLTAGE_UNITS = { si: 169, ip: 169 }
-const FREQUENCY_UNITS = { si: 170, ip: 170 }
+const CURRENT_UNITS = { si: 166, ip: 166 }
+const SOUND_UNITS = { si: 168, ip: 168 }
+const VOLTAGE_UNITS = { si: 170, ip: 170 }
+const FREQUENCY_UNITS = { si: 171, ip: 171 }
 
 function FanTechnicalData(props: FanTechnicalDataProps) {
   const { data, loading, unitTypes } = props

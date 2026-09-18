@@ -12,26 +12,24 @@ public class RemoteCondenserRequestValidatorTests
 
     private static RemoteCondenserRequest ValidRequest() => new()
     {
-        CondenserType = "V-Type",
-        CondenserModel = "All",
+        CondenserType = "All",
         FansConnection = "All~50Hz",
         AirFlowDirection = "Vertical",
         UnitsType = "si",
         Condensing = 45,
-        RefrigerantType = "R134a",
-        AtmosphericPress = 101325,
-        SplValue = 0,
+        RefrigerantType = "R-134a",
+        AtmosphericPress = 101.325,
+        MaxSoundPressure = 65,
         Distance = 10,
         ThermalCapacity = 50,
-        ToleranceMin = -10,
-        ToleranceMax = 10,
-        Compressor = 0,
+        Tolerance = 10,
+        Compressor = 25,
         SubCooling = 3,
         DryBulb = 25
     };
 
     [Test]
-    public void ValidRequest_WithMinAndMax_IsValid()
+    public void ValidRequest_WithTolerance_IsValid()
     {
         var result = _validator.Validate(ValidRequest());
 
@@ -39,10 +37,11 @@ public class RemoteCondenserRequestValidatorTests
     }
 
     [Test]
-    public void PositiveToleranceMinAndMax_IsValid()
+    public void ValidRequest_WithMinAndMax_IsValid()
     {
         var request = ValidRequest();
-        request.ToleranceMin = 10;
+        request.Tolerance = 0;
+        request.ToleranceMin = -10;
         request.ToleranceMax = 10;
 
         var result = _validator.Validate(request);
@@ -51,26 +50,111 @@ public class RemoteCondenserRequestValidatorTests
     }
 
     [Test]
-    public void MissingToleranceMin_IsInvalid()
+    public void OnlyMin_IsInvalid()
     {
         var request = ValidRequest();
-        request.ToleranceMin = null;
+        request.ToleranceMin = -10;
 
         var result = _validator.Validate(request);
 
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == "ToleranceMin");
+        result.Errors.Should().Contain(e => e.ErrorMessage.Contains("both be provided"));
     }
 
     [Test]
-    public void MissingToleranceMax_IsInvalid()
+    public void MinGreaterThanMax_IsInvalid()
     {
         var request = ValidRequest();
-        request.ToleranceMax = null;
+        request.ToleranceMin = 10;
+        request.ToleranceMax = -10;
 
         var result = _validator.Validate(request);
 
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == "ToleranceMax");
+        result.Errors.Should().Contain(e => e.ErrorMessage.Contains("cannot be greater"));
+    }
+
+    [Test]
+    public void NegativeEsp_IsInvalid()
+    {
+        var request = ValidRequest();
+        request.Esp = -1;
+
+        var result = _validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "Esp");
+    }
+
+    [Test]
+    public void ZeroEsp_IsValid()
+    {
+        var request = ValidRequest();
+        request.Esp = 0;
+
+        _validator.Validate(request).IsValid.Should().BeTrue();
+    }
+
+    [Test]
+    public void NegativeMaxSoundPower_IsInvalid()
+    {
+        var request = ValidRequest();
+        request.MaxSoundPower = -1;
+
+        var result = _validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "MaxSoundPower");
+    }
+
+    [Test]
+    public void NegativeNoiseTolerance_IsInvalid()
+    {
+        var request = ValidRequest();
+        request.NoiseTolerance = -1;
+
+        var result = _validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "NoiseTolerance");
+    }
+
+    [TestCase("ave")]
+    [TestCase("dew")]
+    [TestCase("bubble")]
+    [TestCase("0.5")]
+    [TestCase("1")]
+    [TestCase("0")]
+    [TestCase(null)]
+    public void CondensingReference_KnownValues_AreValid(string? reference)
+    {
+        var request = ValidRequest();
+        request.CondensingReference = reference;
+
+        _validator.Validate(request).IsValid.Should().BeTrue();
+    }
+
+    [Test]
+    public void CondensingReference_UnknownValue_IsInvalid()
+    {
+        var request = ValidRequest();
+        request.CondensingReference = "x";
+
+        var result = _validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "CondensingReference");
+    }
+
+    [Test]
+    public void CondensingReference_Middle_IsInvalid()
+    {
+        var request = ValidRequest();
+        request.CondensingReference = "middle";
+
+        var result = _validator.Validate(request);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "CondensingReference");
     }
 }

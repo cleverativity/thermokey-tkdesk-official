@@ -1,3 +1,4 @@
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Requests;
 using FluentValidation;
 
@@ -30,6 +31,10 @@ namespace Cardano.Application.Validators
             RuleFor(e => e.Condensing)
                 .NotNull().WithMessage("Condensing is required.");
 
+            RuleFor(e => e.CondensingReference)
+                .Must(CondensingReferenceConverter.IsAllowed)
+                .WithMessage("Condensing reference must be ave, dew, or bubble.");
+
             RuleFor(e => e.RefrigerantType)
                 .NotEmpty().WithMessage("Refrigerant type is required.")
                 .MaximumLength(50).WithMessage("Refrigerant type cannot exceed 50 characters.");
@@ -38,9 +43,17 @@ namespace Cardano.Application.Validators
                 .NotNull().WithMessage("Atmospheric pressure is required.")
                 .GreaterThan(0).WithMessage("Atmospheric pressure must be greater than 0.");
 
-            RuleFor(e => e.SplValue)
-                .NotNull().WithMessage("SPL value is required.")
-                .GreaterThanOrEqualTo(0).WithMessage("SPL value cannot be negative.");
+            RuleFor(e => e.MaxSoundPressure)
+                .NotNull().WithMessage("Max sound pressure is required.")
+                .GreaterThanOrEqualTo(0).WithMessage("Max sound pressure cannot be negative.");
+
+            RuleFor(e => e.MaxSoundPower)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Max sound power cannot be negative.");
+
+            RuleFor(e => e.NoiseTolerance)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Noise tolerance cannot be negative.");
 
             RuleFor(e => e.Distance)
                 .NotNull().WithMessage("Distance is required.")
@@ -50,11 +63,22 @@ namespace Cardano.Application.Validators
                 .NotNull().WithMessage("Thermal capacity is required.")
                 .GreaterThan(0).WithMessage("Thermal capacity must be greater than 0.");
 
+            RuleFor(e => e.Tolerance)
+                .GreaterThanOrEqualTo(0).WithMessage("Tolerance cannot be negative.")
+                .When(e => !e.ToleranceMin.HasValue && !e.ToleranceMax.HasValue);
+
             RuleFor(e => e.ToleranceMin)
-                .NotNull().WithMessage("Tolerance min is required.");
+                .NotNull().WithMessage("Tolerance min and max must both be provided.")
+                .When(e => e.ToleranceMin.HasValue || e.ToleranceMax.HasValue);
 
             RuleFor(e => e.ToleranceMax)
-                .NotNull().WithMessage("Tolerance max is required.");
+                .NotNull().WithMessage("Tolerance min and max must both be provided.")
+                .When(e => e.ToleranceMin.HasValue || e.ToleranceMax.HasValue);
+
+            RuleFor(e => e)
+                .Must(e => !e.ToleranceMin.HasValue || !e.ToleranceMax.HasValue || e.ToleranceMin <= e.ToleranceMax)
+                .WithMessage("Tolerance min cannot be greater than tolerance max.")
+                .When(e => e.ToleranceMin.HasValue && e.ToleranceMax.HasValue);
 
             RuleFor(e => e.Compressor)
                 .NotNull().WithMessage("Compressor value is required.")
@@ -72,6 +96,22 @@ namespace Cardano.Application.Validators
             RuleFor(e => e.RelHumidity)
                 .NotNull().WithMessage("Relative humidity is required.")
                 .InclusiveBetween(0, 100).WithMessage("Relative humidity must be between 0 and 100.");
+
+            RuleFor(e => e.MaxLength)
+                .GreaterThan(0)
+                .When(e => e.MaxLength.HasValue);
+
+            RuleFor(e => e.MaxHeight)
+                .GreaterThan(0)
+                .When(e => e.MaxHeight.HasValue);
+
+            RuleFor(e => e.MaxWidth)
+                .GreaterThan(0)
+                .When(e => e.MaxWidth.HasValue);
+
+            RuleFor(e => e.Esp)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("ESP cannot be negative.");
         }
     }
 }

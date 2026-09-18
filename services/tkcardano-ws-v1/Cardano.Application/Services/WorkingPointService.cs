@@ -1,3 +1,4 @@
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Computation;
@@ -224,7 +225,7 @@ namespace Cardano.Application.Services
                 return null;
             }
 
-            return value.Trim();
+            return RefrigerantTypeNormalizer.ToEngine(value.Trim());
         }
 
         private static double? ScaleByFans(double? singleValue, int fanCount)

@@ -4,6 +4,11 @@ import rawCoilGeometry from 'Localization/Constants/rating_coil_geometry.json'
 import rawFluidPassages from 'Localization/Constants/rating_fluid_passages.json'
 import React from 'react'
 
+const ALL_OPTION = { value: 'All', label: 'All' }
+const withAllOption = (
+  options: Array<{ value: string; label: string }> = [],
+) => [ALL_OPTION, ...options.filter((option) => option.value !== 'All')]
+
 function CoilFilter() {
   const twoColSpan = { xs: 24, sm: 12 }
 
@@ -17,8 +22,8 @@ function CoilFilter() {
           <StyledRow gutter={[8, 8]}>
             <FieldThermalSelect
               span={twoColSpan}
-              data={rawFluidPassages}
-              name='rating.fluid_passages'
+              data={withAllOption(rawFluidPassages)}
+              name='rating.fluidPassages'
               label='data.thermal.rating.fluid_passages'
               field='value'
               defaultValue='All'
@@ -26,8 +31,8 @@ function CoilFilter() {
             />
             <FieldThermalSelect
               span={twoColSpan}
-              data={rawCoilGeometry}
-              name='rating.tube_geo'
+              data={withAllOption(rawCoilGeometry)}
+              name='rating.coilGeometry'
               label='data.thermal.rating.tube_geo'
               field='value'
               defaultValue='All'

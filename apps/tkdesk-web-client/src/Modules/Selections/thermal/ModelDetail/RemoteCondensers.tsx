@@ -20,15 +20,15 @@ const PERFORMANCE = 'Performance'
 const CAPACITY_UNITS = { si: 6, ip: 8 }
 const REQ_CAPACITY_UNITS = { si: 6, ip: 8 }
 const TEMP_C_UNITS = { si: 32, ip: 33 }
-const TEMP_K_UNITS = { si: 34, ip: 33 }
+const TEMP_K_UNITS = { si: 35, ip: 33 }
 const ALTITUDE_UNITS = { si: 1, ip: 3 }
 const FLOW_UNITS = { si: 23, ip: 26 }
-const SOUND_UNITS = { si: 167, ip: 167 }
-const PRESSURE_KPA_UNITS = { si: 41, ip: 46 }
-const PRESSURE_PA_UNITS = { si: 40, ip: 50 }
-const SURFACE_UNITS = { si: 119, ip: 142 }
-const WEIGHT_UNITS = { si: 138, ip: 166 }
-const VOLUME_UNITS = { si: 137, ip: 146 }
+const SOUND_UNITS = { si: 168, ip: 168 }
+const PRESSURE_KPA_UNITS = { si: 42, ip: 47 }
+const PRESSURE_PA_UNITS = { si: 41, ip: 51 }
+const SURFACE_UNITS = { si: 120, ip: 143 }
+const WEIGHT_UNITS = { si: 139, ip: 167 }
+const VOLUME_UNITS = { si: 138, ip: 147 }
 const AT_DISTANCE_UNITS = { si: 1, ip: 3 }
 
 function RemoteCondensers(props: RemoteCondensersProps) {

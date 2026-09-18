@@ -85,62 +85,101 @@ const actionsCreator =
 
 const staticColumnThermalResults = [
   {
-    title: <FormattedMessage id='data.thermal.columns.model' />,
+    title: <FormattedMessage id='data.selections.model_detail.model_code' />,
     dataIndex: 'modelName',
     width: 150,
     render: (modelName: string) => <Span value={modelName} />,
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.capacity' />,
-    dataIndex: 'capacity',
-    render: (capacity: string) => (
-      <SpanNumber value={Number(capacity)} scale={2} isPointed={true} />
-    ),
+    title: null,
+    children: [
+      {
+        title: (
+          <FormattedMessage id='data.selections.model_detail.power_exchange' />
+        ),
+        dataIndex: 'capacity',
+        render: (capacity: string) => (
+          <SpanNumber value={Number(capacity)} scale={2} isPointed={true} />
+        ),
+      },
+    ],
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.air_flow' />,
-    dataIndex: 'airflow',
-    render: (airflow: string) => <Span value={airflow} />,
+    title: <FormattedMessage id='ui.thermal.panelHeader.fluid' />,
+    children: [
+      {
+        title: <FormattedMessage id='data.thermal.columns.tube_vol' />,
+        dataIndex: 'internal_Volume',
+        render: (internal_Volume: string) => <Span value={internal_Volume} />,
+      },
+      {
+        title: <FormattedMessage id='data.thermal.columns.connections_inlet' />,
+        dataIndex: 'inlet_Connection',
+        render: (inletConnection: string) => <Span value={inletConnection} />,
+      },
+      {
+        title: <FormattedMessage id='data.thermal.columns.connections_outlet' />,
+        dataIndex: 'outlet_Connection',
+        render: (outletConnection: string) => <Span value={outletConnection} />,
+      },
+    ],
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.spl' />,
-    dataIndex: 'spl',
-    render: (spl: string) => <Span value={spl} />,
+    title: null,
+    children: [
+      {
+        title: <FormattedMessage id='data.thermal.columns.air_flow' />,
+        dataIndex: 'airflow',
+        render: (airflow: string) => <Span value={airflow} />,
+      },
+    ],
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.fan_motors_number' />,
-    dataIndex: 'no_Fans',
-    render: (no_Fans: string) => <Span value={no_Fans} />,
+    title: null,
+    children: [
+      {
+        title: (
+          <FormattedMessage id='data.selections.model_detail.sound_pressure' />
+        ),
+        dataIndex: 'spl',
+        render: (spl: string) => <Span value={spl} />,
+      },
+    ],
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.fan_motors_rpm' />,
-    dataIndex: 'rpm',
-    render: (rpm: string) => <Span value={rpm} />,
+    title: <FormattedMessage id='ui.thermal.panelHeader.fans' />,
+    children: [
+      {
+        title: <FormattedMessage id='data.thermal.columns.fan_motors_number' />,
+        dataIndex: 'no_Fans',
+        render: (no_Fans: string) => <Span value={no_Fans} />,
+      },
+      {
+        title: <FormattedMessage id='data.thermal.columns.fan_motors_rpm' />,
+        dataIndex: 'rpm',
+        render: (rpm: string) => <Span value={rpm} />,
+      },
+      {
+        title: <FormattedMessage id='data.thermal.columns.fan_motors_power' />,
+        dataIndex: 'power',
+        render: (power: string) => <Span value={power} />,
+      },
+      {
+        title: <FormattedMessage id='data.thermal.columns.fan_motors_current' />,
+        dataIndex: 'current_a',
+        render: (current: string) => <Span value={current} />,
+      },
+    ],
   },
   {
-    title: <FormattedMessage id='data.thermal.columns.fan_motors_power' />,
-    dataIndex: 'power',
-    render: (power: string) => <Span value={power} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.columns.fan_motors_current' />,
-    dataIndex: 'current_a',
-    render: (current_a: string) => <Span value={current_a} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.columns.tube_vol' />,
-    dataIndex: 'internal_Volume',
-    render: (internal_Volume: string) => <Span value={internal_Volume} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.columns.weight' />,
-    dataIndex: 'weights',
-    render: (weights: string) => <Span value={weights} />,
-  },
-  {
-    title: <FormattedMessage id='data.thermal.columns.price' />,
-    dataIndex: 'price',
-    render: (price: string) => <Span value={price} />,
+    title: null,
+    children: [
+      {
+        title: <FormattedMessage id='data.thermal.columns.price' />,
+        dataIndex: 'price',
+        render: (price: string) => <Span value={price} />,
+      },
+    ],
   },
 ]
 
@@ -176,12 +215,11 @@ const staticColumnPefResults = [
     render: (_value: unknown, record: any) => {
       const fanType = record?.fanType
       const fanNumber = record?.fanNumber
-      const rows = record?.rows
       const value =
-        fanType == null && fanNumber == null && rows == null
+        fanType == null && fanNumber == null
           ? null
-          : `${fanType ?? '-'} / ${fanNumber ?? '-'} rows x ${rows ?? '-'}`
-      return <Span value={value} empty='- / - rows x -' />
+          : `${fanType ?? '-'} / ${fanNumber ?? '-'}`
+      return <Span value={value} empty='- / -' />
     },
   },
   {

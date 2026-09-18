@@ -19,9 +19,12 @@ namespace Cardano.Domain.Models
         public string? RefrigerantType { get; set; }
         public double AtmPressureInMetric { get; set; }
         public double SplValue { get; set; }
+        public double MaxSoundPower { get; set; }
+        public double NoiseTolerance { get; set; }
         public double Distance { get; set; }
         public string? FlowDirection { get; set; }
         public double ThermalCapacity { get; set; }
+        public double Tolerance { get; set; }
         public double ToleranceMin { get; set; }
         public double ToleranceMax { get; set; }
         public double SubCooling { get; set; }
@@ -31,5 +34,6 @@ namespace Cardano.Domain.Models
         public double RelHumidity { get; set; }
         public double CapacityAdjustment { get; set; }
         public double NewAirFlow { get; set; }
+        public double Esp { get; set; }
     }
 }

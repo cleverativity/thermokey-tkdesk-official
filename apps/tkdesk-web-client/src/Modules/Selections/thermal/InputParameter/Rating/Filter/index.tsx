@@ -6,15 +6,16 @@ import _ from 'lodash'
 
 interface RatingFilterProps {
   preferences: any
+  data?: any
 }
 
 function RatingFilterParameter(props: RatingFilterProps) {
-  const { preferences } = props
+  const { data, preferences } = props
   const unitsType = _.get(preferences, 'um_system', 'si')
   return (
     <>
       <UnitFilter unitTypes={unitsType} />
-      <VentilationFilter />
+      <VentilationFilter data={data} />
       <CoilFilter />
     </>
   )

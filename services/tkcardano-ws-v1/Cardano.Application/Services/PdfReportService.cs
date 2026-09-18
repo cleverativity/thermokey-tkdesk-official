@@ -992,19 +992,19 @@ namespace Cardano.Application.Services
                     {
                         string[] dataValues =
                         {
-                            enerAnalysis.AirTempInlet.ToString("F2"),
-                            enerAnalysis.Capacity.ToString("F2"),
-                            enerAnalysis.AirFlow.ToString("F2"),
-                            enerAnalysis.DpAir.ToString("F2"),
-                            enerAnalysis.Spl.ToString("F2"),
-                            enerAnalysis.Rpm.ToString("F2"),
-                            enerAnalysis.Power.ToString("F2"),
-                            enerAnalysis.CurrentFans.ToString("F2"),
-                            enerAnalysis.TubeVolume.ToString("F2"),
-                            enerAnalysis.Weight.ToString("F2"),
+                            FormatEnergyValue(enerAnalysis.AirTempInlet),
+                            FormatEnergyValue(enerAnalysis.Capacity),
+                            FormatEnergyValue(enerAnalysis.AirFlow),
+                            FormatEnergyValue(enerAnalysis.DpAir),
+                            FormatEnergyValue(enerAnalysis.Spl),
+                            FormatEnergyValue(enerAnalysis.Rpm),
+                            FormatEnergyValue(enerAnalysis.Power),
+                            FormatEnergyValue(enerAnalysis.CurrentFans),
+                            FormatEnergyValue(enerAnalysis.TubeVolume),
+                            FormatEnergyValue(enerAnalysis.Weight),
                             enerAnalysis.ConnectDiamInlet ?? string.Empty,
                             enerAnalysis.ConnectDiamOutlet ?? string.Empty,
-                            enerAnalysis.Price.ToString("F2")
+                            FormatEnergyValue(enerAnalysis.Price)
                         };
 
                         foreach (string value in dataValues)
@@ -1029,6 +1029,13 @@ namespace Cardano.Application.Services
 
                 return ms.ToArray();
             }
+        }
+
+        private static string FormatEnergyValue(double value)
+        {
+            return double.IsNaN(value) || double.IsInfinity(value)
+                ? "-"
+                : value.ToString("F2");
         }
     }
 }

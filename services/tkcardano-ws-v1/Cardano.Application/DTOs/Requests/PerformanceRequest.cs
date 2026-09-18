@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Cardano.Application.Common.Utilities;
 using Cardano.Domain.Entities;
 
 namespace Cardano.Application.DTOs.Requests
@@ -24,17 +26,27 @@ namespace Cardano.Application.DTOs.Requests
 
         public double Condensing { get; set; }
 
+        [JsonConverter(typeof(CondensingReferenceJsonConverter))]
+        public string? CondensingReference { get; set; }
+
         public string? RefrigerantType { get; set; }
 
         public double AtmosphericPress { get; set; }
 
-        public double SplValue { get; set; }
+        public double MaxSoundPressure { get; set; }
+
+        public double MaxSoundPower { get; set; }
+
+        public double NoiseTolerance { get; set; }
 
         public double Distance { get; set; }
 
         public double ThermalCapacity { get; set; }
 
+        public double Tolerance { get; set; }
+
         public double? ToleranceMin { get; set; }
+
         public double? ToleranceMax { get; set; }
 
         public double Compressor { get; set; }
@@ -48,8 +60,9 @@ namespace Cardano.Application.DTOs.Requests
         public double RelHumidity { get; set; }
         public double CapacityAdjustment { get; set; }
         public double NewAirFlow { get; set; }
-
-
-
+        public double? MaxLength { get; set; }
+        public double? MaxHeight { get; set; }
+        public double? MaxWidth { get; set; }
+        public double Esp { get; set; }
     }
 }

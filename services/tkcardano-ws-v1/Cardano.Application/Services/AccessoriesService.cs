@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Computation;
@@ -76,7 +77,7 @@ namespace Cardano.Application.Services
             int condenserId = dto.Id;
             String? condenserModel = dto.RemoteModel;
             String? fansConnection = dto.FansConnection;
-            String? refRigerantType = dto.RefRigerantType;
+            String? refRigerantType = RefrigerantTypeNormalizer.ToEngine(dto.RefRigerantType);
             String? flowDirection = dto.AirFlowDirection;
             Double accessoriesDiscount = dto.AccessoriesDiscount;
             Double unitDiscount = dto.UnitDiscount;

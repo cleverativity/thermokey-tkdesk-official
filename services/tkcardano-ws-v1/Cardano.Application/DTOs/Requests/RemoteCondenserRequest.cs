@@ -1,25 +1,26 @@
-﻿using Cardano.Application.DTOs.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Cardano.Application.Common.Utilities;
+using Cardano.Application.DTOs.Responses;
+using System.Text.Json.Serialization;
 
 namespace Cardano.Application.DTOs.Requests
 {
     public class RemoteCondenserRequest
     {
         public string? CondenserType { get; set; }
-        public string? CondenserModel { get; set; } 
         public string? FansConnection { get; set; }
         public string? AirFlowDirection { get; set; }
         public string? UnitsType { get; set; }
         public double Condensing { get; set; }
+        [JsonConverter(typeof(CondensingReferenceJsonConverter))]
+        public string? CondensingReference { get; set; }
         public string? RefrigerantType { get; set; }
         public double AtmosphericPress { get; set; }
-        public double SplValue { get; set; }
+        public double MaxSoundPressure { get; set; }
+        public double MaxSoundPower { get; set; }
+        public double NoiseTolerance { get; set; }
         public double Distance { get; set; }
         public double ThermalCapacity { get; set; }
+        public double Tolerance { get; set; }
         public double? ToleranceMin { get; set; }
         public double? ToleranceMax { get; set; }
         public double Compressor { get; set; }
@@ -28,8 +29,10 @@ namespace Cardano.Application.DTOs.Requests
         public double Altitude { get; set; }
         public double RelHumidity { get; set; }
         public string? CurrentUnitType { get; set; }
-
-        
+        public double? MaxLength { get; set; }
+        public double? MaxHeight { get; set; }
+        public double? MaxWidth { get; set; }
+        public double Esp { get; set; }
     }
 
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { Col } from 'antd'
 import { StyledRow, StyledTable } from 'Components/Styled'
 import _ from 'lodash'
@@ -11,11 +11,27 @@ import Air from './Air'
 
 interface WorkingPointDetailProps {
   preferences: any
+  rows?: any[]
+  loading?: boolean
 }
 
-const TABLE_BODY_HEIGHT = 240
-
 const WorkingPointPage = styled.div`
+  .wp-layout {
+    align-items: stretch;
+  }
+
+  .wp-table {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .wp-table .ant-spin-nested-loading,
+  .wp-table .ant-spin-container,
+  .wp-table .ant-table,
+  .wp-table .ant-table-container {
+    height: 100%;
+  }
   .wp-fields {
     .ant-form-item {
       margin-bottom: 0;
@@ -37,6 +53,10 @@ const WorkingPointPage = styled.div`
       align-items: stretch;
     }
 
+    .ant-space-compact > * {
+      min-width: 0;
+    }
+
     .ant-space-compact > *:not(:first-child) {
       margin-inline-start: -1px;
     }
@@ -47,17 +67,30 @@ const WorkingPointPage = styled.div`
     .ant-space-compact .ant-form-item-control-input,
     .ant-space-compact .ant-form-item-control-input-content {
       margin-bottom: 0;
+      margin-inline: 0;
+      width: 100%;
       height: 32px;
       min-height: 32px;
     }
 
     .ant-space-compact .ant-input-number,
-    .ant-space-compact .ant-input-number-affix-wrapper,
+    .ant-space-compact .ant-input-number-affix-wrapper {
+      height: 32px !important;
+      min-height: 32px !important;
+      border-start-start-radius: 6px !important;
+      border-end-start-radius: 6px !important;
+      border-start-end-radius: 0 !important;
+      border-end-end-radius: 0 !important;
+    }
+
     .ant-space-compact .ant-select,
     .ant-space-compact .ant-select-selector {
       height: 32px !important;
       min-height: 32px !important;
-      border-radius: 0 !important;
+      border-start-start-radius: 0 !important;
+      border-end-start-radius: 0 !important;
+      border-start-end-radius: 6px !important;
+      border-end-end-radius: 6px !important;
     }
 
     .ant-space-compact .ant-input-number-input {
@@ -81,17 +114,6 @@ const WorkingPointPage = styled.div`
       white-space: nowrap;
     }
 
-    .ant-space-compact > *:first-child .ant-input-number,
-    .ant-space-compact > *:first-child .ant-input-number-affix-wrapper {
-      border-start-start-radius: 6px !important;
-      border-end-start-radius: 6px !important;
-    }
-
-    .ant-space-compact > *:last-child .ant-select-selector {
-      border-start-end-radius: 6px !important;
-      border-end-end-radius: 6px !important;
-    }
-
     .ant-space-compact .ant-input-number-focused,
     .ant-space-compact .ant-select-focused,
     .ant-space-compact .ant-select-open {
@@ -113,41 +135,63 @@ const WorkingPointPage = styled.div`
     font-size: 13px;
     line-height: 20px;
   }
-
-  .wp-table .ant-table-body,
-  .wp-table .ant-table-content {
-    max-height: ${TABLE_BODY_HEIGHT}px !important;
-  }
 `
 
 function WorkingPoint(props: WorkingPointDetailProps) {
-  const { preferences } = props
+  const { preferences, rows = [], loading = false } = props
   const unitsType = _.get(preferences, 'um_system', 'si')
+  const fieldsRef = useRef<HTMLDivElement>(null)
+  const tableRef = useRef<HTMLDivElement>(null)
+  const [tableBodyHeight, setTableBodyHeight] = useState(240)
   const tableScrollX = staticColumn.reduce(
     (sum, column) => sum + (Number(column.width) || 0),
     0,
   )
 
+  useLayoutEffect(() => {
+    const fields = fieldsRef.current
+    const table = tableRef.current
+    if (!fields) return
+
+    const syncHeight = () => {
+      const fieldsHeight = fields.getBoundingClientRect().height
+      const thead = table?.querySelector('.ant-table-thead')
+      const headerHeight = thead?.getBoundingClientRect().height ?? 40
+      setTableBodyHeight(
+        Math.max(Math.round(fieldsHeight - headerHeight - 20), 120),
+      )
+    }
+
+    syncHeight()
+    const observer = new ResizeObserver(syncHeight)
+    observer.observe(fields)
+    return () => observer.disconnect()
+  }, [rows, loading])
+
   return (
     <WorkingPointPage>
-      <StyledRow gutter={[24, 16]} align='top'>
+      <StyledRow className='wp-layout' gutter={[24, 16]} align='stretch'>
         <Col xs={24} lg={8} className='wp-fields'>
-          <Speed />
-          <Air unitTypes={unitsType} />
-          <Liquid unitTypes={unitsType} />
-          <Ventilation unitTypes={unitsType} />
+          <div ref={fieldsRef}>
+            <Speed unitTypes={unitsType} />
+            <Air unitTypes={unitsType} />
+            <Liquid unitTypes={unitsType} />
+            <Ventilation unitTypes={unitsType} />
+          </div>
         </Col>
         <Col xs={24} lg={16} style={{ minWidth: 0 }} className='wp-table'>
-          <StyledTable
-            rowKey='id'
-            size='small'
-            dataSource={[]}
-            loading={false}
-            pagination={false}
-            columns={staticColumn}
-            tableLayout='fixed'
-            scroll={{ x: tableScrollX, y: TABLE_BODY_HEIGHT }}
-          />
+          <div ref={tableRef} style={{ height: '100%' }}>
+            <StyledTable
+              rowKey='id'
+              size='small'
+              dataSource={rows}
+              loading={loading}
+              pagination={false}
+              columns={staticColumn}
+              tableLayout='fixed'
+              scroll={{ x: tableScrollX, y: tableBodyHeight }}
+            />
+          </div>
         </Col>
       </StyledRow>
     </WorkingPointPage>

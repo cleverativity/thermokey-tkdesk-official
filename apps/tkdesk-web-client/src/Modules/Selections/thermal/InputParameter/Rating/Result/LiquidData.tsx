@@ -1,5 +1,5 @@
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import { formatRatingUnit, ResultDataProps } from './types'
 
 const DropletIcon = () => (
   <svg
@@ -19,7 +19,8 @@ const DropletIcon = () => (
 )
 
 function LiquidData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.refrigerantData
 
   return (
     <FieldsetCard
@@ -28,28 +29,27 @@ function LiquidData(props: ResultDataProps) {
       items={[
         {
           labelId: 'data.thermal.rating.liquid_data.refrigerant_type',
-          value: selectedMachine ? 'R-404A' : null,
+          value: data?.refrigerantType ?? null,
         },
         {
           labelId: 'data.thermal.rating.liquid_data.condensing',
-          value: selectedMachine ? 40.0 : null,
-          unit: '°C',
+          value: data?.condensing ?? null,
+          unit: formatRatingUnit(data?.condensingUnit),
         },
         {
           labelId: 'data.thermal.rating.liquid_data.subcooling',
-          value: selectedMachine ? 3.0 : null,
-          unit: 'K',
+          value: data?.subCooling ?? null,
+          unit: formatRatingUnit(data?.subCoolingUnit),
         },
         {
           labelId: 'data.thermal.rating.liquid_data.liquid_leaving',
-          value: selectedMachine ? 37.0 : null,
-          unit: '°C',
+          value: data?.liquidLeaving ?? null,
+          unit: formatRatingUnit(data?.liquidLeavingUnit),
         },
         {
           labelId: 'data.thermal.rating.liquid_data.pressure_drop',
-          value: selectedMachine ? 58 : null,
-          unit: 'kPa',
-          scale: 0,
+          value: data?.pressureDrop ?? null,
+          unit: formatRatingUnit(data?.pressureDropUnit),
         },
       ]}
     />

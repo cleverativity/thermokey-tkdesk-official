@@ -1,4 +1,5 @@
 using Cardano.Application.Common;
+using Cardano.Application.Common.Utilities;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Repositories;
 using Cardano.Domain.Entities;
@@ -28,7 +29,14 @@ namespace Cardano.Application.Services
         public async Task<IEnumerable<CondenserRefType>> GetAllCondenserRefType()
         {
             var conRefType = await _repository.GetAllCondenserRefType();
-            return conRefType;
+            return conRefType
+                .Select(r => new CondenserRefType
+                {
+                    Id = r.Id,
+                    condenser_type = RefrigerantTypeNormalizer.ToDisplay(r.condenser_type)
+                })
+                .OrderBy(r => r.condenser_type, StringComparer.OrdinalIgnoreCase)
+                .ToList();
         }
 
         public async Task<IEnumerable<CondenserType>> GetAllCondenserType()

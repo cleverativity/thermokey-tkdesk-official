@@ -9,16 +9,18 @@ import {
   StyledRow,
 } from 'Components/Styled'
 import { useFormikContext } from 'formik'
+import { useAuthorization } from 'Modules/App/Authorization'
 import { useUnitMeasureField } from 'Modules/Selections/units/shared/variableUnitField'
 
 interface AirProps {
-  OnChangeRelHumidity: (value: number) => void
-  OnChangeAltitude: (value: number) => void
+  onChangeRelHumidity: (value: number) => void
+  onChangeAltitude: (value: number) => void
   unitTypes: string
 }
 
-function Air({ OnChangeRelHumidity, OnChangeAltitude, unitTypes }: AirProps) {
+function Air({ onChangeRelHumidity, onChangeAltitude, unitTypes }: AirProps) {
   const { values, setFieldValue } = useFormikContext<any>()
+  const autho = useAuthorization()
 
   const dryBulbField = useUnitMeasureField({
     query: {
@@ -52,6 +54,7 @@ function Air({ OnChangeRelHumidity, OnChangeAltitude, unitTypes }: AirProps) {
     extraUnitFields: ['condenser.atmosphericPress_unit'],
     defaultValue: 101.35,
     defaultUnitIds: null,
+    enabled: autho.iAmAdmin,
   })
 
   const altitudeField = useUnitMeasureField({
@@ -71,10 +74,26 @@ function Air({ OnChangeRelHumidity, OnChangeAltitude, unitTypes }: AirProps) {
     defaultUnitIds: { si: 1, ip: 3 },
   })
 
+  const minOperativeTemperatureField = useUnitMeasureField({
+    query: {
+      product: 'condenser',
+      step: 'Input parameters',
+      section: 'Air',
+      variable: 'minOperativeTemperature',
+    },
+    values,
+    setFieldValue,
+    unitTypes,
+    valueField: 'condenser.minOperativeTemperature',
+    unitField: 'condenser.minOperativeTemperatureType',
+    defaultValue: -20,
+    defaultUnitIds: { si: 32, ip: 33 },
+  })
+
   return (
     <>
-      <StyledCollapse defaultActiveKey={['2']} style={{ marginBottom: '20px' }}>
-        <StyledCollapsePanel header='ui.thermal.panelHeader.air' key='2'>
+      <StyledCollapse defaultActiveKey={['3']} style={{ marginBottom: '20px' }}>
+        <StyledCollapsePanel header='ui.thermal.panelHeader.air' key='3'>
           <StyledRow gutter={[16, 16]}>
             <FieldUnitInput
               span={{ sm: 24, md: 12, lg: 5 }}
@@ -92,20 +111,22 @@ function Air({ OnChangeRelHumidity, OnChangeAltitude, unitTypes }: AirProps) {
               label='data.thermal.field.rel_humidity'
               required
               isPointed={true}
-              overrideOnChange={OnChangeRelHumidity}
+              overrideOnChange={onChangeRelHumidity}
               defaultValue={50}
               hasFeedback={false}
               controls={false}
             />
 
-            <FieldUnitInput
-              span={{ sm: 24, md: 12, lg: 5 }}
-              labelId='data.thermal.field.atmospheric'
-              field={atmosphericField}
-              valueName='condenser.atmosphericPress'
-              unitName='condenser.atmosphericPressType'
-              required
-            />
+            {autho.iAmAdmin && (
+              <FieldUnitInput
+                span={{ sm: 24, md: 12, lg: 5 }}
+                labelId='data.thermal.field.atmospheric'
+                field={atmosphericField}
+                valueName='condenser.atmosphericPress'
+                unitName='condenser.atmosphericPressType'
+                required
+              />
+            )}
 
             <FieldThermalSelect
               span={{ sm: 24, md: 12, lg: 5 }}
@@ -124,6 +145,15 @@ function Air({ OnChangeRelHumidity, OnChangeAltitude, unitTypes }: AirProps) {
               valueName='condenser.altitude'
               unitName='condenser.altitudeType'
               required
+            />
+
+            <FieldUnitInput
+              span={{ sm: 24, md: 12, lg: 5 }}
+              labelId='data.selections.input_parameters.min_operative_temperature'
+              field={minOperativeTemperatureField}
+              valueName='condenser.minOperativeTemperature'
+              unitName='condenser.minOperativeTemperatureType'
+              unitSelectWidth={64}
             />
           </StyledRow>
         </StyledCollapsePanel>

@@ -13,7 +13,7 @@ namespace Cardano.Application.DTOs.Requests
         public int? NumberOfModules { get; set; }
         public int? NumberOfFans { get; set; }
         public string? Assembly { get; set; }
-        public string? FanType { get; set; }
+        public string? FansConnection { get; set; }
         public string? FanBrand { get; set; }
         public int? FanDiameter { get; set; }
         public MeasuredValue? FanSpeed { get; set; }

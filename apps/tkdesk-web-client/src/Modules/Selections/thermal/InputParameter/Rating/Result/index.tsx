@@ -1,6 +1,7 @@
 import { Col } from 'antd'
 import { Span, SpanIntl } from 'Components/Span'
 import {
+  StyledButton,
   StyledCard,
   StyledCollapse,
   StyledCollapsePanel,
@@ -11,7 +12,7 @@ import {
 import _ from 'lodash'
 import { applyFiltersToColumns, applyOrdersToColumns } from 'Model/table'
 import { staticColumnPefResults } from 'Model/Selections/table'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import AirData from './AirData'
 import CoilData from './CoilData'
@@ -20,13 +21,17 @@ import NoiseData from './NoiseData'
 import PerfData from './PerfData'
 import UnitData from './UnitData'
 import VentilationData from './VentilationData'
-import { PefMachine } from './types'
+import { PefMachine, RatingCalculation } from './types'
 
 interface RatingResultProps {
   machines?: PefMachine[]
   loading?: boolean
+  calculating?: boolean
+  calculation?: RatingCalculation | null
   params?: SearchParameters
   onUpdateParams?: any
+  onSelectMachine?: (machine: PefMachine | null) => void
+  onCalculate?: () => void
   filterContent?: React.ReactNode
   fieldsContent?: React.ReactNode
 }
@@ -383,8 +388,12 @@ function RatingResult(props: RatingResultProps) {
   const {
     machines = SAMPLE_MACHINES,
     loading = false,
+    calculating = false,
+    calculation = null,
     params,
     onUpdateParams,
+    onSelectMachine,
+    onCalculate,
     filterContent,
     fieldsContent,
   } = props
@@ -400,6 +409,22 @@ function RatingResult(props: RatingResultProps) {
     [selectedMachineDetail],
   )
 
+  const clearSelection = () => {
+    setSelectedRowKeys([])
+    setSelectedMachineDetail([])
+    onSelectMachine?.(null)
+  }
+
+  const selectMachine = (machine: PefMachine) => {
+    setSelectedRowKeys([machine.id])
+    setSelectedMachineDetail([machine])
+    onSelectMachine?.(machine)
+  }
+
+  useEffect(() => {
+    clearSelection()
+  }, [machines])
+
   const filteredMachines = useMemo(
     () => _.filter(machines, (machine) => matchesQuery(machine, searchQuery)),
     [machines, searchQuery],
@@ -412,8 +437,7 @@ function RatingResult(props: RatingResultProps) {
 
   const handleQueryChange = (newQuery: string) => {
     setSearchQuery(newQuery)
-    setSelectedRowKeys([])
-    setSelectedMachineDetail([])
+    clearSelection()
 
     if (onUpdateParams) {
       onUpdateParams({
@@ -443,12 +467,7 @@ function RatingResult(props: RatingResultProps) {
 
   const fanTypeNumber = selectedMachine
     ? joinOrDash(
-        [
-          selectedMachine.fanType,
-          `${selectedMachine.fanNumber ?? PLACEHOLDER} rows x ${
-            selectedMachine.rows ?? PLACEHOLDER
-          }`,
-        ],
+        [selectedMachine.fanType, selectedMachine.fanNumber],
         ' / ',
       )
     : null
@@ -484,7 +503,7 @@ function RatingResult(props: RatingResultProps) {
     {
       labelId: 'data.thermal.rating.pef.fan_type_number',
       value: fanTypeNumber,
-      empty: `${PLACEHOLDER} / ${PLACEHOLDER} rows x ${PLACEHOLDER}`,
+      empty: `${PLACEHOLDER} / ${PLACEHOLDER}`,
     },
     {
       labelId: 'data.thermal.rating.pef.dimensions',
@@ -535,15 +554,18 @@ function RatingResult(props: RatingResultProps) {
             type: 'radio',
             hideSelectAll: true,
             selectedRowKeys,
-            onChange: (keys: React.Key[], selectedRows: PefMachine[]) => {
-              setSelectedRowKeys(keys)
-              setSelectedMachineDetail(selectedRows)
+            onChange: (_keys: React.Key[], selectedRows: PefMachine[]) => {
+              const machine = selectedRows[0]
+              if (machine) {
+                selectMachine(machine)
+              } else {
+                clearSelection()
+              }
             },
           }}
           onRow={(record: PefMachine) => ({
             onClick: () => {
-              setSelectedRowKeys([record.id])
-              setSelectedMachineDetail([record])
+              selectMachine(record)
             },
           })}
         />
@@ -574,30 +596,61 @@ function RatingResult(props: RatingResultProps) {
       >
         <StyledRow gutter={[16, 16]} align='stretch'>
           <FieldsetCardCol xs={24} lg={8}>
-            <PerfData selectedMachine={selectedMachine} />
+            <PerfData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
           <FieldsetCardCol xs={24} lg={8}>
-            <AirData selectedMachine={selectedMachine} />
+            <AirData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
           <FieldsetCardCol xs={24} lg={8}>
-            <LiquidData selectedMachine={selectedMachine} />
+            <LiquidData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
         </StyledRow>
         <StyledRow gutter={[16, 16]} align='stretch' style={{ marginTop: 16 }}>
           <FieldsetCardCol xs={24} lg={8}>
-            <UnitData selectedMachine={selectedMachine} />
+            <UnitData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
           <FieldsetCardCol xs={24} lg={8}>
-            <NoiseData selectedMachine={selectedMachine} />
+            <NoiseData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
           <FieldsetCardCol xs={24} lg={8}>
-            <CoilData selectedMachine={selectedMachine} />
+            <CoilData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
         </StyledRow>
         <StyledRow gutter={[16, 16]} style={{ marginTop: 16 }}>
           <FieldsetCardCol xs={24}>
-            <VentilationData selectedMachine={selectedMachine} />
+            <VentilationData
+              selectedMachine={selectedMachine}
+              calculation={calculation}
+            />
           </FieldsetCardCol>
+        </StyledRow>
+        <StyledRow justify='end' style={{ marginTop: 16 }}>
+          <StyledButton
+            type='primary'
+            id='button.thermal.rating.calculate'
+            label='ui.generic.calculate'
+            loading={calculating}
+            disabled={!selectedMachine || calculating}
+            onClick={() => onCalculate?.()}
+          />
         </StyledRow>
       </StyledCollapsePanel>
     </StyledCollapse>

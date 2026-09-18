@@ -1,4 +1,5 @@
-﻿using Cardano.Application.DTOs.Requests;
+﻿using Cardano.Application.Common.Utilities;
+using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Computation;
 using Cardano.Application.Interfaces.Services;
@@ -71,6 +72,7 @@ namespace Cardano.Application.Services
             }
 
             var fanSpeed = NormalizeFanSpeed(request.FanSpeed);
+            var fan = FansConnectionMapper.Resolve(request.FansConnection, request.FanBrand);
 
             return new RatingSearch
             {
@@ -79,8 +81,8 @@ namespace Cardano.Application.Services
                 NumberOfModules = request.NumberOfModules,
                 NumberOfFans = request.NumberOfFans,
                 Assembly = NormalizeAll(request.Assembly),
-                FanType = NormalizeAll(request.FanType),
-                FanBrand = NormalizeAll(request.FanBrand),
+                FanType = fan.FanType,
+                FanBrand = fan.FanBrand,
                 FanDiameter = request.FanDiameter,
                 FanSpeedValue = fanSpeed.Value,
                 FanSpeedUnit = fanSpeed.Unit,
@@ -360,7 +362,7 @@ namespace Cardano.Application.Services
                 return null;
             }
 
-            return value.Trim();
+            return RefrigerantTypeNormalizer.ToEngine(value.Trim());
         }
 
         private static double? ToMeters(double millimeters)

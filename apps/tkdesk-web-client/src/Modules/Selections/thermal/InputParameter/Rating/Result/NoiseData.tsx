@@ -1,9 +1,10 @@
 import { SoundOutlined } from '@ant-design/icons'
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import { formatRatingUnit, ResultDataProps } from './types'
 
 function NoiseData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.noiseData
 
   return (
     <FieldsetCard
@@ -12,20 +13,20 @@ function NoiseData(props: ResultDataProps) {
       items={[
         {
           labelId: 'data.thermal.rating.noise_data.sound_power',
-          value: selectedMachine ? 84 : null,
-          unit: 'dB(A)',
+          value: data?.soundPower ?? null,
+          unit: formatRatingUnit(data?.soundPowerUnit),
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.noise_data.sound_pressure',
-          value: selectedMachine ? 52 : null,
-          unit: 'dB(A)',
+          value: data?.soundPressure ?? null,
+          unit: formatRatingUnit(data?.soundPressureUnit),
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.noise_data.distance',
-          value: selectedMachine ? 10 : null,
-          unit: 'm',
+          value: data?.distance ?? null,
+          unit: formatRatingUnit(data?.distanceUnit),
           scale: 0,
         },
       ]}

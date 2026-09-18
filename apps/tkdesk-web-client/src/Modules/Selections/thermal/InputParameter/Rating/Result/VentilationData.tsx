@@ -1,84 +1,98 @@
 import { Fan } from 'Components/Icons'
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import {
+  formatRatingPair,
+  formatRatingUnit,
+  ResultDataProps,
+} from './types'
 
 function VentilationData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.ventilationData
+  const electricalSupply =
+    data?.phases == null && data?.voltage == null && data?.frequency == null
+      ? null
+      : `${data?.phases ?? '-'}ph / ${data?.voltage ?? '-'}V / ${
+          data?.frequency ?? '-'
+        }Hz`
 
   return (
     <FieldsetCard
       title='ui.thermal.panelHeader.rating_ventilation_data'
       icon={<Fan width='14px' height='14px' />}
       warningId={
-        selectedMachine
+        data
           ? 'data.thermal.rating.ventilation_data.long_delivery_warning'
           : undefined
       }
       items={[
         {
           labelId: 'data.thermal.rating.ventilation_data.fan_name',
-          value: selectedMachine ? 'FN080-SDS.6N,V7 ART 138756' : null,
+          value: data?.fanName ?? null,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.fan_type',
-          value: selectedMachine ? 'AC' : null,
+          value: data?.fanType ?? null,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.speed_wp_max',
-          value: selectedMachine ? '900 / 900' : null,
+          value: formatRatingPair(data?.rpmWp, data?.rpmMax),
           unit: 'rpm',
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.esp',
-          value: selectedMachine ? 0 : null,
-          unit: 'Pa',
+          value: data?.esp ?? null,
+          unit: formatRatingUnit(data?.espUnit) ?? 'Pa',
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.diameter',
-          value: selectedMachine ? 800 : null,
+          value: data?.diameter ?? null,
           unit: 'mm',
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.fan_rows',
-          value: selectedMachine ? 2 : null,
+          value: data?.fanRows ?? null,
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.fan_per_row',
-          value: selectedMachine ? 1 : null,
+          value: data?.fansPerRow ?? null,
           scale: 0,
         },
       ]}
       rightItems={[
         {
           labelId: 'data.thermal.rating.ventilation_data.link',
-          value: selectedMachine ? 'AC' : null,
+          value: data?.link ?? null,
         },
         {
           labelId:
             'data.thermal.rating.ventilation_data.phases_voltage_frequency',
-          value: selectedMachine ? '3ph / 400V / 50Hz' : null,
+          value: electricalSupply,
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.single_power',
-          value: selectedMachine ? '1,800 / 1,800' : null,
+          value: formatRatingPair(data?.singlePowerWp, data?.singlePowerMax),
           unit: 'W',
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.total_power',
-          value: selectedMachine ? '3,600 / 3,600' : null,
+          value: formatRatingPair(data?.totalPowerWp, data?.totalPowerMax),
           unit: 'W',
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.single_current',
-          value: selectedMachine ? '3.90 / 3.90' : null,
+          value: formatRatingPair(
+            data?.singleCurrentWp,
+            data?.singleCurrentMax,
+          ),
           unit: 'A',
         },
         {
           labelId: 'data.thermal.rating.ventilation_data.total_current',
-          value: selectedMachine ? '7.80 / 7.80' : null,
+          value: formatRatingPair(data?.totalCurrentWp, data?.totalCurrentMax),
           unit: 'A',
         },
       ]}

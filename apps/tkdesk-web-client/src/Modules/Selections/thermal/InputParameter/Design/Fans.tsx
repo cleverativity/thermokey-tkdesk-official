@@ -3,9 +3,13 @@ import {
   FieldCheckbox,
   FieldSwitch,
   FieldThermalSelect,
+  FieldUnitInput,
 } from 'Components/Field'
+import { SpanIntl } from 'Components/Span'
 import { StyledCollapse, StyledCollapsePanel } from 'Components/Styled'
 import Row from 'Components/Styled/Row'
+import { useFormikContext } from 'formik'
+import { useUnitMeasureField } from 'Modules/Selections/units/shared/variableUnitField'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import rawVenFilter from 'Localization/Constants/ventilation_filter.json'
@@ -14,12 +18,30 @@ interface FansProps {
   data?: {
     fanConnection?: any[]
   }
+  unitTypes: string
 }
 
 function Fans(props: FansProps) {
   const intl = useIntl()
-  const { fanConnection } = props.data
+  const { fanConnection } = props.data ?? {}
+  const { values, setFieldValue } = useFormikContext<any>()
   const compactFieldStyle = { marginBottom: 0 }
+
+  const espField = useUnitMeasureField({
+    query: {
+      product: 'condenser',
+      step: 'Input parameters',
+      section: 'Fans',
+      variable: 'esp',
+    },
+    values,
+    setFieldValue,
+    unitTypes: props.unitTypes,
+    valueField: 'condenser.esp',
+    unitField: 'condenser.espType',
+    defaultValue: 0,
+    defaultUnitIds: { si: 41, ip: 51 },
+  })
 
   const handleErpFilter = (checked: boolean, { form, field }: any) => {
     form.setFieldValue(field.name, checked ? 'ul' : 'erp', false)
@@ -38,6 +60,18 @@ function Fans(props: FansProps) {
               defaultValue='All~50Hz'
               field='fan_connection'
               required
+            />
+            <FieldUnitInput
+              span={{ sm: 24, md: 12, lg: 6 }}
+              labelId='data.thermal.rating.esp'
+              field={espField}
+              valueName='condenser.esp'
+              unitName='condenser.espType'
+              tooltip={
+                <SpanIntl value='data.selections.input_parameters.esp.tooltip' />
+              }
+              tooltipTrigger='click'
+              unitSelectWidth={112}
             />
             <Col xs={24} flex='none'>
               <FieldCheckbox

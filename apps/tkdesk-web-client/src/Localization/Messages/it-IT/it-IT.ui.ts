@@ -357,7 +357,7 @@ export default {
         rating_ventilation_data: 'Dati di ventilazione',
         working_point_speed: 'Velocità',
         working_point_air: 'Aria',
-        working_point_liquid: 'Liquido',
+        working_point_liquid: 'Refrigerante',
         working_ventilation: 'Ventilazione',
       },
       tab_value: {

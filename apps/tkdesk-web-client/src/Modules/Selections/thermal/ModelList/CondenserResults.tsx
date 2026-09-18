@@ -20,6 +20,7 @@ import { CondenserDataTable } from 'Model/Selections/steps/ModelList/table'
 import useCondenserPayload from '../../units/shared/condenserPayload'
 import { useColumnUM } from './ColumnUM'
 import { getCondenserDataTableColumns, useTableDetailUM } from './TableDetailUM'
+import EntryConditions from '../ModelDetail/EntryConditions'
 
 interface CondenserResultProps {
   condenser?: any
@@ -185,6 +186,7 @@ function CondenserResults(props: CondenserResultProps) {
   type CondenserRow = Record<string, any>
   return (
     <>
+      <EntryConditions />
       <StyledCard>
         <StyledRow style={{ display: 'flex', justifyContent: 'center' }}>
           <SpanIntl
@@ -227,6 +229,9 @@ function CondenserResults(props: CondenserResultProps) {
             pagination={tablePagination}
             onChange={handleTableChange}
             columns={tableColumns}
+            bordered
+            tableLayout='auto'
+            scroll={{ x: 'max-content', y: 55 * 5 }}
             rowSelection={{
               // type: 'radio',
               hideSelectAll: true,

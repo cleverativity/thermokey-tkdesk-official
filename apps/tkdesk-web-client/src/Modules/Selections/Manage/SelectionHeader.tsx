@@ -309,6 +309,9 @@ const SelectionHeader = (props: any) => {
           onCalculateEnergy={(payload) =>
             thermalModelDetailRef.current?.calculateEnergyAnalysis(payload)
           }
+          onCalculateWorkingPoint={() =>
+            thermalModelDetailRef.current?.calculateWorkingPoint()
+          }
           onDownload={onPDFDownload}
           onDownloadCondenserPdf={() =>
             thermalModelDetailRef.current?.downloadCondenserPdf()

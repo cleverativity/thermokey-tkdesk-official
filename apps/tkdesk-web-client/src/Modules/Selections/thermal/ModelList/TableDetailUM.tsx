@@ -74,7 +74,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailSpl',
     unitField: 'condenser.detailSplType',
     extraUnitFields: ['condenser.detailSpl_unit'],
-    defaultUnitIds: { si: 167, ip: 167 },
+    defaultUnitIds: { si: 168, ip: 168 },
     baseField: 'condenser.detailSplBaseW',
   },
   {
@@ -102,7 +102,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailFanMotorsRPM',
     unitField: 'condenser.detailFanMotorsRPMType',
     extraUnitFields: ['condenser.detailFanMotorsRPM_unit'],
-    defaultUnitIds: { si: 168, ip: 168 },
+    defaultUnitIds: { si: 169, ip: 169 },
     baseField: 'condenser.detailFanMotorsRPMBaseW',
   },
   {
@@ -130,7 +130,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailFanMotorsCurrent',
     unitField: 'condenser.detailFanMotorsCurrentType',
     extraUnitFields: ['condenser.detailFanMotorsCurrent_unit'],
-    defaultUnitIds: { si: 165, ip: 165 },
+    defaultUnitIds: { si: 166, ip: 166 },
     baseField: 'condenser.detailFanMotorsCurrentBaseW',
   },
   {
@@ -144,7 +144,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailTubeVolume',
     unitField: 'condenser.detailTubeVolumeType',
     extraUnitFields: ['condenser.detailTubeVolume_unit'],
-    defaultUnitIds: { si: 137, ip: 146 },
+    defaultUnitIds: { si: 138, ip: 147 },
     baseField: 'condenser.detailTubeVolumeBaseW',
   },
   {
@@ -158,7 +158,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailWeight',
     unitField: 'condenser.detailWeightType',
     extraUnitFields: ['condenser.detailWeight_unit'],
-    defaultUnitIds: { si: 138, ip: 166 },
+    defaultUnitIds: { si: 139, ip: 167 },
     baseField: 'condenser.detailWeightBaseW',
   },
   {
@@ -200,7 +200,7 @@ const DETAIL_UM_FIELDS: DetailUMFieldConfig[] = [
     valueField: 'condenser.detailPrice',
     unitField: 'condenser.detailPriceType',
     extraUnitFields: ['condenser.detailPrice_unit'],
-    defaultUnitIds: { si: 131, ip: 131 },
+    defaultUnitIds: { si: 132, ip: 132 },
     baseField: 'condenser.detailPriceBaseW',
   },
 ]

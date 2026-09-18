@@ -1,4 +1,5 @@
-﻿using Cardano.Domain.Entities;
+﻿using Cardano.Application.Common.Utilities;
+using Cardano.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -69,15 +70,21 @@ namespace Cardano.Application.DTOs.Responses
             public string? RemoteModel { get; set; }
             public string? CondenserType { get; set; }
             public double Condensing { get; set; }
+            [JsonConverter(typeof(CondensingReferenceJsonConverter))]
+            public string? CondensingReference { get; set; }
             public double Distance { get; set; }
             public double DryBulb { get; set; }
             public string? FansConnection { get; set; }
             public string? RefrigerantType { get; set; }
             public double RelHumidity { get; set; }
-            public double SplValue { get; set; }
+            public double MaxSoundPressure { get; set; }
+            public double MaxSoundPower { get; set; }
+            public double NoiseTolerance { get; set; }
             public double SubCooling { get; set; }
             public double ThermalCapacity { get; set; }
             public double Tolerance { get; set; }
+            public double? ToleranceMin { get; set; }
+            public double? ToleranceMax { get; set; }
             public string? UnitsType { get; set; }
             public double CapacityAdjustment { get; set; }
             public string? AdjustmentModuleType { get; set; }
@@ -85,6 +92,10 @@ namespace Cardano.Application.DTOs.Responses
             public double Current_a { get; set; }
             public double Price { get; set; }
             public string? CurrentUnitType { get; set; }
+            public double? MaxLength { get; set; }
+            public double? MaxHeight { get; set; }
+            public double? MaxWidth { get; set; }
+            public double Esp { get; set; }
         }
     }
 
@@ -133,15 +144,21 @@ namespace Cardano.Application.DTOs.Responses
         public string? RemoteModel { get; set; }
         public string? CondenserType { get; set; }
         public double Condensing { get; set; }
+        [JsonConverter(typeof(CondensingReferenceJsonConverter))]
+        public string? CondensingReference { get; set; }
         public double Distance { get; set; }
         public double DryBulb { get; set; }
         public string? FansConnection { get; set; }
         public string? RefrigerantType { get; set; }
         public double RelHumidity { get; set; }
-        public double SplValue { get; set; }
+        public double MaxSoundPressure { get; set; }
+        public double MaxSoundPower { get; set; }
+        public double NoiseTolerance { get; set; }
         public double SubCooling { get; set; }
         public double ThermalCapacity { get; set; }
         public double Tolerance { get; set; }
+        public double? ToleranceMin { get; set; }
+        public double? ToleranceMax { get; set; }
         public string? UnitsType { get; set; }
         public double CapacityAdjustment { get; set; }
         public string? AdjustmentModuleType { get; set; }
@@ -149,6 +166,9 @@ namespace Cardano.Application.DTOs.Responses
         public double Current_a { get; set; } // Clearer naming
         public double Price { get; set; }
         public string? currentUnitType { get; set; }
-        
+        public double? MaxLength { get; set; }
+        public double? MaxHeight { get; set; }
+        public double? MaxWidth { get; set; }
+        public double Esp { get; set; }
     }
 }

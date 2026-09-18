@@ -1,7 +1,4 @@
-import {
-  FieldThermalSelect,
-  FieldUnitInput,
-} from 'Components/Field'
+import { FieldThermalSelect, FieldUnitInput } from 'Components/Field'
 import { useFormikContext } from 'formik'
 import { useUnitMeasureField } from 'Modules/Selections/units/shared/variableUnitField'
 import React from 'react'
@@ -36,6 +33,7 @@ function Liquid(props: LiquidProps) {
     unitTypes,
     valueField: 'rating.condensing',
     unitField: 'rating.condensingType',
+    defaultValue: 45,
     defaultUnitIds: { si: 32, ip: 33 },
   })
 
@@ -51,7 +49,8 @@ function Liquid(props: LiquidProps) {
     unitTypes,
     valueField: 'rating.subCooling',
     unitField: 'rating.subCoolingType',
-    defaultUnitIds: { si: 34, ip: 33 },
+    defaultValue: 5,
+    defaultUnitIds: { si: 35, ip: 33 },
   })
 
   const capacity = useUnitMeasureField({
@@ -64,11 +63,12 @@ function Liquid(props: LiquidProps) {
     values,
     setFieldValue,
     unitTypes,
-    valueField: 'rating.capacity',
-    unitField: 'rating.capacityType',
-    extraUnitFields: ['rating.capacity_unit'],
+    valueField: 'rating.thermalCapacity',
+    unitField: 'rating.thermalCapacityType',
+    extraUnitFields: ['rating.thermalCapacity_unit'],
     defaultUnitIds: { si: 6, ip: 8 },
-    baseField: 'rating.capacityBaseW',
+    defaultValue: 100,
+    baseField: 'rating.thermalCapacityBaseW',
   })
 
   return (
@@ -85,7 +85,7 @@ function Liquid(props: LiquidProps) {
               name='rating.refrigerantType'
               label='data.thermal.field.refrigerant_type'
               field='condenser_type'
-              defaultValue='R-404A'
+              defaultValue='R404A'
               required
               hasFeedback={false}
             />
@@ -109,8 +109,8 @@ function Liquid(props: LiquidProps) {
               span={twoColSpan}
               labelId='data.thermal.rating.capacity'
               field={capacity}
-              valueName='rating.capacity'
-              unitName='rating.capacityType'
+              valueName='rating.thermalCapacity'
+              unitName='rating.thermalCapacityType'
               required
             />
           </StyledRow>

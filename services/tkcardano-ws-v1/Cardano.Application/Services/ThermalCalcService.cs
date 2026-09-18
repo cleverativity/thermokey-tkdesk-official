@@ -46,6 +46,8 @@ namespace Cardano.Application.Services
             var con = (await _condenserRepository.GetAllCondenser()).ToList();
             var acc = (await _repository.GetAllAccessories()).ToList();
 
+            ApplyBackupEngineInputs(dto);
+
             int condenserId = dto.ModelId;
             int selectedModelId = dto.Id;
             string? remoteModel = dto.RemoteModel;
@@ -55,10 +57,10 @@ namespace Cardano.Application.Services
             Double condensing = dto.Condensing;
             string? refRigerantType = dto.RefrigerantType;
             Double atmPressureInMetric = dto.AtmosphericPress;
-            Double splValue = dto.SplValue;
             Double distance = dto.Distance;
             string? flowDirection = dto.AirFlowDirection;
             Double thermalCapacity = dto.ThermalCapacity;
+            Double tolerance = dto.Tolerance;
             Double subCooling = dto.SubCooling;
             Double compressor = dto.Compressor;
             Double dryBulb = _unitConvert.DegFfromDegDryBulb(dto.DryBulb); //_thermokeyCondensers.DegFfromDegDryBulb(dto.DryBulb);
@@ -67,8 +69,26 @@ namespace Cardano.Application.Services
             Double capacityAdjustment = dto.CapacityAdjustment;
             Double newAirFlow = dto.NewAirFlow;
 
+            dto.Condensing = CondensingReferenceConverter.ToEngineCondensing(
+                dto.Condensing,
+                dto.RefrigerantType,
+                dto.CondensingReference);
             dto.DryBulb = _unitConvert.DegFfromDegDryBulb(dto.DryBulb);
             dto.Condensing = _unitConvert.DegFfromDegDryBulb(dto.Condensing);
+
+            var selected = con.FirstOrDefault(unit => unit.Id == condenserId);
+            if (selected is not null
+                && !CondenserSizeFilter.Fits(
+                    selected,
+                    CondenserSizeFilter.ToMillimetres(dto.MaxLength, dto.UnitsType),
+                    CondenserSizeFilter.ToMillimetres(dto.MaxHeight, dto.UnitsType),
+                    CondenserSizeFilter.ToMillimetres(dto.MaxWidth, dto.UnitsType),
+                    dto.CondenserType,
+                    dto.AirFlowDirection))
+            {
+                return [];
+            }
+
             var condenserSearch = CreateCondenserSearch(dto);
 
             _engine.CapacitySearch(con, condenserSearch);
@@ -79,7 +99,7 @@ namespace Cardano.Application.Services
 
         public CondenserSearch CreateCondenserSearch(PerformanceRequest dto)
         {
-            var (toleranceMin, toleranceMax) = ToleranceBounds.Resolve(dto.ToleranceMin, dto.ToleranceMax);
+            var (toleranceMin, toleranceMax) = ToleranceBounds.Resolve(dto.Tolerance, dto.ToleranceMin, dto.ToleranceMax);
 
             return new CondenserSearch
             {
@@ -92,10 +112,13 @@ namespace Cardano.Application.Services
                 Condensing = dto.Condensing,
                 RefrigerantType = dto.RefrigerantType,
                 AtmPressureInMetric = dto.AtmosphericPress,
-                SplValue = dto.SplValue,
+                SplValue = dto.MaxSoundPressure,
+                MaxSoundPower = Math.Max(0, dto.MaxSoundPower),
+                NoiseTolerance = Math.Max(0, dto.NoiseTolerance),
                 Distance = dto.Distance,
                 FlowDirection = dto.AirFlowDirection,
                 ThermalCapacity = dto.ThermalCapacity,
+                Tolerance = Math.Max(Math.Abs(toleranceMin), Math.Abs(toleranceMax)),
                 ToleranceMin = toleranceMin,
                 ToleranceMax = toleranceMax,
                 SubCooling = dto.SubCooling,
@@ -104,7 +127,8 @@ namespace Cardano.Application.Services
                 Altitude = dto.Altitude,
                 RelHumidity = dto.RelHumidity,
                 CapacityAdjustment = dto.CapacityAdjustment,
-                NewAirFlow = dto.NewAirFlow
+                NewAirFlow = dto.NewAirFlow,
+                Esp = Math.Max(0, dto.Esp)
             };
         }
 
@@ -113,6 +137,8 @@ namespace Cardano.Application.Services
             var con = (await _condenserRepository.GetAllCondenser()).ToList();
             var acc = (await _repository.GetAllAccessories()).ToList();
             //var step = (await _steps.GetCurrentStepsAsync(dto.Selection_id)).ToList();
+
+            ApplyBackupEngineInputs(dto);
 
             var isImperial = string.Equals(dto.CurrentUnitType, "imp", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(dto.CurrentUnitType, "english", StringComparison.OrdinalIgnoreCase)
@@ -131,10 +157,38 @@ namespace Cardano.Application.Services
                 dto.Distance = _unitConvert.ThermalDistance("si", dto.Distance);
                 dto.AtmosphericPress = _unitConvert.ThermalAtmosphericPress("si", dto.RelHumidity, dto.Altitude);
             }
-            else
+
+            dto.Condensing = CondensingReferenceConverter.ToEngineCondensing(
+                dto.Condensing,
+                dto.RefrigerantType,
+                dto.CondensingReference);
+
+            if (!isImperial)
             {
                 dto.Condensing = _unitConvert.DegFfromDegDryBulb(dto.Condensing);
                 dto.DryBulb = _unitConvert.DegFfromDegDryBulb(dto.DryBulb);
+            }
+
+            con = CondenserSizeFilter.Apply(
+                con,
+                CondenserSizeFilter.ToMillimetres(dto.MaxLength, dto.CurrentUnitType ?? dto.UnitsType),
+                CondenserSizeFilter.ToMillimetres(dto.MaxHeight, dto.CurrentUnitType ?? dto.UnitsType),
+                CondenserSizeFilter.ToMillimetres(dto.MaxWidth, dto.CurrentUnitType ?? dto.UnitsType),
+                dto.CondenserType,
+                dto.AirFlowDirection);
+
+            if (con.Count == 0)
+            {
+                return new PaginatedComputationResponse
+                {
+                    Results = [],
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalCount = 0,
+                    TotalPages = 0,
+                    HasNextPage = false,
+                    HasPreviousPage = false
+                };
             }
 
             var condenserSearch = CreateCondenserSearch(dto);
@@ -157,27 +211,31 @@ namespace Cardano.Application.Services
 
         public CondenserSearch CreateCondenserSearch(RemoteCondenserRequest dto)
         {
-            var (toleranceMin, toleranceMax) = ToleranceBounds.Resolve(dto.ToleranceMin, dto.ToleranceMax);
+            var (toleranceMin, toleranceMax) = ToleranceBounds.Resolve(dto.Tolerance, dto.ToleranceMin, dto.ToleranceMax);
 
             return new CondenserSearch
             {
                 CondenserType = dto.CondenserType,
-                CondenserModel = dto.CondenserModel,
+                CondenserModel = "All",
                 FansConnection = dto.FansConnection,
                 UnitsType = dto.UnitsType,
                 Condensing = dto.Condensing,
                 RefrigerantType = dto.RefrigerantType,
                 AtmPressureInMetric = dto.AtmosphericPress,
-                SplValue = dto.SplValue,
+                SplValue = dto.MaxSoundPressure,
+                MaxSoundPower = Math.Max(0, dto.MaxSoundPower),
+                NoiseTolerance = Math.Max(0, dto.NoiseTolerance),
                 Distance = dto.Distance,
                 FlowDirection = dto.AirFlowDirection,
                 ThermalCapacity = dto.ThermalCapacity,
+                Tolerance = Math.Max(Math.Abs(toleranceMin), Math.Abs(toleranceMax)),
                 ToleranceMin = toleranceMin,
                 ToleranceMax = toleranceMax,
                 SubCooling = dto.SubCooling,
                 Compressor = dto.Compressor,
                 DryBulb = dto.DryBulb,
                 Altitude = dto.Altitude,
+                Esp = Math.Max(0, dto.Esp)
             };
         }
 
@@ -199,6 +257,40 @@ namespace Cardano.Application.Services
                     dto.Relhumidity,
                     convertedAltitude),
             });
+        }
+
+        private static void ApplyBackupEngineInputs(RemoteCondenserRequest dto)
+        {
+            dto.RefrigerantType = RefrigerantTypeNormalizer.ToEngine(dto.RefrigerantType);
+            dto.AtmosphericPress = NormalizeAtmosphericPressureKpa(dto.AtmosphericPress);
+            dto.MaxSoundPressure = NormalizeMaxSoundPressure(dto.MaxSoundPressure);
+            dto.Compressor = NormalizeCompressor(dto.Compressor);
+        }
+
+        private static void ApplyBackupEngineInputs(PerformanceRequest dto)
+        {
+            dto.RefrigerantType = RefrigerantTypeNormalizer.ToEngine(dto.RefrigerantType);
+            dto.AtmosphericPress = NormalizeAtmosphericPressureKpa(dto.AtmosphericPress);
+            dto.MaxSoundPressure = NormalizeMaxSoundPressure(dto.MaxSoundPressure);
+            dto.Compressor = NormalizeCompressor(dto.Compressor);
+        }
+
+        private static double NormalizeAtmosphericPressureKpa(double atmosphericPress)
+        {
+            // Backup engine uses kPa (101.325). UI/curl sometimes send Pa (101325).
+            return atmosphericPress > 2000 ? atmosphericPress / 1000.0 : atmosphericPress;
+        }
+
+        private static double NormalizeMaxSoundPressure(double maxSoundPressure)
+        {
+            // Thermokey default in the backup engine comments is 65 dB.
+            return maxSoundPressure <= 0 ? 65 : maxSoundPressure;
+        }
+
+        private static double NormalizeCompressor(double compressor)
+        {
+            // Thermokey default desuperheat is 25 K.
+            return compressor <= 0 ? 25 : compressor;
         }
     }
 }

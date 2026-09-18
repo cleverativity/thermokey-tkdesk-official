@@ -14,6 +14,7 @@ namespace Cardano.Domain.Models
         public double Capacity { get; set; }
         public double Airflow { get; set; }
         public double Spl { get; set; }
+        public double SoundPower { get; set; }
         public double No_fans { get; set; }
 
         public double Rpm { get; set; }

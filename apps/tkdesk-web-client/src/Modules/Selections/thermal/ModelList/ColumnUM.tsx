@@ -74,7 +74,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'condenser.modelSpl',
     unitField: 'condenser.modelSplType',
     extraUnitFields: ['condenser.modelSpl_unit'],
-    defaultUnitIds: { si: 167, ip: 167 },
+    defaultUnitIds: { si: 168, ip: 168 },
     baseField: 'condenser.modelSplBaseW',
   },
   {
@@ -102,7 +102,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'condenser.modelFanMotorsRPM',
     unitField: 'condenser.modelFanMotorsRPMType',
     extraUnitFields: ['condenser.modelFanMotorsRPM_unit'],
-    defaultUnitIds: { si: 168, ip: 168 },
+    defaultUnitIds: { si: 169, ip: 169 },
     baseField: 'condenser.modelFanMotorsRPMBaseW',
   },
   {
@@ -130,7 +130,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'condenser.modelFanMotorsCurrent',
     unitField: 'condenser.modelFanMotorsCurrentType',
     extraUnitFields: ['condenser.modelFanMotorsCurrent_unit'],
-    defaultUnitIds: { si: 165, ip: 165 },
+    defaultUnitIds: { si: 166, ip: 166 },
     baseField: 'condenser.modelFanMotorsCurrentBaseW',
   },
   {
@@ -144,22 +144,8 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'condenser.modelTubeVolume',
     unitField: 'condenser.modelTubeVolumeType',
     extraUnitFields: ['condenser.modelTubeVolume_unit'],
-    defaultUnitIds: { si: 137, ip: 146 },
+    defaultUnitIds: { si: 138, ip: 147 },
     baseField: 'condenser.modelTubeVolumeBaseW',
-  },
-  {
-    query: {
-      product: 'condenser',
-      step: 'Model choice',
-      section: 'Model list table',
-      variable: 'weight',
-    },
-    dataIndex: 'weights',
-    valueField: 'condenser.modelWeight',
-    unitField: 'condenser.modelWeightType',
-    extraUnitFields: ['condenser.modelWeight_unit'],
-    defaultUnitIds: { si: 138, ip: 166 },
-    baseField: 'condenser.modelWeightBaseW',
   },
   {
     query: {
@@ -200,7 +186,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     valueField: 'condenser.modelPrice',
     unitField: 'condenser.modelPriceType',
     extraUnitFields: ['condenser.modelPrice_unit'],
-    defaultUnitIds: { si: 131, ip: 131 },
+    defaultUnitIds: { si: 132, ip: 132 },
     baseField: 'condenser.modelPriceBaseW',
   },
 ]
@@ -366,20 +352,30 @@ function applyColumnUM(columns: any[], configs: AppliedColumnUMConfig[]) {
     configs.map((config) => [config.dataIndex, config]),
   )
 
-  return columns.map((column: any) => {
-    const config = byDataIndex.get(column.dataIndex)
-    if (!config) {
-      return withTopAlignedHeader(column, {
-        title: <ColumnUMTitle title={column.title} align='left' />,
-      })
-    }
+  const applyColumns = (items: any[]): any[] =>
+    items.map((column: any) => {
+      if (Array.isArray(column.children)) {
+        return withTopAlignedHeader({
+          ...column,
+          children: applyColumns(column.children),
+        })
+      }
 
-    return withTopAlignedHeader(column, {
-      align: 'center',
-      title: <ColumnUMTitle title={column.title} config={config} />,
-      render: (value: string) => renderColumnUMValue(value, config),
+      const config = byDataIndex.get(column.dataIndex)
+      if (!config) {
+        return withTopAlignedHeader(column, {
+          title: <ColumnUMTitle title={column.title} align='left' />,
+        })
+      }
+
+      return withTopAlignedHeader(column, {
+        align: 'center',
+        title: <ColumnUMTitle title={column.title} config={config} />,
+        render: (value: string) => renderColumnUMValue(value, config),
+      })
     })
-  })
+
+  return applyColumns(columns)
 }
 
 export function useColumnUM({

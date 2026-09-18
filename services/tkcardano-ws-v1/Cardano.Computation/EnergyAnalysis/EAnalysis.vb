@@ -19,6 +19,11 @@ Public Class EAnalysis
     Dim VariationDeltaTemperature As Boolean = False
     Dim VariationCapacity As Boolean = False
 
+    Private Const MinimumFittedTempRatio As Double = 0.4
+    Private Const MaximumFittedTempRatio As Double = 1.8
+    Private Const StandardNoiseDistance As Double = 10
+    Private Const MaximumSweepRows As Int32 = 500
+
     'Dim dbService As New DatabaseService()
     'Dim allCondensers = dbService.GetAllCondenser()
 
@@ -41,12 +46,14 @@ Public Class EAnalysis
 
 
 
+            Dim airTemperatures = AirTemperatureSteps(intEAStartingAir, intEAFinalAir, intEAStep)
+            Dim noiseDistance = ResolveNoiseDistance(intEADistance, distance)
+
             If isCalculateCapacity Then
 
-                For thisRow = Int(intEAStep) + 1 To 2 Step -1
+                For Each thisAirTemperature In airTemperatures
 
                     Dim detail As New EAResult()
-                    thisAirTemperature = intEAStartingAir + (thisRow - 2) * (intEAFinalAir - intEAStartingAir) / intEAStep
                     thisDeltaTemperature = Val(intEACondensingTemp) - thisAirTemperature
                     '''Computation
                     'If deltaTemperature = 15 Then
@@ -61,9 +68,9 @@ Public Class EAnalysis
                     detail.AirTempInlet = thisAirTemperature
                     detail.Capacity = TkCoilCapacity(newCondeser, conderserId, thisDeltaTemperature, _airflowRate, refRigerantType, compressor, subCooling, atmPressureInMetric)
                     detail.AirFlow = _airflowRate
-                    thisTkDpAir = TkCondenserCapacities.CoilStandardAirPressureDrop(condensers(conderserId - 1).Coil_Type, condensers(conderserId - 1).Coil_Length, refRigerantType, (thisCalculatedAirFlowRate / 60) / condensers(conderserId - 1).Number_Coils, atmPressureInMetric)
+                    thisTkDpAir = TkCondenserCapacities.CoilStandardAirPressureDrop(condensers(conderserId - 1).Coil_Type, condensers(conderserId - 1).Coil_Length, refRigerantType, (_airflowRate / 60) / condensers(conderserId - 1).Number_Coils, atmPressureInMetric)
                     detail.DpAir = 1.45 * thisTkDpAir
-                    detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, distance)
+                    detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, noiseDistance)
                     detail.Rpm = _rpm
                     detail.Power = _numberOfFans * _power
                     detail.CurrentFans = _numberOfFans * _currentFan
@@ -122,31 +129,23 @@ Public Class EAnalysis
                     'End If
 
 
+                    SanitizeDetail(detail)
                     detailsList.Add(detail)
                 Next
 
             ElseIf isCalculateAirFlow Then
 
 
-                For thisRow = Int(intEAStep) + 1 To 2 Step -1
+                For Each thisAirTemperature In airTemperatures
 
                     Dim detail As New EAResult()
-                    thisAirTemperature = intEAStartingAir + (thisRow - 2) * (intEAFinalAir - intEAStartingAir) / intEAStep
                     detail.Capacity = Val(IntEACurrentFixCapacity)
 
                     detail.AirTempInlet = thisAirTemperature
                     thisDeltaTemperature = Val(intEACondensingTemp) - thisAirTemperature
 
                     ''Computation
-                    If deltaTemperature = 15 Then
-                        thisCalculatedAirFlowRate = _airflowRate * CoefficientForAirFlowRate(thisDeltaTemperature / 15, refRigerantType)
-                    Else
-                        thisCalculatedAirFlowRate = _airflowRate / CoefficientForAirFlowRate(deltaTemperature / 15, refRigerantType)
-                        thisCalculatedAirFlowRate = thisCalculatedAirFlowRate * CoefficientForAirFlowRate(thisDeltaTemperature / 15, refRigerantType)
-
-                    End If
-
-
+                    thisCalculatedAirFlowRate = ScaledAirFlowRate(_airflowRate, deltaTemperature, thisDeltaTemperature, refRigerantType)
 
                     thisTkDpAir = TkCondenserCapacities.CoilStandardAirPressureDrop(condensers(conderserId - 1).Coil_Type, condensers(conderserId - 1).Coil_Length, refRigerantType, (thisCalculatedAirFlowRate / 60) / condensers(conderserId - 1).Number_Coils, atmPressureInMetric)
                     thisTkDpAir = 1.45 * thisTkDpAir
@@ -154,35 +153,9 @@ Public Class EAnalysis
                     detail.DpAir = thisTkDpAir
 
                     'SPL
-                    detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, distance)
+                    detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, noiseDistance)
 
-
-                    Select Case True
-
-                        Case Microsoft.VisualBasic.Right(condenserModel, 2) = "B1"
-
-                            detail.Rpm = _numberOfFans * Me.thisTkFansEcDataAtWP.RadialSpeed(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                            'Power
-                            detail.Power = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricPower(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                            'Current
-                            detail.CurrentFans = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricCurrent(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-
-
-                        Case Microsoft.VisualBasic.Right(condenserModel, 2) = "B2"
-
-                            detail.Rpm = _numberOfFans * Me.thisTkFansEcDataAtWP.RadialSpeed(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                            'Power
-                            detail.Power = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricPower(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                            'Current
-                            detail.CurrentFans = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricCurrent(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                        Case Else
-                    End Select
+                    ApplyFanData(detail, conderserId, condenserModel, thisCalculatedAirFlowRate, thisTkDpAir, _numberOfFans, _rpm, _power, _currentFan)
 
                     detail.TubeVolume = _tubeVolume
                     detail.Weight = _weight
@@ -239,6 +212,7 @@ Public Class EAnalysis
                     '    detail.Price = 0
                     'End If
 
+                    SanitizeDetail(detail)
                     detailsList.Add(detail)
 
                 Next
@@ -254,63 +228,23 @@ Public Class EAnalysis
                 detail.ConnectDiamOutlet = _diameterOutlet
                 detail.Price = _price
 
-                If IntEANewFixCapacity <> 0 Then
+                Dim thisFixedCapacity = If(IntEANewFixCapacity <> 0, Val(IntEANewFixCapacity), Val(IntEACurrentFixCapacity))
 
-                    detail.AirTempInlet = Val(intEAInletAirTemp)
-                    detail.Capacity = If(IntEACurrentFixCapacity <> IntEANewFixCapacity, IntEANewFixCapacity, Val(IntEACurrentFixCapacity))
-                    thisDeltaTemperature = Val(intEACondensingTemp) - Val(intEAInletAirTemp)
+                detail.AirTempInlet = Val(intEAInletAirTemp)
+                detail.Capacity = thisFixedCapacity
+                thisDeltaTemperature = Val(intEACondensingTemp) - Val(intEAInletAirTemp)
 
-                    ''Computation
-                    If deltaTemperature = 15 Then
-                        thisCalculatedAirFlowRate = _airflowRate * CoefficientForAirFlowRate(thisDeltaTemperature / 15, refRigerantType)
-                    Else
-                        thisCalculatedAirFlowRate = _airflowRate / CoefficientForAirFlowRate(deltaTemperature / 15, refRigerantType)
-                        thisCalculatedAirFlowRate = thisCalculatedAirFlowRate * CoefficientForAirFlowRate(thisDeltaTemperature / 15, refRigerantType)
-
-                    End If
-
-                End If
-
+                ''Computation
+                thisCalculatedAirFlowRate = ScaledAirFlowRate(_airflowRate, deltaTemperature, thisDeltaTemperature, refRigerantType)
 
                 detail.AirFlow = thisCalculatedAirFlowRate
                 thisTkDpAir = TkCondenserCapacities.CoilStandardAirPressureDrop(condensers(conderserId - 1).Coil_Type, condensers(conderserId - 1).Coil_Length, refRigerantType, (thisCalculatedAirFlowRate / 60) / condensers(conderserId - 1).Number_Coils, atmPressureInMetric)
+                thisTkDpAir = 1.45 * thisTkDpAir
+                detail.DpAir = thisTkDpAir
 
-                If IntEANewFixCapacity <> 0 Then
-                    detail.DpAir = thisTkDpAir
-                Else
-                    detail.DpAir = 1.45 * thisTkDpAir
-                End If
+                detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, noiseDistance)
 
-                detail.Spl = TkFanNoise(conderserId, condenserModel, flowDirection, distance)
-
-
-
-                Select Case True
-
-                    Case Microsoft.VisualBasic.Right(condenserModel, 2) = "B1"
-
-                        detail.Rpm = _numberOfFans * Me.thisTkFansEcDataAtWP.RadialSpeed(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                        'Power
-                        detail.Power = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricPower(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                        'Current
-                        detail.CurrentFans = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricCurrent(Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-
-
-                    Case Microsoft.VisualBasic.Right(condenserModel, 2) = "B2"
-
-                        detail.Rpm = _numberOfFans * Me.thisTkFansEcDataAtWP.RadialSpeed(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                        'Power
-                        detail.Power = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricPower(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                        'Current
-                        detail.CurrentFans = _numberOfFans * Me.thisTkFansEcDataAtWP.ElectricCurrent(Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(conderserId - 1), thisCalculatedAirFlowRate, thisTkDpAir)
-
-                    Case Else
-                End Select
+                ApplyFanData(detail, conderserId, condenserModel, thisCalculatedAirFlowRate, thisTkDpAir, _numberOfFans, _rpm, _power, _currentFan)
 
 
                 'If TkEC_Fans_SoundPressureLevelCheck(conderserId, condenserModel, flowDirection) = False Then
@@ -361,6 +295,7 @@ Public Class EAnalysis
                 '    detail.Price = 0
                 'End If
 
+                SanitizeDetail(detail)
                 detailsList.Add(detail)
 
             End If
@@ -373,6 +308,171 @@ Public Class EAnalysis
         End Try
 
         Return detailsList
+
+    End Function
+
+    'The air temperature sweep is driven by the step expressed in degrees, so the final
+    'air temperature is part of the table instead of being dropped by a row counter.
+    Private Function AirTemperatureSteps(ByVal _startingAir As Double, ByVal _finalAir As Double, ByVal _step As Double) As List(Of Double)
+
+        Dim temperatures As New List(Of Double)
+        Dim increment As Double = Abs(_step)
+
+        If increment <= 0 OrElse _startingAir = _finalAir Then
+            temperatures.Add(_startingAir)
+            Return temperatures
+        End If
+
+        If _finalAir < _startingAir Then increment = -increment
+
+        Dim tolerance As Double = Abs(increment) / 1000
+        Dim thisTemperature As Double = _startingAir
+
+        While temperatures.Count < MaximumSweepRows AndAlso
+              ((increment > 0 AndAlso thisTemperature <= _finalAir + tolerance) OrElse
+               (increment < 0 AndAlso thisTemperature >= _finalAir - tolerance))
+
+            temperatures.Add(Round(thisTemperature, 6))
+            thisTemperature = _startingAir + temperatures.Count * increment
+        End While
+
+        If temperatures.Count = 0 Then temperatures.Add(_startingAir)
+
+        Return temperatures
+
+    End Function
+
+    'The energy analysis panel carries its own distance; fall back to the selection
+    'distance so the sound pressure level is never evaluated at the machine surface.
+    Private Function ResolveNoiseDistance(ByVal _eaDistance As Double, ByVal _distance As Double) As Double
+
+        If _eaDistance > 0 Then Return _eaDistance
+        If _distance > 0 Then Return _distance
+
+        Return StandardNoiseDistance
+
+    End Function
+
+    'Air flow needed to keep the fixed capacity when the inlet air temperature moves away
+    'from the rated working point.
+    Private Function ScaledAirFlowRate(ByVal _ratedAirFlowRate As Double, ByVal _ratedDeltaTemperature As Double, ByVal _thisDeltaTemperature As Double, ByVal _refr As String) As Double
+
+        If _ratedAirFlowRate <= 0 OrElse _thisDeltaTemperature <= 0 Then Return 0
+
+        Dim thisAirFlowRate As Double = _ratedAirFlowRate * AirFlowCoefficient(_thisDeltaTemperature / 15, _refr)
+
+        If _ratedDeltaTemperature > 0 AndAlso _ratedDeltaTemperature <> 15 Then
+            thisAirFlowRate = thisAirFlowRate / AirFlowCoefficient(_ratedDeltaTemperature / 15, _refr)
+        End If
+
+        If Double.IsNaN(thisAirFlowRate) OrElse Double.IsInfinity(thisAirFlowRate) OrElse thisAirFlowRate < 0 Then Return 0
+
+        Return thisAirFlowRate
+
+    End Function
+
+    'CoefficientForAirFlowRate is a curve fit built around the 15 K rating point: outside
+    'roughly 6 K to 27 K it oscillates and turns negative, which produced negative air flow
+    'rates and NaN air pressure drops. Inside that band the fit is used untouched; outside it
+    'the curve is continued with a power law matching the value and the slope at the boundary.
+    Private Function AirFlowCoefficient(ByVal _RatiodeltaTemp As Double, ByVal _refr As String) As Double
+
+        If Double.IsNaN(_RatiodeltaTemp) OrElse Double.IsInfinity(_RatiodeltaTemp) OrElse _RatiodeltaTemp <= 0 Then Return 1
+
+        If _RatiodeltaTemp >= MinimumFittedTempRatio AndAlso _RatiodeltaTemp <= MaximumFittedTempRatio Then
+            Return PositiveCoefficient(CoefficientForAirFlowRate(_RatiodeltaTemp, _refr), 1)
+        End If
+
+        Dim boundary As Double = If(_RatiodeltaTemp > MaximumFittedTempRatio, MaximumFittedTempRatio, MinimumFittedTempRatio)
+        Dim innerPoint As Double = If(_RatiodeltaTemp > MaximumFittedTempRatio, 0.75 * boundary, 1.25 * boundary)
+
+        Dim boundaryValue As Double = PositiveCoefficient(CoefficientForAirFlowRate(boundary, _refr), 0)
+        Dim innerValue As Double = PositiveCoefficient(CoefficientForAirFlowRate(innerPoint, _refr), 0)
+
+        If boundaryValue <= 0 Then Return 1
+        If innerValue <= 0 Then Return boundaryValue
+
+        Dim exponent As Double = Log(boundaryValue / innerValue) / Log(boundary / innerPoint)
+
+        If Double.IsNaN(exponent) OrElse Double.IsInfinity(exponent) Then Return boundaryValue
+
+        Return PositiveCoefficient(boundaryValue * (_RatiodeltaTemp / boundary) ^ exponent, boundaryValue)
+
+    End Function
+
+    Private Function PositiveCoefficient(ByVal _value As Double, ByVal _fallback As Double) As Double
+
+        If Double.IsNaN(_value) OrElse Double.IsInfinity(_value) OrElse _value <= 0 Then Return _fallback
+
+        Return _value
+
+    End Function
+
+    'EC fans follow their working point, AC fans stay at the catalogue values because they
+    'are not speed controlled. The fan equations are fed with the flow rate of a single fan.
+    Private Sub ApplyFanData(ByVal detail As EAResult, ByVal _thisIdCondenser As Int32, ByVal condenserModel As String, ByVal _thisAirFlowRate As Double, ByVal _thisDpAir As Double, ByVal _numberOfFans As Double, ByVal _rpm As Double, ByVal _power As Double, ByVal _currentFan As Double)
+
+        Dim fanCount As Double = ResolveNumberOfFans(_thisIdCondenser, _numberOfFans)
+
+        detail.Rpm = Max(_rpm, 0)
+        detail.Power = fanCount * Max(_power, 0)
+        detail.CurrentFans = fanCount * Max(_currentFan, 0)
+
+        Dim thisFanName As String = Nothing
+
+        Select Case UCase(Microsoft.VisualBasic.Right(If(condenserModel, ""), 2))
+
+            Case "B1"
+                thisFanName = Me.TkEC_FansFlowRate.EC_New_FanSeriesEbmPapst(_thisIdCondenser - 1)
+
+            Case "B2"
+                thisFanName = Me.TkEC_FansFlowRate.EC_New_FanSeriesZiehl(_thisIdCondenser - 1)
+
+            Case Else
+                Return
+
+        End Select
+
+        If String.IsNullOrWhiteSpace(thisFanName) OrElse fanCount <= 0 OrElse _thisAirFlowRate <= 0 Then Return
+
+        Dim thisFlowRatePerFan As Double = _thisAirFlowRate / fanCount
+
+        Try
+            detail.Rpm = PositiveCoefficient(Me.thisTkFansEcDataAtWP.RadialSpeed(thisFanName, thisFlowRatePerFan, _thisDpAir), Max(_rpm, 0))
+            detail.Power = fanCount * PositiveCoefficient(Me.thisTkFansEcDataAtWP.ElectricPower(thisFanName, thisFlowRatePerFan, _thisDpAir), Max(_power, 0))
+            detail.CurrentFans = fanCount * PositiveCoefficient(Me.thisTkFansEcDataAtWP.ElectricCurrent(thisFanName, thisFlowRatePerFan, _thisDpAir), Max(_currentFan, 0))
+        Catch ex As Exception
+        End Try
+
+    End Sub
+
+    Private Function ResolveNumberOfFans(ByVal _thisIdCondenser As Int32, ByVal _numberOfFans As Double) As Double
+
+        If _numberOfFans > 0 Then Return _numberOfFans
+
+        Dim thisFanCount As Double = condensers(_thisIdCondenser - 1).Num_Of_Fan_Rows * condensers(_thisIdCondenser - 1).Num_Of_Fan_Per_Row
+
+        Return Max(thisFanCount, 1)
+
+    End Function
+
+    Private Sub SanitizeDetail(ByVal detail As EAResult)
+
+        detail.Capacity = FiniteOrZero(detail.Capacity)
+        detail.AirFlow = FiniteOrZero(detail.AirFlow)
+        detail.DpAir = FiniteOrZero(detail.DpAir)
+        detail.Spl = FiniteOrZero(detail.Spl)
+        detail.Rpm = FiniteOrZero(detail.Rpm)
+        detail.Power = FiniteOrZero(detail.Power)
+        detail.CurrentFans = FiniteOrZero(detail.CurrentFans)
+
+    End Sub
+
+    Private Function FiniteOrZero(ByVal _value As Double) As Double
+
+        If Double.IsNaN(_value) OrElse Double.IsInfinity(_value) OrElse _value < 0 Then Return 0
+
+        Return _value
 
     End Function
 
@@ -1006,29 +1106,32 @@ Public Class EAnalysis
     End Function
 
 
-    Public Function TkFanNoise(ByVal _thisIdCondenser As Int16, condenserModel As String, ByVal _AirDirection As String, ByVal _distance As Int32) As Double
+    Public Function TkFanNoise(ByVal _thisIdCondenser As Int16, condenserModel As String, ByVal _AirDirection As String, ByVal _distance As Double) As Double
 
         Dim _thisTkFanNoise As Double = 0
-        Dim thisTkCondensatoreScelto = Microsoft.VisualBasic.Right(condenserModel, 13)
+        Dim thisTkCondensatoreScelto = Microsoft.VisualBasic.Right(If(condenserModel, ""), 13)
+
+        'The machine is reused between rows, so the sound power of the previous selection
+        'must not leak into this one.
+        TkFanNoiseMachine.TotalLWA = 0
 
 
-        Select Case _AirDirection
+        TkFanNoiseMachine.DistanceFromMachine = _distance
 
-            Case "Vertical"
+        Select Case UCase(If(_AirDirection, ""))
 
+            Case "HORIZONTAL"
+
+                TkFanNoiseMachine.MachineHeight = condensers(_thisIdCondenser - 1).Horizontal_Machine_Height / 1000
+                TkFanNoiseMachine.MachineLength = condensers(_thisIdCondenser - 1).Horizontal_Machine_Length / 1000
+                TkFanNoiseMachine.MachineWidth = condensers(_thisIdCondenser - 1).Horizontal_Machine_Width / 1000
+
+            Case Else
 
                 TkFanNoiseMachine.MachineHeight = condensers(_thisIdCondenser - 1).Vertical_Machine_Height / 1000
-                TkFanNoiseMachine.DistanceFromMachine = _distance
                 TkFanNoiseMachine.MachineLength = condensers(_thisIdCondenser - 1).Vertical_Machine_Length / 1000
                 TkFanNoiseMachine.MachineWidth = condensers(_thisIdCondenser - 1).Vertical_Machine_Width / 1000
 
-            Case "Horizontal"
-
-                TkFanNoiseMachine.MachineHeight = condensers(_thisIdCondenser - 1).Horizontal_Machine_Height / 1000
-                TkFanNoiseMachine.DistanceFromMachine = _distance
-                TkFanNoiseMachine.MachineLength = condensers(_thisIdCondenser - 1).Horizontal_Machine_Length / 1000
-                TkFanNoiseMachine.MachineWidth = condensers(_thisIdCondenser - 1).Horizontal_Machine_Width / 1000
-            Case Else
         End Select
 
 
@@ -1345,13 +1448,41 @@ Public Class EAnalysis
         End Select
 
 
+        'AC machines never match the EC curves above: their sound power comes from the
+        'catalogue, exactly as the selection engine reads it.
+        If TkFanNoiseMachine.TotalLWA <= 0 Then
+            TkFanNoiseMachine.TotalLWA = CatalogueSoundPower(_thisIdCondenser, condenserModel)
+        End If
+
         TkFanNoiseMachine.FanRowsNumber = condensers(_thisIdCondenser - 1).Num_Of_Fan_Rows
         TkFanNoiseMachine.FanNumberPerEachRow = condensers(_thisIdCondenser - 1).Num_Of_Fan_Per_Row
+
+        If TkFanNoiseMachine.TotalLWA <= 0 Then Return 0
 
         _thisTkFanNoise = TkFanNoiseMachine.MachineFanNoise
 
 
         Return _thisTkFanNoise
+
+    End Function
+
+    'Delta, star and single phase AC machines are identified by the suffix the selection
+    'engine appends to the model name.
+    Private Function CatalogueSoundPower(ByVal _thisIdCondenser As Int16, ByVal condenserModel As String) As Double
+
+        Dim thisCondenser = condensers(_thisIdCondenser - 1)
+
+        Select Case UCase(Microsoft.VisualBasic.Right(If(condenserModel, ""), 2))
+
+            Case "YV", "YH"
+                Return thisCondenser.Fan_Noise_Star
+
+            Case "DV", "DH", "MV", "MH"
+                Return thisCondenser.Fan_Noise_Delta
+
+        End Select
+
+        Return If(thisCondenser.Fan_Noise_Delta > 0, thisCondenser.Fan_Noise_Delta, thisCondenser.Fan_Noise_Star)
 
     End Function
 

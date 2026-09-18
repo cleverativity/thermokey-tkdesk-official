@@ -1,9 +1,10 @@
 import { EditOutlined } from '@ant-design/icons'
 import { FieldsetCard } from 'Components/Styled'
-import { ResultDataProps } from './types'
+import { formatRatingUnit, ResultDataProps } from './types'
 
 function UnitData(props: ResultDataProps) {
-  const { selectedMachine } = props
+  const { calculation } = props
+  const data = calculation?.unitData
 
   return (
     <FieldsetCard
@@ -12,51 +13,49 @@ function UnitData(props: ResultDataProps) {
       items={[
         {
           labelId: 'data.thermal.rating.unit_data.type',
-          value: selectedMachine ? 'Modular' : null,
+          value: data?.type ?? null,
         },
         {
           labelId: 'data.thermal.rating.unit_data.length',
-          value: selectedMachine ? 1.412 : null,
-          unit: 'm',
+          value: data?.length ?? null,
+          unit: formatRatingUnit(data?.dimensionUnit),
           scale: 3,
         },
         {
           labelId: 'data.thermal.rating.unit_data.width',
-          value: selectedMachine ? 2.244 : null,
-          unit: 'm',
+          value: data?.width ?? null,
+          unit: formatRatingUnit(data?.dimensionUnit),
           scale: 3,
         },
         {
           labelId: 'data.thermal.rating.unit_data.height',
-          value: selectedMachine ? 2.407 : null,
-          unit: 'm',
+          value: data?.height ?? null,
+          unit: formatRatingUnit(data?.dimensionUnit),
           scale: 3,
         },
         {
           labelId: 'data.thermal.rating.unit_data.weight',
-          value: selectedMachine ? 571 : null,
-          unit: 'kg',
+          value: data?.weight ?? null,
+          unit: formatRatingUnit(data?.weightUnit),
           scale: 0,
         },
         {
           labelId: 'data.thermal.rating.unit_data.inner_volume',
-          value: selectedMachine ? 53.4 : null,
-          unit: 'dm³',
+          value: data?.innerVolume ?? null,
+          unit: formatRatingUnit(data?.innerVolumeUnit),
         },
         {
           labelId: 'data.thermal.rating.unit_data.exchange_area',
-          value: selectedMachine ? 339.2 : null,
-          unit: 'm²',
+          value: data?.exchangeArea ?? null,
+          unit: formatRatingUnit(data?.exchangeAreaUnit),
         },
         {
           labelId: 'data.thermal.rating.unit_data.inlet_conn',
-          value: selectedMachine ? '2 x 2" - 1.34' : null,
-          unit: 'm/s',
+          value: data?.inletConnection ?? null,
         },
         {
           labelId: 'data.thermal.rating.unit_data.outlet_conn',
-          value: selectedMachine ? '2 x 2" - 1.34' : null,
-          unit: 'm/s',
+          value: data?.outletConnection ?? null,
         },
       ]}
     />
