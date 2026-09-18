@@ -4,9 +4,8 @@ using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Computation;
 using Cardano.Application.Interfaces.Repositories;
-
+using Cardano.Domain.Entities;
 using Cardano.Domain.Interfaces;
-using System.Text.RegularExpressions;
 
 
 namespace Cardano.Application.Services
@@ -33,9 +32,12 @@ namespace Cardano.Application.Services
         public async Task<List<AccessoriesGroupResponse>> GetAccessoriesItemPerModel(AccessoriesRequest dto)
         {
             var condensers = (await _condenserRepository.GetAllCondenser()).ToList();
-            var accessoriesItems = (await _repository.GetAllAccessoriesItems()).ToList();
+            // view_accessories_by_group can return the same accessory id more than once.
+            var accessoriesItems = await GetUniqueAccessoriesItemsAsync();
 
-            var items = _engine.AccessoriesItems(condensers, accessoriesItems, dto.Id, dto.RemoteModel).OrderBy(x => x.Id);
+            var items = _engine.AccessoriesItems(condensers, accessoriesItems, dto.Id, dto.RemoteModel)
+                .DistinctBy(x => x.Id)
+                .OrderBy(x => x.Id);
 
             var grp = items.GroupBy(x => new { x.GrpId, x.Group_name })
                 .OrderBy(g => g.Key.GrpId)
@@ -71,7 +73,7 @@ namespace Cardano.Application.Services
         public async Task<List<AccessoriesSelectedResponse>> GetSelectedAccessoriesPerModel(AccessoriesSelectedRequest dto)
         {
             var condensers = (await _condenserRepository.GetAllCondenser()).ToList();
-            var accessoriesItems = (await _repository.GetAllAccessoriesItems()).ToList();
+            var accessoriesItems = await GetUniqueAccessoriesItemsAsync();
             var accessories = (await _repository.GetAllAccessories()).ToList();
 
             int condenserId = dto.Id;
@@ -87,6 +89,16 @@ namespace Cardano.Application.Services
             return _mapper.Map<List<AccessoriesSelectedResponse>>(items);
         }
 
-     
+        /// <summary>
+        /// view_accessories_by_group is keyless and can emit duplicate accessory ids
+        /// (same Code/Description many times in the UI). Keep one row per id.
+        /// </summary>
+        private async Task<List<AccessoriesItems>> GetUniqueAccessoriesItemsAsync()
+        {
+            return (await _repository.GetAllAccessoriesItems())
+                .DistinctBy(x => x.Id)
+                .OrderBy(x => x.Id)
+                .ToList();
+        }
     }
 }

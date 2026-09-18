@@ -4,6 +4,7 @@ using Cardano.Application.DTOs.Requests;
 using Cardano.Application.DTOs.Responses;
 using Cardano.Application.Interfaces.Computation;
 using Cardano.Application.Interfaces.Repositories;
+using Cardano.Application.Interfaces.Services;
 using Cardano.Computation;
 using Cardano.Domain.Interfaces;
 using Cardano.Domain.Models;
@@ -20,6 +21,7 @@ namespace Cardano.Application.Services
         private readonly IThermalComputationEngine _engine;
         private readonly IThermalCalcRepository _repository;
         private readonly ICondenserRepository _condenserRepository;
+        private readonly ICondenserImageService _condenserImageService;
         private readonly IMapper _mapper;
 
         //private readonly ConvertUnitType _unitConvert = new ConvertUnitType();
@@ -30,6 +32,7 @@ namespace Cardano.Application.Services
             IThermalCalcRepository repository,
             ICondenserRepository condenserRepository,
             IThermalComputationEngine engine,
+            ICondenserImageService condenserImageService,
             IMapper mapper)
         {
             //_thermokeyCondensers = new ThermokeyCondensers();
@@ -38,6 +41,7 @@ namespace Cardano.Application.Services
             _engine = engine;
             _repository = repository;
             _condenserRepository = condenserRepository;
+            _condenserImageService = condenserImageService;
             _mapper = mapper;
         }
 
@@ -94,7 +98,32 @@ namespace Cardano.Application.Services
             _engine.CapacitySearch(con, condenserSearch);
             var performances = _engine.GeneratePerformance(acc, selectedModelId, condenserId, remoteModel, fansConnection, unitsType, flowDirection, refRigerantType, distance, dto.Condensing, thermalCapacity, dryBulb, altitude, compressor, subCooling, atmPressureInMetric, relHumidity, capacityAdjustment, newAirFlow);
 
-            return _mapper.Map<List<PerformanceResponse>>(performances);
+            var response = _mapper.Map<List<PerformanceResponse>>(performances);
+            await AttachCondenserImageAsync(response, dto);
+            return response;
+        }
+
+        private async Task AttachCondenserImageAsync(List<PerformanceResponse> response, PerformanceRequest dto)
+        {
+            if (response.Count == 0)
+                return;
+
+            var modelName = response[0].ModelName ?? dto.RemoteModel;
+            var image = await _condenserImageService.TryGetImageAsync(
+                modelName,
+                dto.AirFlowDirection,
+                dto.CondenserType);
+
+            if (image is null)
+                return;
+
+            var base64 = Convert.ToBase64String(image.Bytes);
+            foreach (var item in response)
+            {
+                item.ImageObjectKey = image.ObjectKey;
+                item.ImageContentType = image.ContentType;
+                item.ImageBase64 = base64;
+            }
         }
 
         public CondenserSearch CreateCondenserSearch(PerformanceRequest dto)

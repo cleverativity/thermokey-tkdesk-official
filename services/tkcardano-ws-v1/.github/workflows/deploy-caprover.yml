@@ -1,0 +1,80 @@
+name: Deploy to CapRover (testing)
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+concurrency:
+  group: caprover-cardano-webapi-db-testing
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CAPROVER_SERVER: https://captain.srvnve02.cleverativity.com
+  CAPROVER_APP: cardano-webapi-db-testing
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write appsettings from GitHub secrets
+        env:
+          APPSETTINGS_JSON: ${{ secrets.APPSETTINGS_JSON }}
+          APPSETTINGS_DEVELOPMENT: ${{ secrets.APPSETTINGS_DEVELOPMENT }}
+          APPSETTINGS_STAGING: ${{ secrets.APPSETTINGS_STAGING }}
+          APPSETTINGS_PRODUCTION: ${{ secrets.APPSETTINGS_PRODUCTION }}
+        run: |
+          write_if_present() {
+            local name="$1"
+            local path="$2"
+            local value="$3"
+            if [ -n "$value" ]; then
+              printf '%s\n' "$value" > "$path"
+              echo "Wrote $path from secret $name."
+            else
+              echo "Skipping $path; secret $name is not set."
+            fi
+          }
+
+          # Real appsettings*.json are gitignored; deploy injects them from secrets only.
+          write_if_present APPSETTINGS_JSON "Cardano API/appsettings.json" "$APPSETTINGS_JSON"
+          write_if_present APPSETTINGS_DEVELOPMENT "Cardano API/appsettings.Development.json" "$APPSETTINGS_DEVELOPMENT"
+          write_if_present APPSETTINGS_STAGING "Cardano API/appsettings.Staging.json" "$APPSETTINGS_STAGING"
+          write_if_present APPSETTINGS_PRODUCTION "Cardano API/appsettings.Production.json" "$APPSETTINGS_PRODUCTION"
+
+          # Base APPSETTINGS_JSON is optional — Staging/Production secrets already hold full config.
+          if [ ! -s "Cardano API/appsettings.json" ]; then
+            printf '%s\n' '{ "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } }, "AllowedHosts": "*" }' \
+              > "Cardano API/appsettings.json"
+            echo "Wrote minimal Cardano API/appsettings.json (APPSETTINGS_JSON secret not set)."
+          fi
+
+          if [ ! -s "Cardano API/appsettings.Staging.json" ] && [ ! -s "Cardano API/appsettings.Production.json" ]; then
+            echo "::error::Need APPSETTINGS_STAGING or APPSETTINGS_PRODUCTION for CapRover."
+            exit 1
+          fi
+
+      - name: Create CapRover deploy tarball
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.vs' \
+            --exclude='bin' \
+            --exclude='obj' \
+            --exclude='TestResults' \
+            --exclude='deploy.tar' \
+            -cf deploy.tar .
+
+      - name: Deploy to CapRover
+        uses: caprover/deploy-from-github@v1.1.2
+        with:
+          server: ${{ env.CAPROVER_SERVER }}
+          app: ${{ env.CAPROVER_APP }}
+          token: ${{ secrets.CAPROVER_APP_TOKEN }}

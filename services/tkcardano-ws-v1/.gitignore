@@ -1,5 +1,21 @@
-# Sensitive ASP.NET configuration — keep local copies, do not commit
-Cardano API/appsettings.json
-Cardano API/appsettings.Development.json
-Cardano API/appsettings.Staging.json
-Cardano API/appsettings.Production.json
+## Build / IDE
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+TestResults/
+
+## Local secrets — keep only *.example in git
+# Deploy writes real files from GitHub secrets (see .github/workflows/deploy-caprover.yml)
+**/appsettings.json
+**/appsettings.Development.json
+**/appsettings.Staging.json
+**/appsettings.Production.json
+!**/appsettings.json.example
+!**/appsettings.Development.json.example
+!**/appsettings.Staging.json.example
+!**/appsettings.Production.json.example
+
+## Deploy artifacts
+deploy.tar
