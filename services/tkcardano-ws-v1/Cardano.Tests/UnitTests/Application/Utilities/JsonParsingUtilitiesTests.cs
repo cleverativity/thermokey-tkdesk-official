@@ -107,4 +107,32 @@ public class JsonParsingUtilitiesTests
 
         JsonParsingUtilities.CondenseParseFromJson(json).MaxSoundPressure.Should().Be(70);
     }
+
+    [Test]
+    public void CondenseParseFromJson_ReadsFluidCanonicalsAndModes()
+    {
+        const string json = """
+            {
+              "condensing": 39.75,
+              "condensingReference": "bubble",
+              "condensingMidpointC": 40,
+              "compressor": 25,
+              "compressorBaseK": 25,
+              "subCooling": 3,
+              "subCoolingBaseK": 3,
+              "compressorInletMode": "temperature",
+              "subCoolingMode": "delta_temperature"
+            }
+            """;
+
+        var condenser = JsonParsingUtilities.CondenseParseFromJson(json);
+
+        condenser.Condensing.Should().Be(39.75);
+        condenser.CondensingReference.Should().Be("bubble");
+        condenser.CondensingMidpointC.Should().Be(40);
+        condenser.CompressorBaseK.Should().Be(25);
+        condenser.SubCoolingBaseK.Should().Be(3);
+        condenser.CompressorInletMode.Should().Be("temperature");
+        condenser.SubCoolingMode.Should().Be("delta_temperature");
+    }
 }

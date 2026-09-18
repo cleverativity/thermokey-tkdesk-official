@@ -32,6 +32,7 @@ export function FieldUnitInput({
   required,
   tooltip,
   disabled,
+  readOnly,
   unitSelectWidth = UNIT_SELECT_WIDTH,
   useFormikValueChange = false,
   tooltipTrigger = 'hover',
@@ -44,6 +45,7 @@ export function FieldUnitInput({
   required?: boolean
   tooltip?: ReactNode
   disabled?: boolean
+  readOnly?: boolean
   unitSelectWidth?: number
   useFormikValueChange?: boolean
   tooltipTrigger?: 'hover' | 'click'
@@ -66,6 +68,7 @@ export function FieldUnitInput({
           addonAfter={null}
           tooltip={labelId ? undefined : tooltip}
           disabled={disabled}
+          readOnly={readOnly}
           overrideOnChange={
             useFormikValueChange ? undefined : field.handleValueChange
           }
@@ -86,7 +89,7 @@ export function FieldUnitInput({
             hasFeedback={false}
             style={{ width: '100%' }}
             allowClear={false}
-            disabled={disabled}
+            disabled={disabled || readOnly}
             defaultValue={field.defaultUnitName}
             name={unitName}
             optionKeyPath={['value']}

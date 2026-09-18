@@ -90,6 +90,7 @@ const COLUMN_UM_FIELDS: ColumnUMFieldConfig[] = [
     extraUnitFields: ['condenser.modelFanMotorsNo_unit'],
     defaultUnitIds: { si: 0, ip: 0 },
     baseField: 'condenser.modelFanMotorsNoBaseW',
+    decimalPlaces: 0,
   },
   {
     query: {

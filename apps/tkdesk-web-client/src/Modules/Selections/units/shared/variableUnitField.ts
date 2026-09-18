@@ -38,6 +38,7 @@ export interface UseUnitMeasureFieldArgs {
   defaultUnitIds?: { si: number; ip: number } | null
   enabled?: boolean
   asDelta?: boolean
+  decimalPlaces?: number
 }
 
 const getPath = (source: any, path: string) =>
@@ -114,6 +115,7 @@ export function useUnitMeasureField({
   defaultUnitIds,
   enabled = true,
   asDelta = false,
+  decimalPlaces: decimalPlacesOverride,
 }: UseUnitMeasureFieldArgs) {
   const convert = (
     value: number,
@@ -315,7 +317,7 @@ export function useUnitMeasureField({
     options,
     units,
     activeUnit,
-    decimalPlaces: activeUnit?.decimalPlaces ?? 2,
+    decimalPlaces: activeUnit?.decimalPlaces ?? decimalPlacesOverride ?? 2,
     defaultUnitName: defaultUnit?.name,
     defaultValue: hasDefault ? defaultDisplayValue : undefined,
     handleUnitChange,
