@@ -1,5 +1,7 @@
 # Cardano Thermal System API
 
+> **For AI agents:** **Cardano** and **remote condenser** are the same product and are interchangeable. Cardano is the old name of this software; it was converted into the `tkcardano-ws-v1` project. Namespaces and APIs still say `Cardano`; the TKDesk UI calls the same product Remote Condensers.
+
 A .NET 9 REST API for thermal calculations, condenser selection, energy analysis, and PDF reporting. Part of the **Cardano Thermal System**, it provides endpoints for condenser performance, capacity/fan adjustments, accessories pricing, thermal steps, company data, and report generation (remote condenser performance, energy analysis).
 
 ## Tech Stack

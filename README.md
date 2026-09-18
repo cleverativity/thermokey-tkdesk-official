@@ -2,6 +2,8 @@
 
 Nx + pnpm monorepo for the TKDesk web client and the Cardano thermal API.
 
+**Cardano** and **remote condenser** are the same product (interchangeable names). Cardano is the old software name; it now lives in `services/tkcardano-ws-v1`.
+
 ## Layout
 
 ```
