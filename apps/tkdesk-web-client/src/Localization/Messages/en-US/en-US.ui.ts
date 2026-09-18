@@ -260,6 +260,7 @@ export default {
           '': 'Detail',
           unit_data: 'Unit Data',
           accessories: 'Accessories',
+          image: 'Image',
         },
       },
       tabs: {

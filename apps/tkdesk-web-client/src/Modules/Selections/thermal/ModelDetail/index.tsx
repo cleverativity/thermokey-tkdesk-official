@@ -8,10 +8,12 @@ import React, {
 } from 'react'
 import Accessories from './Accessories'
 import GroupedDetails from './GroupedDetails'
+import ModelImage from './ModelImage'
 import { ConsoleLogger } from 'aws-amplify/utils'
 import _ from 'lodash'
 
 import { useIntl } from 'react-intl'
+import { StyledSpinner } from 'Components/Styled'
 import Tabs from 'Components/Styled/Tabs'
 import { useDetail } from '../hooks/useDetail'
 
@@ -82,27 +84,26 @@ const ThermalModelDetail = forwardRef<
   valuesRef.current = values
 
   useEffect(() => {
-    if (condenser) {
-      const newCompute = {
-        ...condenser,
-        percentAdjustment: 0,
-      }
-      setComputeValue(newCompute)
-      log.info('ThermalModelDetail.initComputeValue', {})
+    if (!condenser) {
+      setHideEnergyAnalysisButton(false)
+      return
     }
 
-    if (
-      condenser.remoteModel.slice(-2) === 'B1' ||
-      condenser.remoteModel.slice(-2) === 'B2'
-    ) {
+    const newCompute = {
+      ...condenser,
+      percentAdjustment: 0,
+    }
+    setComputeValue(newCompute)
+    log.info('ThermalModelDetail.initComputeValue', {})
+
+    const remoteModel = String(_.get(condenser, 'remoteModel', '') || '')
+    const suffix = remoteModel.slice(-2)
+    if (suffix === 'B1' || suffix === 'B2') {
       setHideEnergyAnalysisButton(true)
-      log.info('ThermalModelDetail.remoteModel', condenser.remoteModel)
+      log.info('ThermalModelDetail.remoteModel', remoteModel)
     } else {
       setHideEnergyAnalysisButton(false)
-      log.info(
-        'ThermalModelDetail.remoteModel not B1 or B2',
-        condenser.remoteModel,
-      )
+      log.info('ThermalModelDetail.remoteModel not B1 or B2', remoteModel)
     }
   }, [JSON.stringify(condenser)])
 
@@ -320,6 +321,10 @@ const ThermalModelDetail = forwardRef<
     accessoriesPrice,
   })
 
+  if (!condenser) {
+    return <StyledSpinner />
+  }
+
   return (
     <>
       <Tabs items={tabsPanels} activeKey={activeTab} onChange={onTabChange} />
@@ -342,7 +347,7 @@ const ThermalModelDetail = forwardRef<
 
       {activeTab === 'perf' ? (
         <>
-          {autho.iAmAdmin && condenser !== null && (
+          {autho.iAmAdmin && (
             <AdjustModule
               capacityData={adjustCapacityResult}
               fanFlowsData={adjustFanFlowsResult}
@@ -355,7 +360,7 @@ const ThermalModelDetail = forwardRef<
             data={performance}
             model={condenser}
             loading={isLoading}
-            direction={condenser.airFlowDirection}
+            direction={_.get(condenser, 'airFlowDirection')}
             unitTypes={unitsType}
           />
           <Accessories
@@ -370,6 +375,26 @@ const ThermalModelDetail = forwardRef<
             setDiscount={setDiscount}
             discount={discount}
             unitTypes={unitsType}
+          />
+          <ModelImage
+            data={{
+              imageBase64: _.get(
+                performance,
+                'imageBase64',
+                _.get(condenser, 'imageBase64'),
+              ),
+              imageContentType: _.get(
+                performance,
+                'imageContentType',
+                _.get(condenser, 'imageContentType', 'image/jpeg'),
+              ),
+              imageObjectKey: _.get(
+                performance,
+                'imageObjectKey',
+                _.get(condenser, 'imageObjectKey'),
+              ),
+            }}
+            loading={isLoading}
           />
         </>
       ) : activeTab === 'wp' ? (

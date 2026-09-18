@@ -23,6 +23,12 @@ export const useDetail = ({
 
 
   useEffect(() => {
+    if (!condenser) {
+      setPerformance({})
+      setIsLoading(false)
+      return
+    }
+
     setIsLoading(true)
 
     const newCondenser = {

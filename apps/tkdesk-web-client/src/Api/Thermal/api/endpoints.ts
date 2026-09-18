@@ -201,15 +201,29 @@ export const getCondenserAndAccessories = async (
 }
 
 export const deleteSolve = async (id: number) => {
+  if (id == null || Number.isNaN(Number(id))) {
+    log.info('deleteSolve.skipped', { id })
+    return { data: null }
+  }
+
   const endpoint = 'CondenserSteps'
-  const { data } = await makeApiRequest(
-    `${endpoint}?thermal_id=${id}`,
-    'DELETE',
-    {},
-    false,
-    true,
-  )
-  return { data }
+  try {
+    const { data } = await makeApiRequest(
+      `${endpoint}?thermal_id=${id}`,
+      'DELETE',
+      {},
+      false,
+      true,
+    )
+    return { data }
+  } catch (error: any) {
+    // Back is idempotent: step may already be deleted (local/dev shared selection).
+    if (error?.response?.status === 404) {
+      log.info('deleteSolve.alreadyDeleted', { id })
+      return { data: null }
+    }
+    throw error
+  }
 }
 
 export const getPerformance = async (payload: any) => {

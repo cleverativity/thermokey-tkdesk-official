@@ -40,7 +40,7 @@ function EnergyAnalysisButtons(props: EnergyAnalysisButtonsProps) {
   const activeThermalTab = _.get(
     values,
     'ea.activeThermalTab',
-    'Performance',
+    'perf',
   ) as string
 
   const handleCalculate = () => {
@@ -98,7 +98,7 @@ function EnergyAnalysisButtons(props: EnergyAnalysisButtonsProps) {
 
   return (
     <>
-      {activeThermalTab === 'Performance' ? (
+      {activeThermalTab === 'perf' ? (
         <StyledButton
           type='primary'
           onClick={(e) => {
