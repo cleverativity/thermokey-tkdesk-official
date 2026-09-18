@@ -33,5 +33,6 @@ namespace Cardano.Application.DTOs.Requests
         public double? MaxWeight { get; set; }
         public double? Distance { get; set; }
         public bool UseContainerWidth { get; set; }
+        public string? UnitsType { get; set; }
     }
 }

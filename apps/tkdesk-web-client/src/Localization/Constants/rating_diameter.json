@@ -1,11 +1,8 @@
 [
+  { "value": "400", "label": "400" },
+  { "value": "450", "label": "450" },
   { "value": "500", "label": "500" },
   { "value": "630", "label": "630" },
   { "value": "800", "label": "800" },
-  { "value": "860", "label": "860" },
-  { "value": "900", "label": "900" },
-  { "value": "910", "label": "910" },
-  { "value": "950", "label": "950" },
-  { "value": "960", "label": "960" },
-  { "value": "1000", "label": "1000" }
+  { "value": "910", "label": "910" }
 ]

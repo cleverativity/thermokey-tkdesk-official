@@ -25,6 +25,7 @@ import { PefMachine, RatingCalculation } from './types'
 
 interface RatingResultProps {
   machines?: PefMachine[]
+  totalCount?: number
   loading?: boolean
   calculating?: boolean
   calculation?: RatingCalculation | null
@@ -37,160 +38,6 @@ interface RatingResultProps {
 }
 
 const PLACEHOLDER = '-'
-
-/** Placeholder list until PEF results are loaded from the API. */
-const SAMPLE_MACHINES: PefMachine[] = [
-  {
-    id: '1',
-    modelCode: 'TMWH1190C12DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'C12',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 2,
-    length: 1190,
-    width: 900,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '2',
-    modelCode: 'TMWH1190C11DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'C11',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 1,
-    length: 1190,
-    width: 900,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '3',
-    modelCode: 'TMWH1190C22DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'C22',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 2,
-    rows: 2,
-    length: 1190,
-    width: 900,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '4',
-    modelCode: 'TMWH1190C21DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'C21',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 2,
-    rows: 1,
-    length: 1190,
-    width: 900,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '5',
-    modelCode: 'TMWH1190D12DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'D12',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 2,
-    length: 1190,
-    width: 900,
-    height: 700,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '6',
-    modelCode: 'TMWH1190D11DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'D11',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 1,
-    length: 1190,
-    width: 900,
-    height: 700,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '7',
-    modelCode: 'TMWH1190D22DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'D22',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 2,
-    rows: 2,
-    length: 1190,
-    width: 900,
-    height: 700,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '8',
-    modelCode: 'TMWH1190D21DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'D21',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 2,
-    rows: 1,
-    length: 1190,
-    width: 900,
-    height: 700,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '9',
-    modelCode: 'TMWH1190E12DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'E12',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 2,
-    length: 1190,
-    width: 950,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-  {
-    id: '10',
-    modelCode: 'TMWH1190E11DM2HTM',
-    fanCode: 'FC090-SDS.7Q.6',
-    coilCode: 'E11',
-    series: 'TMWH',
-    fanType: 'Axial',
-    fanNumber: 1,
-    rows: 1,
-    length: 1190,
-    width: 950,
-    height: 650,
-    quantity: 1,
-    fanQuantity: 1,
-  },
-]
 
 const RatingLayout = styled.div`
   display: grid;
@@ -386,7 +233,8 @@ const matchesQuery = (machine: PefMachine, query: string) => {
 
 function RatingResult(props: RatingResultProps) {
   const {
-    machines = SAMPLE_MACHINES,
+    machines = [],
+    totalCount,
     loading = false,
     calculating = false,
     calculation = null,
@@ -429,6 +277,10 @@ function RatingResult(props: RatingResultProps) {
     () => _.filter(machines, (machine) => matchesQuery(machine, searchQuery)),
     [machines, searchQuery],
   )
+
+  const displayedCount = searchQuery
+    ? filteredMachines.length
+    : (totalCount ?? filteredMachines.length)
 
   const tableColumns: any = _.flow([
     applyFiltersToColumns(filters),
@@ -525,7 +377,7 @@ function RatingResult(props: RatingResultProps) {
           value='data.thermal.rating.pef.compatible_machines_count'
         />
         <span style={{ fontWeight: 'bold', margin: '10px 0 16px' }}>
-          {`: ${filteredMachines.length}`}
+          {`: ${displayedCount}`}
         </span>
       </StyledRow>
 

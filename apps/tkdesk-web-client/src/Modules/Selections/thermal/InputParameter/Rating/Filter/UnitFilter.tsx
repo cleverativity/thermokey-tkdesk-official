@@ -30,7 +30,7 @@ const withAllOption = (
 ) => [ALL_OPTION, ...options.filter((option) => option.value !== 'All')]
 
 const COUNT_OPTIONS = withAllOption(
-  Array.from({ length: 12 }, (_, index) => {
+  Array.from({ length: 3 }, (_, index) => {
     const value = String(index + 1)
     return { value, label: value }
   }),
@@ -39,9 +39,6 @@ const COUNT_OPTIONS = withAllOption(
 const getSubseriesOptions = (series?: string) => {
   if (series === 'T') {
     return withAllOption(rawSubseriesId.T)
-  }
-  if (series === 'V' || series === 'J') {
-    return withAllOption(rawSubseriesId.J ?? [])
   }
   return [ALL_OPTION]
 }
@@ -80,7 +77,7 @@ function UnitFilter(props: UnitFilterProps) {
 
   const maxLength = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: SECTION,
       variable: 'maxLength',
@@ -95,7 +92,7 @@ function UnitFilter(props: UnitFilterProps) {
   })
   const maxHeight = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: SECTION,
       variable: 'maxHeight',
@@ -110,7 +107,7 @@ function UnitFilter(props: UnitFilterProps) {
   })
   const maxWidth = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: SECTION,
       variable: 'maxWidth',
@@ -125,7 +122,7 @@ function UnitFilter(props: UnitFilterProps) {
   })
   const weight = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: SECTION,
       variable: 'weight',
@@ -135,7 +132,6 @@ function UnitFilter(props: UnitFilterProps) {
     unitTypes,
     valueField: 'rating.weight',
     unitField: 'rating.weightType',
-    defaultValue: 10,
     defaultUnitIds: WEIGHT_UNITS,
   })
 
@@ -214,7 +210,6 @@ function UnitFilter(props: UnitFilterProps) {
               field={weight}
               valueName='rating.weight'
               unitName='rating.weightType'
-              required
             />
           </StyledRow>
           <StyledRow gutter={[8, 8]} align='middle' style={{ marginTop: 8 }}>

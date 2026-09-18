@@ -62,7 +62,9 @@ namespace Cardano.Application.Services
 
         private static RatingSearch CreateSearch(RatingRequest request)
         {
-            var maxWidthMm = request.MaxWidth;
+            var maxLengthMm = CondenserSizeFilter.ToMillimetres(request.MaxLength, request.UnitsType);
+            var maxHeightMm = CondenserSizeFilter.ToMillimetres(request.MaxHeight, request.UnitsType);
+            var maxWidthMm = CondenserSizeFilter.ToMillimetres(request.MaxWidth, request.UnitsType);
 
             if (request.UseContainerWidth)
             {
@@ -96,8 +98,8 @@ namespace Cardano.Application.Services
                 CondensingC = request.Condensing,
                 SubCoolingK = request.SubCooling,
                 ThermalCapacityKw = request.ThermalCapacity,
-                MaxLengthMm = request.MaxLength,
-                MaxHeightMm = request.MaxHeight,
+                MaxLengthMm = maxLengthMm,
+                MaxHeightMm = maxHeightMm,
                 MaxWidthMm = maxWidthMm,
                 MaxWeightKg = request.MaxWeight,
                 DistanceM = request.Distance is > 0 ? request.Distance : 10

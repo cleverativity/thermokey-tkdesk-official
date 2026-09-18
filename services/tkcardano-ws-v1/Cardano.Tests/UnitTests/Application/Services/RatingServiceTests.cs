@@ -215,4 +215,53 @@ public class RatingServiceTests
             It.IsAny<IList<Condenser>>(),
             It.Is<RatingSearch>(s => s.FanType == "AC" && s.FanBrand == "All")), Times.Once);
     }
+
+    [Test]
+    public async Task RateAsync_ConvertsMetreLimitsToMillimetres()
+    {
+        _condenserRepository.Setup(x => x.GetAllCondenser()).ReturnsAsync(new List<Condenser>
+        {
+            new() { Id = 1, Model = "TMCH1150HUU" }
+        });
+        _engine.Setup(x => x.SelectRatedUnits(It.IsAny<IList<Condenser>>(), It.IsAny<RatingSearch>()))
+            .Returns(new List<RatingMatch>());
+
+        var request = Request();
+        request.MaxLength = 10;
+        request.MaxHeight = 10;
+        request.MaxWidth = 10;
+        request.UnitsType = "si";
+        request.UseContainerWidth = false;
+
+        await _service.RateAsync(request, 1, 10);
+
+        _engine.Verify(x => x.SelectRatedUnits(
+            It.IsAny<IList<Condenser>>(),
+            It.Is<RatingSearch>(s =>
+                s.MaxLengthMm == 10000 &&
+                s.MaxHeightMm == 10000 &&
+                s.MaxWidthMm == 10000)), Times.Once);
+    }
+
+    [Test]
+    public async Task RateAsync_AppliesContainerWidthAfterMetreConversion()
+    {
+        _condenserRepository.Setup(x => x.GetAllCondenser()).ReturnsAsync(new List<Condenser>
+        {
+            new() { Id = 1, Model = "TMCH1150HUU" }
+        });
+        _engine.Setup(x => x.SelectRatedUnits(It.IsAny<IList<Condenser>>(), It.IsAny<RatingSearch>()))
+            .Returns(new List<RatingMatch>());
+
+        var request = Request();
+        request.MaxWidth = 10;
+        request.UnitsType = "si";
+        request.UseContainerWidth = true;
+
+        await _service.RateAsync(request, 1, 10);
+
+        _engine.Verify(x => x.SelectRatedUnits(
+            It.IsAny<IList<Condenser>>(),
+            It.Is<RatingSearch>(s => s.MaxWidthMm == RatingService.ContainerWidthMm)), Times.Once);
+    }
 }

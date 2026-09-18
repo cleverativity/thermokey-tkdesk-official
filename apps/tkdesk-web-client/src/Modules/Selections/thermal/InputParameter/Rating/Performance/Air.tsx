@@ -22,7 +22,7 @@ function Air(props: AirProps) {
 
   const airInletTemp = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: 'Air',
       variable: 'airInletTemp',
@@ -38,7 +38,7 @@ function Air(props: AirProps) {
 
   const altitude = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: 'Air',
       variable: 'altitude',

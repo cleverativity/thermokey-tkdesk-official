@@ -17,7 +17,7 @@ function Noise(props: NoiseProps) {
 
   const noise = useUnitMeasureField({
     query: {
-      product: 'drycooler',
+      product: 'condenser',
       step: 'Rating',
       section: 'Noise',
       variable: 'noise',

@@ -61,7 +61,7 @@ function RatingPerfParameter(props: RatingPerfParameterProps) {
     null,
   )
 
-  const { machines, calculation, isLoading, isCalculating, calculate } =
+  const { machines, totalCount, calculation, isLoading, isCalculating, calculate } =
     useRating({
       rating,
       unitsType,
@@ -82,6 +82,7 @@ function RatingPerfParameter(props: RatingPerfParameterProps) {
         <Col xs={24} lg={16}>
           <RatingResult
             machines={machines}
+            totalCount={totalCount}
             loading={isLoading}
             calculating={isCalculating}
             calculation={calculation}

@@ -7,7 +7,8 @@ namespace Cardano.Application.Validators
 {
     public class RatingRequestValidator : AbstractValidator<RatingRequest>
     {
-        private static readonly string[] AllowedSubseries = ["All", "M", "T", "J"];
+        private static readonly string[] AllowedSubseries =
+            ["All", "HLL", "HUU", "HNU", "HTN", "HTT", "HTX"];
         private static readonly string[] AllowedAssembly = ["All", "Single", "Assembled"];
         private static readonly string[] AllowedFanBrand =
         [
@@ -67,7 +68,7 @@ namespace Cardano.Application.Validators
 
             RuleFor(x => x.Subseries)
                 .Must(value => IsAllowed(value, AllowedSubseries))
-                .WithMessage("Subseries must be All, M, T, or J.")
+                .WithMessage("Subseries must be All, HLL, HUU, HNU, HTN, HTT, or HTX.")
                 .When(x => !string.IsNullOrWhiteSpace(x.Subseries));
 
             RuleFor(x => x.Assembly)

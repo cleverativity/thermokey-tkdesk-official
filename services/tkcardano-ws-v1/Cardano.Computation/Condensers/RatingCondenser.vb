@@ -34,8 +34,8 @@ Public Class RatingCondenser
         Dim noiseFilter = MapNoiseClassToLetter(search.NoiseClass)
         Dim diameterFilter As Integer? = NormalizeOptionalDiameter(search.FanDiameter)
 
-        ' Series/subseries M has no Remote Condenser family in this catalog.
-        If seriesFilter = "M" OrElse subseriesFilter = "M" Then
+        ' Series M has no Remote Condenser family in this catalog.
+        If seriesFilter = "M" Then
             Return matches
         End If
 
@@ -56,16 +56,17 @@ Public Class RatingCondenser
 
         For Each unit In condensers
             Dim model = If(unit.Model, String.Empty).Trim().ToUpperInvariant()
-            Dim subseries = ResolveSubseries(model)
+            Dim family = ResolveFamily(model)
+            Dim tableSubseries = ResolveTableSubseries(model)
             Dim modules = ResolveModuleCount(model)
             Dim fans = unit.Num_Of_Fan_Rows * unit.Num_Of_Fan_Per_Row
             Dim noiseLetter = ResolveFanType(model, unit.Fan_Series)
 
-            If Not MatchesSeries(unit.Series, seriesFilter, subseries) Then
+            If Not MatchesSeries(unit.Series, seriesFilter, family) Then
                 Continue For
             End If
 
-            If Not MatchesSubseries(subseriesFilter, subseries) Then
+            If Not MatchesSubseries(subseriesFilter, tableSubseries) Then
                 Continue For
             End If
 
@@ -115,7 +116,7 @@ Public Class RatingCondenser
             If includeAc AndAlso fanBrandFilter = "ALL" AndAlso fanTypeFilter <> "EC" Then
                 Dim acDiameter = ResolveDiameter(model, unit.Fan_Model)
                 If MatchesDiameter(diameterFilter, acDiameter) Then
-                    matches.Add(CreateMatch(unit, model, subseries, seriesFilter, noiseLetter, modules, fans, "AC", Nothing, acDiameter, unit.Fan_Model, search))
+                    matches.Add(CreateMatch(unit, model, tableSubseries, seriesFilter, noiseLetter, modules, fans, "AC", Nothing, acDiameter, unit.Fan_Model, search))
                 End If
             End If
 
@@ -128,7 +129,7 @@ Public Class RatingCondenser
                     If IsValidEcName(ebmName) Then
                         Dim ebmDiameter = ResolveDiameter(model, ebmName)
                         If MatchesDiameter(diameterFilter, ebmDiameter) Then
-                            matches.Add(CreateMatch(unit, model, subseries, seriesFilter, noiseLetter, modules, fans, "EC", "EBM Papst", ebmDiameter, ebmName, search))
+                            matches.Add(CreateMatch(unit, model, tableSubseries, seriesFilter, noiseLetter, modules, fans, "EC", "EBM Papst", ebmDiameter, ebmName, search))
                         End If
                     End If
                 End If
@@ -137,7 +138,7 @@ Public Class RatingCondenser
                     If IsValidEcName(ziehlName) Then
                         Dim ziehlDiameter = ResolveDiameter(model, ziehlName)
                         If MatchesDiameter(diameterFilter, ziehlDiameter) Then
-                            matches.Add(CreateMatch(unit, model, subseries, seriesFilter, noiseLetter, modules, fans, "EC", "Ziehl-Abegg", ziehlDiameter, ziehlName, search))
+                            matches.Add(CreateMatch(unit, model, tableSubseries, seriesFilter, noiseLetter, modules, fans, "EC", "Ziehl-Abegg", ziehlDiameter, ziehlName, search))
                         End If
                     End If
                 End If
@@ -420,7 +421,7 @@ Public Class RatingCondenser
         Return "Table-Type"
     End Function
 
-    Private Function ResolveSubseries(model As String) As String
+    Private Function ResolveFamily(model As String) As String
         If IsJumbo(model) Then
             Return "J"
         End If
@@ -434,6 +435,36 @@ Public Class RatingCondenser
         End If
 
         Return String.Empty
+    End Function
+
+    Private Shared ReadOnly TableSubseriesTags As String() =
+        {"HUU", "HTX", "HNU", "HTN", "HTT", "HLL"}
+
+    Private Function ResolveTableSubseries(model As String) As String
+        If String.IsNullOrWhiteSpace(model) Then
+            Return String.Empty
+        End If
+
+        Dim found As String = Nothing
+        Dim foundIndex = Integer.MaxValue
+
+        For Each tag In TableSubseriesTags
+            Dim idx = model.IndexOf(tag, StringComparison.OrdinalIgnoreCase)
+            If idx < 0 Then
+                Continue For
+            End If
+
+            If found Is Nothing OrElse idx < foundIndex Then
+                found = tag
+                foundIndex = idx
+            End If
+        Next
+
+        If found Is Nothing Then
+            Return String.Empty
+        End If
+
+        Return found.ToUpperInvariant()
     End Function
 
     Private Function ResolveModuleCount(model As String) As Integer

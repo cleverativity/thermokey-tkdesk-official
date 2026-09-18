@@ -404,19 +404,23 @@ export const getRatingCalculation = async (payload: any) => {
   return { data }
 }
 
-export const getRatingResult = async (payload: any) => {
+export const getRatingResult = async (
+  payload: any,
+  pagination: { page?: number; pageSize?: number } = {},
+) => {
+  const { page = 1, pageSize = 500 } = pagination
   const endpoint = 'Rating'
 
   const { data } = await makeApiRequest(
     `${endpoint}`,
     'POST',
-    {},
+    { queryParams: { page, pageSize } },
     false,
     true,
     payload,
   )
 
-  log.info('getRatingResult.response', { data, payload })
+  log.info('getRatingResult.response', { data, payload, page, pageSize })
   return { data }
 }
 
