@@ -2,6 +2,8 @@
 
 Nx + pnpm monorepo for the TKDesk web client and the Cardano thermal API.
 
+**Cardano** and **remote condenser** are the same product (interchangeable names). Cardano is the old software name; it now lives in `services/tkcardano-ws-v1`.
+
 ## Layout
 
 ```
@@ -114,3 +116,12 @@ Or `cd apps/tkdesk-web-client` and use the scripts in that `package.json`.
 - Install JS dependencies only at the **root** (`pnpm install`). Do not add a nested `package-lock.json`.
 - Peer-dependency warnings (Amplify, `formik-antd`, `react-json-view` vs React 19) are expected.
 - `pnpm nx build tkdesk-web-client` runs TypeScript `noEmit` before Vite. A Vite-only production build is `pnpm --filter tkdesk-web-client exec vite build`.
+
+## Pull requests from a fork
+
+After pushing a feature branch to your fork, open a Pull Request on GitHub with:
+
+- **base repository:** `cleverativity/thermokey-tkdesk-official`
+- **base branch:** `main`
+- **head repository:** `your-username/thermokey-tkdesk-official`
+- **compare branch:** `feature-x`

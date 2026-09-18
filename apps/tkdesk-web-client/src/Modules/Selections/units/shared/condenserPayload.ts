@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { useCallback } from 'react'
 import { ConsoleLogger } from 'aws-amplify/utils'
 import { convertUnit, type ConvertibleUnit } from './conversion/unitConvertion'
+import { fromMidpoint, toMidpoint } from './condenserGlide'
 import {
   getUnitById,
   getUnitIdByName,
@@ -51,7 +52,7 @@ const getUnitDef = (name: string, type?: UnitType): UnitDef | undefined => {
   return unitMatchesType(unit, type) ? unit : undefined
 }
 
-const resolveUnitName = (raw: unknown): string | undefined => {
+export const resolveUnitName = (raw: unknown): string | undefined => {
   if (typeof raw === 'string') return raw
   if (!raw || typeof raw !== 'object') return undefined
 
@@ -90,18 +91,19 @@ const resolveUnitDef = (
   return getUnitDef(name, type)
 }
 
-const readNumeric = (values: any, path: string) => {
+export const readNumeric = (values: any, path: string) => {
   const raw = _.get(values, path)
   return Number(_.get(raw, 'value', raw))
 }
 
-const convertToTarget = (
+export const convertToTarget = (
   value: number,
   fromRaw: unknown,
   targetName: string,
   type: UnitType,
   fallback: number,
   asDelta = false,
+  round = true,
 ) => {
   if (!Number.isFinite(value)) return fallback
 
@@ -109,7 +111,7 @@ const convertToTarget = (
   const from = resolveUnitDef(fromRaw, type) ?? to
   if (!from || !to) return value
 
-  return convertUnit(value, from, to, { asDelta })
+  return convertUnit(value, from, to, { asDelta, round })
 }
 
 const useCondenserPayload = () =>
@@ -267,6 +269,41 @@ const useCondenserPayload = () =>
       'condenser.condensingType',
       40,
     )
+    const refrigerantTypeRaw = _.get(
+      condenser,
+      'refrigerantType',
+      _.get(values, 'condenser.refrigerantType'),
+    )
+    const refrigerantType =
+      refrigerantTypeRaw && typeof refrigerantTypeRaw === 'object'
+        ? (refrigerantTypeRaw.value ??
+          refrigerantTypeRaw.condenser_type ??
+          refrigerantTypeRaw.key)
+        : refrigerantTypeRaw
+
+    const storedMidpoint = Number(
+      _.get(
+        condenser,
+        'condensingMidpointC',
+        _.get(values, 'condenser.condensingMidpointC'),
+      ),
+    )
+    const condensingMidpointC = Number.isFinite(storedMidpoint)
+      ? storedMidpoint
+      : toMidpoint(normalizedCondensing, condensingReference, refrigerantType)
+    const payloadCondensing = fromMidpoint(
+      condensingMidpointC,
+      condensingReference,
+      refrigerantType,
+    )
+
+    const storedCompressorBaseK = Number(
+      _.get(
+        condenser,
+        'compressorBaseK',
+        _.get(values, 'condenser.compressorBaseK'),
+      ),
+    )
     const normalizedCompressorInput = normalizeTemperatureToC(
       isCompressorInletTemperature
         ? 'condenser.inletTemperature'
@@ -275,13 +312,22 @@ const useCondenserPayload = () =>
         ? 'condenser.inletTemperatureType'
         : 'condenser.compressorType',
       isCompressorInletTemperature ? 22 : 25,
-      // Desuperheating = temperature difference (K/°F delta), not absolute
       !isCompressorInletTemperature,
     )
-    const normalizedCompressor = isCompressorInletTemperature
-      ? normalizedCompressorInput - normalizedCondensing
-      : normalizedCompressorInput
+    const normalizedCompressor = Number.isFinite(storedCompressorBaseK)
+      ? storedCompressorBaseK
+      : isCompressorInletTemperature
+        ? normalizedCompressorInput -
+          fromMidpoint(condensingMidpointC, 'dew', refrigerantType)
+        : normalizedCompressorInput
 
+    const storedSubCoolingBaseK = Number(
+      _.get(
+        condenser,
+        'subCoolingBaseK',
+        _.get(values, 'condenser.subCoolingBaseK'),
+      ),
+    )
     const normalizedOutletTemperature = normalizeTemperatureToC(
       'condenser.outletTemperature',
       'condenser.outletTemperatureType',
@@ -291,12 +337,14 @@ const useCondenserPayload = () =>
       'condenser.subCooling',
       'condenser.subCoolingType',
       3,
-      // Subcooling delta = temperature difference (K/°F delta), not absolute
       !isOutletTemperature,
     )
-    const normalizedSubCooling = isOutletTemperature
-      ? normalizedCondensing - normalizedOutletTemperature
-      : normalizedSubCoolingInput
+    const normalizedSubCooling = Number.isFinite(storedSubCoolingBaseK)
+      ? storedSubCoolingBaseK
+      : isOutletTemperature
+        ? fromMidpoint(condensingMidpointC, 'bubble', refrigerantType) -
+          normalizedOutletTemperature
+        : normalizedSubCoolingInput
 
     const toleranceMinRaw = readNumeric(values, 'condenser.toleranceMin')
     const toleranceMaxRaw = readNumeric(values, 'condenser.toleranceMax')
@@ -335,8 +383,6 @@ const useCondenserPayload = () =>
         'toleranceMax',
         'condenserModel',
         'splValue',
-        'compressorInletMode',
-        'subCoolingMode',
         'saturationTitle',
         'inletTemperature',
         'inletTemperatureType',
@@ -354,8 +400,17 @@ const useCondenserPayload = () =>
       dryBulb: normalizedDryBulb,
       minOperativeTemperature: normalizedMinOperativeTemperature,
       compressor: normalizedCompressor,
-      condensing: normalizedCondensing,
+      condensing: payloadCondensing,
       condensingReference,
+      condensingMidpointC,
+      compressorBaseK: normalizedCompressor,
+      subCoolingBaseK: normalizedSubCooling,
+      compressorInletMode: isCompressorInletTemperature
+        ? 'temperature'
+        : 'delta_temperature',
+      subCoolingMode: isOutletTemperature
+        ? 'temperature'
+        : 'delta_temperature',
       subCooling: normalizedSubCooling,
       toleranceMin,
       toleranceMax,

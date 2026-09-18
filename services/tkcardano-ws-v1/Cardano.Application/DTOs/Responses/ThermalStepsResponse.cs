@@ -96,6 +96,11 @@ namespace Cardano.Application.DTOs.Responses
             public double? MaxHeight { get; set; }
             public double? MaxWidth { get; set; }
             public double Esp { get; set; }
+            public double? CondensingMidpointC { get; set; }
+            public double? CompressorBaseK { get; set; }
+            public double? SubCoolingBaseK { get; set; }
+            public string? CompressorInletMode { get; set; }
+            public string? SubCoolingMode { get; set; }
         }
     }
 
@@ -170,5 +175,10 @@ namespace Cardano.Application.DTOs.Responses
         public double? MaxHeight { get; set; }
         public double? MaxWidth { get; set; }
         public double Esp { get; set; }
+        public double? CondensingMidpointC { get; set; }
+        public double? CompressorBaseK { get; set; }
+        public double? SubCoolingBaseK { get; set; }
+        public string? CompressorInletMode { get; set; }
+        public string? SubCoolingMode { get; set; }
     }
 }

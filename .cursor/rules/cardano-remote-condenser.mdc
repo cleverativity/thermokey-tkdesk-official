@@ -1,0 +1,15 @@
+---
+description: Cardano and remote condenser are the same product; Cardano is the old name now living in tkcardano-ws-v1
+alwaysApply: true
+---
+
+# Cardano = Remote Condenser
+
+**Cardano** and **remote condenser** refer to the same product and are interchangeable.
+
+- **Cardano** is the old name of the thermal software.
+- That software was converted into **`tkcardano-ws-v1`** (`services/tkcardano-ws-v1`).
+- In the TKDesk web client, the same product appears as **Remote Condensers** (for example `macro_serie === 'Remote condensers'`).
+- Namespaces, projects, and APIs still use `Cardano` (for example `Cardano.Application`, `Cardano API`). Treat that code as remote-condenser code.
+
+When the user says "cardano", "remote condenser", or "tkcardano", they mean this same system. Do not treat them as separate products.

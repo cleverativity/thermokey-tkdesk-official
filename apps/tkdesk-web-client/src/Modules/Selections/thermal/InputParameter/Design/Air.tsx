@@ -125,6 +125,7 @@ function Air({ onChangeRelHumidity, onChangeAltitude, unitTypes }: AirProps) {
                 valueName='condenser.atmosphericPress'
                 unitName='condenser.atmosphericPressType'
                 required
+                readOnly
               />
             )}
 

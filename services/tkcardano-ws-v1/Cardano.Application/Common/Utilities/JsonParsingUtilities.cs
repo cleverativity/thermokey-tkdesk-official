@@ -67,6 +67,17 @@ namespace Cardano.Application.Common.Utilities
                 data.MaxHeight = GetOptionalDoubleValue(condenserNode, "maxHeight");
                 data.MaxWidth = GetOptionalDoubleValue(condenserNode, "maxWidth");
                 data.Esp = GetDoubleValue(condenserNode, "esp");
+                data.CondensingMidpointC = GetOptionalDoubleValue(condenserNode, "condensingMidpointC");
+                data.CompressorBaseK = GetOptionalDoubleValue(condenserNode, "compressorBaseK");
+                data.SubCoolingBaseK = GetOptionalDoubleValue(condenserNode, "subCoolingBaseK");
+                var compressorInletMode = GetStringValue(condenserNode, "compressorInletMode");
+                data.CompressorInletMode = string.IsNullOrWhiteSpace(compressorInletMode)
+                    ? null
+                    : compressorInletMode;
+                var subCoolingMode = GetStringValue(condenserNode, "subCoolingMode");
+                data.SubCoolingMode = string.IsNullOrWhiteSpace(subCoolingMode)
+                    ? null
+                    : subCoolingMode;
 
             }
             catch (Newtonsoft.Json.JsonReaderException ex)
