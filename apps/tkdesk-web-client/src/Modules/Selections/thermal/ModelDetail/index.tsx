@@ -17,9 +17,7 @@ import { StyledSpinner } from 'Components/Styled'
 import Tabs from 'Components/Styled/Tabs'
 import { useDetail } from '../hooks/useDetail'
 
-import AdjustModule from './AdjustModule'
 import * as APISettings from 'Api/Thermal/api/endpoints'
-import { useCompute } from '../hooks/useCompute'
 import { useFormikContext } from 'formik'
 import useTable from '../hooks/useTable'
 import { staticColumn as staticColumnEnergyAnalysisResults } from 'Model/Selections/thermal/ModelDetail/energyAnalysisTable'
@@ -28,7 +26,6 @@ import { useAccessories } from '../hooks/useAccessories'
 import EnergyAnalysis from './EnergyAnalysis'
 import WorkingPoint from './WorkingPoint'
 import { useWorkingPoint } from '../hooks/useWorkingPoint'
-import { useAuthorization } from 'Modules/App/Authorization'
 
 interface ThermalModelDetailProps {
   data?: any
@@ -69,14 +66,12 @@ const ThermalModelDetail = forwardRef<
   const unitsType = _.get(preferences, 'um_system', 'si')
 
   //const unitsType = um_system == 'imp' ? 'I-P (English)' : 'SI (Metric)'
-  const [computeValue, setComputeValue] = React.useState<any>(null)
   const [hideEnergyAnalysisButton, setHideEnergyAnalysisButton] =
     React.useState(false)
 
   const [selectedAccessoryIds, setSelectedAccessoryIds] = useState<number[]>([])
 
   const intl = useIntl()
-  const autho = useAuthorization()
 
   const formik = useFormikContext()
   const { values, setFieldValue } = formik
@@ -89,13 +84,6 @@ const ThermalModelDetail = forwardRef<
       return
     }
 
-    const newCompute = {
-      ...condenser,
-      percentAdjustment: 0,
-    }
-    setComputeValue(newCompute)
-    log.info('ThermalModelDetail.initComputeValue', {})
-
     const remoteModel = String(_.get(condenser, 'remoteModel', '') || '')
     const suffix = remoteModel.slice(-2)
     if (suffix === 'B1' || suffix === 'B2') {
@@ -107,33 +95,9 @@ const ThermalModelDetail = forwardRef<
     }
   }, [JSON.stringify(condenser)])
 
-  const adjustmentType: string = _.get(
-    values,
-    'condenser.adjustmentModuleType',
-    'ac',
-  )
-
-  const { adjustResult: adjustCapacityResult, calculate: computeCapacity } =
-    useCompute({
-      compute: computeValue,
-      unitsType,
-      apiFn: APISettings.getAdjustCapacity,
-      enabled: adjustmentType === 'ac',
-    })
-  const { adjustResult: adjustFanFlowsResult, calculate: computeFanFlows } =
-    useCompute({
-      compute: computeValue,
-      unitsType,
-      apiFn: APISettings.getAdjustFanCapacity,
-      enabled: adjustmentType === 'aff',
-    })
-
   const { performance, isLoading } = useDetail({
     condenser,
     unitsType,
-    adjustValue:
-      adjustmentType === 'ac' ? adjustCapacityResult : adjustFanFlowsResult,
-    adjustType: adjustmentType,
   })
 
   useEffect(() => {
@@ -221,54 +185,14 @@ const ThermalModelDetail = forwardRef<
     [setDataTable, setFieldValue],
   )
 
-  const onCompute = () => {
-    log.info('useEffect.EnergyAnalysis', data)
-
-    const acAdjustment: string = _.get(
-      values,
-      'acData.perCapacityAdjustment',
-      '',
-    )
-
-    const affAdjustment: string = _.get(values, 'affData.fanFlowAdjustment', '')
-
-    const newCompute = {
-      ...condenser,
-      percentAdjustment: adjustmentType === 'ac' ? acAdjustment : affAdjustment,
-    }
-
-    if (adjustmentType === 'ac') {
-      computeCapacity(newCompute)
-    } else {
-      computeFanFlows(newCompute)
-    }
-
-    log.info('ThermalModelDetail.onCompute', {
-      values,
-      acAdjustment,
-      affAdjustment,
-      adjustCapacityResult,
-      adjustFanFlowsResult,
-      newCompute,
-      adjustmentType,
-      unitsType,
-    })
-  }
-
   const onDownloadPDF = useCallback(() => {
     if (!download) return
 
     const newCondenser = {
       ...condenser,
       unitsType: unitsType,
-      ...(adjustmentType === 'ac' && {
-        capacityAdjustment: adjustCapacityResult.newCapacity,
-        newAirflow: 0,
-      }),
-      ...(adjustmentType === 'aff' && {
-        capacityAdjustment: adjustFanFlowsResult.newCapacity,
-        newAirflow: adjustFanFlowsResult.newAirFlow,
-      }),
+      capacityAdjustment: 0,
+      newAirflow: 0,
     }
 
     const newPriceRequest = {
@@ -289,16 +213,11 @@ const ThermalModelDetail = forwardRef<
       newCondenser,
       condenser,
       accessoriesPrice,
-      adjustCapacityResult,
-      adjustFanFlowsResult,
     })
   }, [
     download,
     condenser,
     unitsType,
-    adjustmentType,
-    adjustCapacityResult,
-    adjustFanFlowsResult,
     selectedAccessoryIds,
     accessoriesPrice,
     intl.locale,
@@ -347,15 +266,6 @@ const ThermalModelDetail = forwardRef<
 
       {activeTab === 'perf' ? (
         <>
-          {autho.iAmAdmin && (
-            <AdjustModule
-              capacityData={adjustCapacityResult}
-              fanFlowsData={adjustFanFlowsResult}
-              model={condenser}
-              compute={onCompute}
-              preferences={preferences}
-            />
-          )}
           <GroupedDetails
             data={performance}
             model={condenser}
