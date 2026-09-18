@@ -1,0 +1,191 @@
+ACCESSORIES DISPLAY BY CONDENSER MODEL
+POST /Accessories
+================================================
+
+The accessory list is built from remoteModel only.
+Temperature is not used.
+
+Items are either:
+  - shown and enabled   (IsDisabled = false)  -> user can select
+  - shown and disabled  (IsDisabled = true)   -> shown greyed / not selectable
+  - not returned        -> not displayed
+
+
+------------------------------------------------
+1. ACCESSORY CATALOG
+------------------------------------------------
+
+ Id | Accessory
+----+-----------------------------------------------
+  1 | Wiring + Main Switch W[I]
+  2 | Wiring with Electrical Panel Q
+  3 | Phase Cut Speed Controller R
+  4 | Special Phase Cut Speed Controller P
+  5 | Step Fan Speed Controller G
+  6 | Inverter Fan Speed Controller Z
+  7 | MonoPhase Fan Speed Controller P
+  8 | MonoPhase Fan Speed Controller R
+  9 | 3 Pole Repair Switch I
+ 10 | 6 Pole Repair Switch I
+ 11 | Electrical Panel with ON/OFF          (never shown)
+ 12 | Wiring W1E
+ 13 | Wiring W3E
+ 14 | Fan Speed Controller Eb
+ 15 | Fan Speed Controller Ep
+ 16 | 3 Pole Repair Switch I
+ 17 | Shock Absorbers
+ 18 | Core Extra Corrosion Protection
+ 19 | Painting of the Casing
+ 20 | Fan EC 01 (EC)                        (never shown on the list;
+    |                                       auto-priced only for -B1 / -B2)
+
+
+------------------------------------------------
+2. CHECK ORDER
+------------------------------------------------
+
+  1) If model ends with -B1 or -B2   -> EC path
+  2) Else if model starts with TMC   -> TMC path
+  3) Else                            -> standard path (JMK / TMK / TMKQ)
+
+Monophase vs 3-phase uses the last 2 letters of the model:
+  MV, MH           = monophase
+  DV, DH, YV, YH   = 3-phase
+  any other suffix = 3-phase
+
+
+------------------------------------------------
+3. PATH A — MODEL ENDS WITH -B1 OR -B2 (EC)
+------------------------------------------------
+
+Shown IDs: 12, 13, 14, 15, 16, 17, 18, 19
+Hidden:    1-11, 20
+
+ Id | Accessory                         | State
+----+-----------------------------------+----------
+ 12 | Wiring W1E                        | ENABLED
+ 13 | Wiring W3E                        | ENABLED
+ 14 | Fan Speed Controller Eb           | ENABLED
+ 15 | Fan Speed Controller Ep           | ENABLED
+ 16 | 3 Pole Repair Switch I            | ENABLED
+ 17 | Shock Absorbers                   | ENABLED
+ 18 | Core Extra Corrosion Protection   | ENABLED
+ 19 | Painting of the Casing            | DISABLED (shown, greyed)
+
+
+------------------------------------------------
+4. PATH B — MODEL STARTS WITH TMC
+    (only if not -B1 / -B2)
+------------------------------------------------
+
+Shown IDs: 1-10, 17-19
+Hidden:    11-16, 20
+
+ Id | Accessory                         | State
+----+-----------------------------------+----------
+  1 | Wiring + Main Switch W[I]         | ENABLED
+  2 | Wiring with Electrical Panel Q    | ENABLED
+  3 | Phase Cut Speed Controller R      | DISABLED
+  4 | Special Phase Cut Speed Controller P | DISABLED
+  5 | Step Fan Speed Controller G       | DISABLED
+  6 | Inverter Fan Speed Controller Z   | DISABLED
+  7 | MonoPhase Fan Speed Controller P  | DISABLED
+  8 | MonoPhase Fan Speed Controller R  | DISABLED
+  9 | 3 Pole Repair Switch I            | ENABLED
+ 10 | 6 Pole Repair Switch I            | ENABLED
+ 17 | Shock Absorbers                   | ENABLED
+ 18 | Core Extra Corrosion Protection   | ENABLED
+ 19 | Painting of the Casing            | DISABLED (shown, greyed)
+
+All speed controllers (3-8) are greyed on TMC.
+
+
+------------------------------------------------
+5. PATH C — ALL OTHER MODELS (JMK / TMK / TMKQ)
+    (not -B1 / -B2, not TMC)
+------------------------------------------------
+
+Shown IDs: 1-10, 17-19
+Hidden:    11-16, 20
+
+
+5.1  Three-phase  AND  model does NOT start with TMKQ
+     Suffix DV / DH / YV / YH (or other non MV/MH)
+
+ Id | Accessory                         | State
+----+-----------------------------------+----------
+  1 | Wiring + Main Switch W[I]         | ENABLED
+  2 | Wiring with Electrical Panel Q    | ENABLED
+  3 | Phase Cut Speed Controller R      | ENABLED
+  4 | Special Phase Cut Speed Controller P | ENABLED
+  5 | Step Fan Speed Controller G       | DISABLED
+  6 | Inverter Fan Speed Controller Z   | DISABLED
+  7 | MonoPhase Fan Speed Controller P  | DISABLED
+  8 | MonoPhase Fan Speed Controller R  | DISABLED
+  9 | 3 Pole Repair Switch I            | ENABLED
+ 10 | 6 Pole Repair Switch I            | ENABLED
+ 17 | Shock Absorbers                   | ENABLED
+ 18 | Core Extra Corrosion Protection   | ENABLED
+ 19 | Painting of the Casing            | DISABLED (shown, greyed)
+
+
+5.2  Three-phase  AND  model starts with TMKQ
+
+Same as 5.1, except:
+  - IDs 3 and 4 stay ENABLED
+  - IDs 5 and 6 stay ENABLED (not turned off on TMKQ)
+  - IDs 7, 8, 19 DISABLED
+
+
+5.3  Monophase  (suffix MV or MH)
+
+ Id | Accessory                         | State
+----+-----------------------------------+----------
+  1 | Wiring + Main Switch W[I]         | ENABLED
+  2 | Wiring with Electrical Panel Q    | ENABLED
+  3 | Phase Cut Speed Controller R      | DISABLED
+  4 | Special Phase Cut Speed Controller P | DISABLED
+  5 | Step Fan Speed Controller G       | DISABLED
+  6 | Inverter Fan Speed Controller Z   | DISABLED
+  7 | MonoPhase Fan Speed Controller P  | DISABLED
+  8 | MonoPhase Fan Speed Controller R  | ENABLED if fan rows <> 2
+                                        | DISABLED if fan rows = 2
+  9 | 3 Pole Repair Switch I            | ENABLED
+ 10 | 6 Pole Repair Switch I            | ENABLED
+ 17 | Shock Absorbers                   | ENABLED
+ 18 | Core Extra Corrosion Protection   | ENABLED
+ 19 | Painting of the Casing            | ENABLED
+
+
+------------------------------------------------
+6. EXAMPLES
+------------------------------------------------
+
+ Model example              | Path                         | What the UI shows
+----------------------------+------------------------------+------------------------------------------
+ ...-B1 or ...-B2           | EC                           | W1E, W3E, Eb, Ep, switch, shock,
+                            |                              | corrosion; painting greyed
+ TMC...                     | TMC                          | Wiring + switches + mechanical;
+                            |                              | all speed controllers greyed
+ JMK...DV  (3-phase)        | Standard 3-phase             | R and P controllers on;
+                            |                              | G, Z and monophase controllers off
+ TMKQ...                    | Standard TMKQ 3-phase        | R, P, G, Z on; monophase controllers off
+ ...MV  (1 fan row)         | Monophase                    | Monophase controller R (id 8) on;
+                            |                              | ids 3-7 off
+ ...MV  (2 fan rows)        | Monophase                    | Id 8 also off
+
+
+------------------------------------------------
+7. NOTES
+------------------------------------------------
+
+- POST /Accessories request body: id, remoteModel only.
+- POST /AccessoriesPrices prices selected item IDs; it does not rebuild
+  this display list by temperature.
+- Min operative temperature is not applied. There is no operating-
+  temperature column on accessory items.
+- Source: ThermokeyCondensers.vb  AccessoriesItemList
+
+================================================
+End of document
+================================================

@@ -95,7 +95,13 @@ namespace Cardano.Application.DTOs.Responses
         public string? Dimension_Mm { get; set; }
         public string? Packaging { get; set; }
 
+        /// <summary>MinIO object key for the condenser drawing (size + airflow).</summary>
+        public string? ImageObjectKey { get; set; }
 
+        /// <summary>MIME type of <see cref="ImageBase64"/> (e.g. image/jpeg).</summary>
+        public string? ImageContentType { get; set; }
 
+        /// <summary>Base64-encoded condenser drawing; null when MinIO has no match.</summary>
+        public string? ImageBase64 { get; set; }
     }
 }

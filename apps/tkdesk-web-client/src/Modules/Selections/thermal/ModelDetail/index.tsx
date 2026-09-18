@@ -84,6 +84,13 @@ const ThermalModelDetail = forwardRef<
       return
     }
 
+    const newCompute = {
+      ...condenser,
+      percentAdjustment: 0,
+    }
+    setComputeValue(newCompute)
+    log.info('ThermalModelDetail.initComputeValue', {})
+
     const remoteModel = String(_.get(condenser, 'remoteModel', '') || '')
     const suffix = remoteModel.slice(-2)
     if (suffix === 'B1' || suffix === 'B2') {
@@ -266,6 +273,15 @@ const ThermalModelDetail = forwardRef<
 
       {activeTab === 'perf' ? (
         <>
+          {autho.iAmAdmin && (
+            <AdjustModule
+              capacityData={adjustCapacityResult}
+              fanFlowsData={adjustFanFlowsResult}
+              model={condenser}
+              compute={onCompute}
+              preferences={preferences}
+            />
+          )}
           <GroupedDetails
             data={performance}
             model={condenser}

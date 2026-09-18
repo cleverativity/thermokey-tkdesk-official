@@ -34,6 +34,9 @@ namespace Cardano_API.Extensions
             // Adjustment Calculation
             services.AddScoped<IThermalAdjustmentService, ThermalAdjustmentService>();
 
+            // Condenser drawing (MinIO) — shared by /Performance and PDF reports
+            services.AddScoped<ICondenserImageService, CondenserImageService>();
+
             // Thermal Report
             services.AddScoped<IPdfReportService, PdfReportService>();
 

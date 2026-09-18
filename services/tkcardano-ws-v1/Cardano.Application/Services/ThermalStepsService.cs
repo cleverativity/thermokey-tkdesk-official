@@ -35,34 +35,12 @@ namespace Cardano.Application.Services
                 {
                     string jsonString = stepData.data?.RootElement.GetRawText() ?? string.Empty;
                     var parsedCondenser = JsonParsingUtilities.CondenseParseFromJson(jsonString);
-                    var parsedAccessories = JsonParsingUtilities.AccessoriesParseFromJson(jsonString, parsedCondenser.ModelId);
 
-                    // Create response data based on status following the original logic
-                    CondenserAndAccessoriesData responseData;
-
-                    if (stepData.status == "solved")
+                    // Same response shape for any status (created, solved, etc.).
+                    CondenserAndAccessoriesData responseData = new CondenserAndAccessoriesData
                     {
-                        // For solved status, only include condenser datacal
-                        responseData = new CondenserAndAccessoriesData
-                        {
-                            Condenser = _mapper.Map<CondenserResponseDto>(parsedCondenser),
-                        };
-                    }
-                    else
-                    {
-                        // For other statuses, include both accessories and condenser
-                        responseData = new CondenserAndAccessoriesData
-                        {
-                            //Accessories = parsedAccessories,
-                            Condenser = _mapper.Map<CondenserResponseDto>(parsedCondenser)
-                        };
-
-                        //Update condenser with additional data from accessories
-                        //if (responseData.Condenser != null)
-                        //{
-                        //    responseData.Condenser.RemoteModel = parsedAccessories?.CondenserModel;
-                        //}
-                    }
+                        Condenser = _mapper.Map<CondenserResponseDto>(parsedCondenser),
+                    };
 
                     // Create strongly-typed response object
                     var response = new GetCondenserAndAccessoriesStepsResponse
